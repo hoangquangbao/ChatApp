@@ -18,36 +18,41 @@ struct Home: View {
             Image("LotusLogo")
                 .resizable()
                 .scaledToFill()
-                .frame(width: 120, height: 120, alignment: .center)
+                .frame(width: 100, height: 100, alignment: .center)
                 .mask(Circle())
                 .padding(.bottom)
+                .shadow(color: .purple, radius: 10)
             
-            Text("Talk with your friend anything!")
-                .font(Font.system(size:13, design: .serif))
-            //.fontWeight(.bold)
-                //.foregroundColor(.)
+            Text("Be carefull talk with your friend anything!")
+                .font(.system(size: 10, weight: .semibold, design: .serif))
                 .padding(.bottom)
             
             NavigationView {
                     
                     ScrollView {
-                        
                         SignInUp()
                     }
-                    .shadow(color: .gray, radius: 5)
+                    //.shadow(color: .gray, radius: 3)
+                    .background(
+                        Image("BG3")
+                            .resizable()
+                            .scaledToFill()
+                            .ignoresSafeArea()
+                            //.blur(radius: 5)
+                    )
+                    .edgesIgnoringSafeArea(.bottom)
             }
-            .cornerRadius(50)
-            .shadow(color: .yellow, radius: 3, y: -3)
+            .cornerRadius(20)
+            .shadow(color: .purple, radius: 10)
         }
-        .background(
-            Image("BG")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-                .blur(radius: 5)
-        )
-        .edgesIgnoringSafeArea(.bottom)
-        
+//        .background(
+//            Image("BG4")
+//                .resizable()
+//                .scaledToFill()
+//                .ignoresSafeArea()
+//                .blur(radius: 1)
+//        )
+        //.edgesIgnoringSafeArea(.bottom)
     }
 }
 
