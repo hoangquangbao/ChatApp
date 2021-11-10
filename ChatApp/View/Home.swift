@@ -21,9 +21,9 @@ struct Home: View {
                 .frame(width: 100, height: 100, alignment: .center)
                 .mask(Circle())
                 .padding(.bottom)
-                .shadow(color: .purple, radius: 10)
+                .shadow(color: .black, radius: 10)
             
-            Text("Be carefull talk with your friend anything!")
+            Text("Feel free to talk to your friends about anything!")
                 .font(.system(size: 10, weight: .semibold, design: .serif))
                 .padding(.bottom)
             
@@ -34,7 +34,7 @@ struct Home: View {
                     }
                     //.shadow(color: .gray, radius: 3)
                     .background(
-                        Image("BG3")
+                        Image("BG4")
                             .resizable()
                             .scaledToFill()
                             .ignoresSafeArea()
@@ -43,7 +43,7 @@ struct Home: View {
                     .edgesIgnoringSafeArea(.bottom)
             }
             .cornerRadius(20)
-            .shadow(color: .purple, radius: 10)
+            .shadow(color: .black, radius: 10)
         }
 //        .background(
 //            Image("BG4")
