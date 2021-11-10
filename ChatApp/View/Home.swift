@@ -21,10 +21,10 @@ struct Home: View {
                 .frame(width: 100, height: 100, alignment: .center)
                 .mask(Circle())
                 .padding(.bottom)
-                .shadow(color: .black, radius: 10)
+                .shadow(color: .purple, radius: 10)
             
             Text("Feel free to talk to your friends about anything!")
-                .font(.system(size: 10, weight: .semibold, design: .serif))
+                .font(.system(size: 11, weight: .semibold))
                 .padding(.bottom)
             
             NavigationView {
@@ -32,26 +32,17 @@ struct Home: View {
                     ScrollView {
                         SignInUp()
                     }
-                    //.shadow(color: .gray, radius: 3)
                     .background(
-                        Image("BG4")
+                        Image("BG3")
                             .resizable()
                             .scaledToFill()
                             .ignoresSafeArea()
-                            //.blur(radius: 5)
                     )
                     .edgesIgnoringSafeArea(.bottom)
             }
             .cornerRadius(20)
             .shadow(color: .black, radius: 10)
         }
-//        .background(
-//            Image("BG4")
-//                .resizable()
-//                .scaledToFill()
-//                .ignoresSafeArea()
-//                .blur(radius: 1)
-//        )
         //.edgesIgnoringSafeArea(.bottom)
     }
 }
