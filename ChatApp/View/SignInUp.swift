@@ -9,12 +9,13 @@ import SwiftUI
 
 struct SignInUp: View {
     
-    @State var isSignMode = true
+    @State var isSignInMode = true
     @State var email : String = ""
     @State var username : String = ""
     @State var password :  String = ""
     @State var isHidePassword : Bool = true
     @State var signStatusMessenger : String = ""
+    @State var isInvalidateEmailFormat : Bool = false
     
     
     @State var showAlert = true
@@ -22,7 +23,7 @@ struct SignInUp: View {
     
     var body: some View {
         
-        Picker("", selection: $isSignMode) {
+        Picker("", selection: $isSignInMode) {
             Text("SIGN IN")
                 .tag(true)
             Text("SIGN UP")
@@ -32,30 +33,35 @@ struct SignInUp: View {
             .padding(.bottom)
         
         VStack(spacing: 30) {
-                                
-                HStack {
-                    
-                    Image(systemName: "envelope.fill")
-                        .foregroundColor(.purple)
-                    TextField("Email", text: $email, onEditingChanged: { (isChanged) in
-                        if !isChanged {
-                            if !self.isValidEmail(self.email) {
-                                signStatusMessenger = "Invalidate email format!"
-                                print(signStatusMessenger)
-                            }
+            
+            HStack {
+                
+                Image(systemName: "envelope.fill")
+                    .foregroundColor(.purple)
+                
+                TextField("Email", text: $email, onEditingChanged: { (isChanged) in
+                    if !isChanged {
+                        if !self.isValidEmail(self.email) {
+                            signStatusMessenger = "Invalidate email format!"
+                            
+                            isInvalidateEmailFormat = true
                         }
                     }
-                    )
                 }
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .padding()
-                .background()
-                .cornerRadius(45)
+                )
+                    .alert(isPresented: $isInvalidateEmailFormat) {
+                        Alert(title: Text("Invalidate email format!"))
+                    }
+            }
+            .keyboardType(.emailAddress)
+            .autocapitalization(.none)
+            .padding()
+            .background()
+            .cornerRadius(45)
             .padding(.horizontal)
-                
             
-            if !isSignMode {
+            
+            if !isSignInMode {
                 HStack {
                     Image(systemName: "person.fill")
                         .foregroundColor(.purple)
@@ -94,7 +100,7 @@ struct SignInUp: View {
                 .cornerRadius(45)
                 .padding(.horizontal)
                 
-                if isSignMode {
+                if isSignInMode {
                     Button {
                         
                     } label: {
@@ -107,11 +113,11 @@ struct SignInUp: View {
             }
             
             Spacer(minLength: 20)
-                        
+            
             Button {
                 
             } label: {
-                Text(isSignMode ? "SIGN IN" : "SIGN UP")
+                Text(isSignInMode ? "SIGN IN" : "SIGN UP")
                     .underline()
                     .font(.system(size: 25, weight: .semibold))
                     .foregroundColor(.purple)
@@ -144,6 +150,19 @@ struct SignInUp: View {
 //        }))
 //        //self.present(alert, animated: true, completion: nil)
 //    }
+    
+    
+    //MARK: - Handle SIGNIN and SIGNUP option
+    func handleSignOption() {
+        
+        if isSignInMode {
+            
+            print("SignIn")
+        } else {
+            
+            print("SignUp")
+        }
+    }
     
 }
 
