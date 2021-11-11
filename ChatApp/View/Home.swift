@@ -20,30 +20,34 @@ struct Home: View {
                 .scaledToFill()
                 .frame(width: 100, height: 100, alignment: .center)
                 .mask(Circle())
-                .padding(.bottom)
-                .shadow(color: .purple, radius: 10)
+                .padding(.vertical)
+                .shadow(color: .black, radius: 10)
             
             Text("Feel free to talk to your friends about anything!")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold, design: .serif))
+                .foregroundColor(.purple)
                 .padding(.bottom)
             
-            NavigationView {
-                    
-                    ScrollView {
-                        SignInUp()
-                    }
-                    .background(
-                        Image("BG3")
-                            .resizable()
-                            .scaledToFill()
-                            .ignoresSafeArea()
-                    )
-                    .edgesIgnoringSafeArea(.bottom)
+            Spacer(minLength: 120)
+            
+            ScrollView {
+                SignInUp()
             }
-            .cornerRadius(20)
-            .shadow(color: .black, radius: 10)
+            //                    .background(
+            //                        Image("BG")
+            //                            .resizable()
+            //                            .scaledToFill()
+            //                            .ignoresSafeArea()
+            //                            .blur(radius: 10)
+            //                    )
         }
-        //.edgesIgnoringSafeArea(.bottom)
+        .background(
+            Image("BG")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .blur(radius: 8)
+        )
     }
 }
 

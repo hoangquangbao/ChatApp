@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct SignInUp: View {
     
@@ -14,12 +15,13 @@ struct SignInUp: View {
     @State var username : String = ""
     @State var password :  String = ""
     @State var isHidePassword : Bool = true
-    @State var signStatusMessenger : String = ""
-    @State var isInvalidateEmailFormat : Bool = false
+    @State var isShowAlert : Bool = false
+    @State var alertMessenger : String = ""
     
     
-    @State var showAlert = true
-    
+    init() {
+        FirebaseApp.configure()
+    }
     
     var body: some View {
         
@@ -42,16 +44,12 @@ struct SignInUp: View {
                 TextField("Email", text: $email, onEditingChanged: { (isChanged) in
                     if !isChanged {
                         if !self.isValidEmail(self.email) {
-                            signStatusMessenger = "Invalidate email format!"
-                            
-                            isInvalidateEmailFormat = true
+                            isShowAlert = true
+                            alertMessenger = "Invalidate email format!"
                         }
                     }
                 }
                 )
-                    .alert(isPresented: $isInvalidateEmailFormat) {
-                        Alert(title: Text("Invalidate email format!"))
-                    }
             }
             .keyboardType(.emailAddress)
             .autocapitalization(.none)
@@ -59,6 +57,7 @@ struct SignInUp: View {
             .background()
             .cornerRadius(45)
             .padding(.horizontal)
+            .shadow(color: .purple, radius: 1)
             
             
             if !isSignInMode {
@@ -72,6 +71,7 @@ struct SignInUp: View {
                 .background()
                 .cornerRadius(45)
                 .padding(.horizontal)
+                .shadow(color: .purple, radius: 1)
             }
             
             VStack(alignment: .trailing) {
@@ -95,10 +95,12 @@ struct SignInUp: View {
                             .foregroundColor(.gray)
                     }
                 }
+                .autocapitalization(.none)
                 .padding()
                 .background()
                 .cornerRadius(45)
                 .padding(.horizontal)
+                .shadow(color: .purple, radius: 1)
                 
                 if isSignInMode {
                     Button {
@@ -116,12 +118,17 @@ struct SignInUp: View {
             
             Button {
                 
+                handleSignOption()
             } label: {
                 Text(isSignInMode ? "SIGN IN" : "SIGN UP")
                     .underline()
                     .font(.system(size: 25, weight: .semibold))
                     .foregroundColor(.purple)
             }
+        }
+        .alert(isPresented: $isShowAlert) {
+            //Alert(title: Text(alertMessenger))
+            Alert(title: Text("Messenger"), message: Text(alertMessenger), dismissButton: .default(Text("Got it!")))
         }
     }
     
@@ -132,24 +139,12 @@ struct SignInUp: View {
         if string.count > 100 {
             return false
         }
-
+        
         let emailFormat = "(?:[\\p{L}0-9!#$%\\&'*+/=?\\^_`{|}~-]+(?:\\.[\\p{L}0-9!#$%\\&'*+/=?\\^_`{|}" + "~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\" + "x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[\\p{L}0-9](?:[a-" + "z0-9-]*[\\p{L}0-9])?\\.)+[\\p{L}0-9](?:[\\p{L}0-9-]*[\\p{L}0-9])?|\\[(?:(?:25[0-5" + "]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-" + "9][0-9]?|[\\p{L}0-9-]*[\\p{L}0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21" + "-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-//        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        //        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
         return emailPredicate.evaluate(with: string)
     }
-    
-    
-    //MARK: - Show Alert error messenger
-//    func showSimpleAlert() {
-//
-//        let alert = UIAlertController(title: "Sign out?", message: "You can always access your content by signing back in",         preferredStyle: UIAlertController.Style.alert)
-//
-//        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.default, handler: { _ in
-//            return
-//        }))
-//        //self.present(alert, animated: true, completion: nil)
-//    }
     
     
     //MARK: - Handle SIGNIN and SIGNUP option
@@ -157,13 +152,49 @@ struct SignInUp: View {
         
         if isSignInMode {
             
-            print("SignIn")
+            signIn()
         } else {
             
-            print("SignUp")
+            signUp()
         }
     }
     
+    
+    //MARK: - SignIn
+    func signIn() {
+        
+        Auth.auth().signIn(withEmail: email, password: password) { result, err in
+            
+            if let err = err {
+
+                isShowAlert = true
+                alertMessenger = err.localizedDescription
+                return
+            }
+        }
+    }
+    
+    
+    //MARK: - SignUp
+    func signUp() {
+        
+        Auth.auth().createUser(withEmail: email, password: password) { result, err in
+            
+            if let err = err {
+                
+                isShowAlert = true
+                alertMessenger = err.localizedDescription
+                return
+            }
+
+            //Auto move SIGN IN tab...
+            isSignInMode = true
+            
+            //...and show alert successfully created
+            isShowAlert = true
+            alertMessenger = "Your account has been successfully cereated"
+        }
+    }
 }
 
 struct SignInUp_Previews: PreviewProvider {

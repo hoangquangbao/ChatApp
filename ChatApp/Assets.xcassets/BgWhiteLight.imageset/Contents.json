@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "BG5.jpeg",
+      "filename" : "BgWhiteLight.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "BG5@2x.jpeg",
+      "filename" : "BgWhiteLight@2x.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "BG5@3x.jpeg",
+      "filename" : "BgWhiteLight@3x.jpg",
       "idiom" : "universal",
       "scale" : "3x"
     }
