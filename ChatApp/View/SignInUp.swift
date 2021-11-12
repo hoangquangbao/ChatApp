@@ -11,6 +11,8 @@ import Firebase
 class FirebaseManager : NSObject {
     
     let auth : Auth
+    //Upload image to Firebase
+    let storage : Storage
     
     static let shared = FirebaseManager()
     
@@ -18,6 +20,7 @@ class FirebaseManager : NSObject {
         
         FirebaseApp.configure()
         self.auth = Auth.auth()
+        storage = Storage.storage()
         super.init()
     }
 }
@@ -32,9 +35,10 @@ struct SignInUp: View {
     @State var isShowAlert : Bool = false
     @State var alertMessenger : String = ""
     
-    //Avatar Image
+    //Get Avatar Image
     @State var shouldShowImagePicker = false
     @State var image: UIImage?
+    
     
     
     //    init() {
@@ -253,8 +257,40 @@ struct SignInUp: View {
             //...and show alert successfully created
             isShowAlert = true
             alertMessenger = "Your account has been successfully cereated!"
+            
+            //Upload image to Firebase
+            persistImageToStorage()
         }
     }
+    
+    //MARK: - Upload image to Firebase
+    func persistImageToStorage() {
+            guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+            let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+            guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
+            ref.putData(imageData, metadata: nil) { metadata, err in
+                if let err = err {
+//                    alertMessenger = "Failed to push image to Storage: \(err)"
+                    isShowAlert = true
+                    alertMessenger = err.localizedDescription
+                    return
+                }
+
+                ref.downloadURL { url, err in
+                    if let err = err {
+//                        alertMessenger = "Failed to retrieve downloadURL: \(err)"
+                        isShowAlert = true
+                        alertMessenger = err.localizedDescription
+                        return
+                    }
+
+//                    alertMessenger = "Successfully stored image with url: \(url?.absoluteString ?? "")"
+                    
+//                    guard let url = url else { return }
+//                    print(url.absoluteString)
+                }
+            }
+        }
 }
 
 struct SignInUp_Previews: PreviewProvider {
