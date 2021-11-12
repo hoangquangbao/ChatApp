@@ -15,6 +15,9 @@ struct Home: View {
     var body: some View {
         
         VStack {
+            
+            Spacer(minLength: 0)
+            
             Image("LotusLogo")
                 .resizable()
                 .scaledToFill()
@@ -27,7 +30,7 @@ struct Home: View {
                 .font(.system(size: 12, weight: .semibold, design: .serif))
                 .foregroundColor(.purple)
                 .padding(.bottom)
-            
+                        
             Spacer(minLength: 120)
             
             ScrollView {
@@ -46,7 +49,7 @@ struct Home: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-                .blur(radius: 8)
+                .blur(radius: 5)
         )
     }
 }

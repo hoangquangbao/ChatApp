@@ -8,6 +8,20 @@
 import SwiftUI
 import Firebase
 
+class FirebaseManager : NSObject {
+    
+    let auth : Auth
+    
+    static let shared = FirebaseManager()
+    
+    override init() {
+        
+        FirebaseApp.configure()
+        self.auth = Auth.auth()
+        super.init()
+    }
+}
+
 struct SignInUp: View {
     
     @State var isSignInMode = true
@@ -19,9 +33,9 @@ struct SignInUp: View {
     @State var alertMessenger : String = ""
     
     
-    init() {
-        FirebaseApp.configure()
-    }
+//    init() {
+//        FirebaseApp.configure()
+//    }
     
     var body: some View {
         
@@ -163,7 +177,7 @@ struct SignInUp: View {
     //MARK: - SignIn
     func signIn() {
         
-        Auth.auth().signIn(withEmail: email, password: password) { result, err in
+        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
             
             if let err = err {
 
@@ -178,7 +192,7 @@ struct SignInUp: View {
     //MARK: - SignUp
     func signUp() {
         
-        Auth.auth().createUser(withEmail: email, password: password) { result, err in
+        FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
             
             if let err = err {
                 
@@ -192,7 +206,7 @@ struct SignInUp: View {
             
             //...and show alert successfully created
             isShowAlert = true
-            alertMessenger = "Your account has been successfully cereated"
+            alertMessenger = "Your account has been successfully cereated!"
         }
     }
 }
