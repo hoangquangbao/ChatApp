@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		065134C0273E109800A5A530 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065134BF273E109800A5A530 /* ImagePicker.swift */; };
 		065C03E5273A59E9009016C3 /* ChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065C03E4273A59E9009016C3 /* ChatAppApp.swift */; };
 		065C03E7273A59E9009016C3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065C03E6273A59E9009016C3 /* ContentView.swift */; };
 		065C03E9273A59EB009016C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 065C03E8273A59EB009016C3 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		065134BF273E109800A5A530 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		065C03E1273A59E9009016C3 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		065C03E4273A59E9009016C3 /* ChatAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAppApp.swift; sourceTree = "<group>"; };
 		065C03E6273A59E9009016C3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 			children = (
 				065C040F273A6173009016C3 /* Home.swift */,
 				065C0414273ACAB1009016C3 /* SignInUp.swift */,
+				065134BF273E109800A5A530 /* ImagePicker.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -175,7 +178,6 @@
 				D2F869BF34550C0130DD4FB0 /* Pods-ChatAppTests.debug.xcconfig */,
 				69136919F18A9F23FF9AD7F4 /* Pods-ChatAppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -287,7 +289,7 @@
 			);
 			mainGroup = 065C03D8273A59E9009016C3;
 			packageReferences = (
-				069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */,
+				069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 065C03E2273A59E9009016C3 /* Products */;
 			projectDirPath = "";
@@ -437,6 +439,7 @@
 			files = (
 				065C03E7273A59E9009016C3 /* ContentView.swift in Sources */,
 				065C0410273A6173009016C3 /* Home.swift in Sources */,
+				065134C0273E109800A5A530 /* ImagePicker.swift in Sources */,
 				065C0415273ACAB1009016C3 /* SignInUp.swift in Sources */,
 				065C03E5273A59E9009016C3 /* ChatAppApp.swift in Sources */,
 			);
@@ -793,7 +796,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */ = {
+		069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
@@ -806,12 +809,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		069DFBD3273BC3B2003E1419 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
 		069DFBD5273BC3B2003E1419 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = 069DFBD2273BC3B2003E1419 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */

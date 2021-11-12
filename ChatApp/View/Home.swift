@@ -30,7 +30,7 @@ struct Home: View {
                 .font(.system(size: 12, weight: .semibold, design: .serif))
                 .foregroundColor(.purple)
                 .padding(.bottom)
-                        
+            
             Spacer(minLength: 120)
             
             ScrollView {

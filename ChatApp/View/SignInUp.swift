@@ -32,10 +32,14 @@ struct SignInUp: View {
     @State var isShowAlert : Bool = false
     @State var alertMessenger : String = ""
     
+    //Avatar Image
+    @State var shouldShowImagePicker = false
+    @State var image: UIImage?
     
-//    init() {
-//        FirebaseApp.configure()
-//    }
+    
+    //    init() {
+    //        FirebaseApp.configure()
+    //    }
     
     var body: some View {
         
@@ -49,6 +53,51 @@ struct SignInUp: View {
             .padding(.bottom)
         
         VStack(spacing: 30) {
+            
+            if !isSignInMode {
+                HStack {
+                    Image(systemName: "person.fill")
+                        .foregroundColor(.purple)
+                    TextField("User name", text: $username)
+                }
+                .padding()
+                //                .background()
+                //                .cornerRadius(45)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                )
+                .padding(.horizontal)
+                //                .shadow(color: .purple, radius: 1)
+                //                .overlay(
+                //                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                //                )
+                .overlay (
+                    //Add avatar in here
+                    Button {
+                        
+                        shouldShowImagePicker.toggle()
+                    } label: {
+                        VStack {
+                            if let image = self.image {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 50, height: 50)
+                                    .mask(Circle())
+                            } else {
+                                Image(systemName: "person.crop.circle.badge.plus")
+                                    .padding()
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .overlay(RoundedRectangle(cornerRadius: 45)
+                                    .stroke(.gray, lineWidth: 1)
+                        )
+                    }
+                        .padding()
+                    ,alignment: .trailing
+                )
+            }
             
             HStack {
                 
@@ -68,25 +117,14 @@ struct SignInUp: View {
             .keyboardType(.emailAddress)
             .autocapitalization(.none)
             .padding()
-            .background()
-            .cornerRadius(45)
+            //.background()
+            //.cornerRadius(45)
+            .overlay(
+                RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+            )
             .padding(.horizontal)
-            .shadow(color: .purple, radius: 1)
+            //.shadow(color: .purple, radius: 1)
             
-            
-            if !isSignInMode {
-                HStack {
-                    Image(systemName: "person.fill")
-                        .foregroundColor(.purple)
-                    TextField(" User name", text: $username)
-                    
-                }
-                .padding()
-                .background()
-                .cornerRadius(45)
-                .padding(.horizontal)
-                .shadow(color: .purple, radius: 1)
-            }
             
             VStack(alignment: .trailing) {
                 
@@ -111,10 +149,13 @@ struct SignInUp: View {
                 }
                 .autocapitalization(.none)
                 .padding()
-                .background()
-                .cornerRadius(45)
+                //                .background()
+                //                .cornerRadius(45)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                )
                 .padding(.horizontal)
-                .shadow(color: .purple, radius: 1)
+                //                .shadow(color: .purple, radius: 1)
                 
                 if isSignInMode {
                     Button {
@@ -144,6 +185,11 @@ struct SignInUp: View {
             //Alert(title: Text(alertMessenger))
             Alert(title: Text("Messenger"), message: Text(alertMessenger), dismissButton: .default(Text("Got it!")))
         }
+        .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil) {
+            ImagePicker(image: $image)
+            //                .ignoresSafeArea()
+        }
+        
     }
     
     
@@ -180,7 +226,7 @@ struct SignInUp: View {
         FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
             
             if let err = err {
-
+                
                 isShowAlert = true
                 alertMessenger = err.localizedDescription
                 return
@@ -200,7 +246,7 @@ struct SignInUp: View {
                 alertMessenger = err.localizedDescription
                 return
             }
-
+            
             //Auto move SIGN IN tab...
             isSignInMode = true
             
