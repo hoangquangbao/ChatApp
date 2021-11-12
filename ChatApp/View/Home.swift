@@ -45,11 +45,11 @@ struct Home: View {
             //                    )
         }
         .background(
-            Image("BG")
+            Image("BG1")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-                .blur(radius: 5)
+                .blur(radius: 4)
         )
     }
 }
