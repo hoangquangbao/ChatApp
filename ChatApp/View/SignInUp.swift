@@ -13,14 +13,16 @@ class FirebaseManager : NSObject {
     let auth : Auth
     //Upload image to Firebase
     let storage : Storage
+    let firestore : Firestore
     
     static let shared = FirebaseManager()
     
     override init() {
         
         FirebaseApp.configure()
-        self.auth = Auth.auth()
+        auth = Auth.auth()
         storage = Storage.storage()
+        firestore = Firestore.firestore()
         super.init()
     }
 }
@@ -64,11 +66,12 @@ struct SignInUp: View {
                         .foregroundColor(.purple)
                     TextField("User name", text: $username)
                 }
+                .autocapitalization(.none)
                 .padding()
                 //                .background()
                 //                .cornerRadius(45)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
                 )
                 .padding(.horizontal)
                 //                .shadow(color: .purple, radius: 1)
@@ -86,7 +89,7 @@ struct SignInUp: View {
                                 Image(uiImage: image)
                                     .resizable()
                                     .scaledToFill()
-                                    .frame(width: 50, height: 50)
+                                    .frame(width: 55, height: 55)
                                     .mask(Circle())
                             } else {
                                 Image(systemName: "person.crop.circle.badge.plus")
@@ -94,7 +97,7 @@ struct SignInUp: View {
                                     .foregroundColor(.gray)
                             }
                         }
-                        .overlay(RoundedRectangle(cornerRadius: 45)
+                        .overlay(RoundedRectangle(cornerRadius: 27)
                                     .stroke(.gray, lineWidth: 1)
                         )
                     }
@@ -124,7 +127,7 @@ struct SignInUp: View {
             //.background()
             //.cornerRadius(45)
             .overlay(
-                RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
             )
             .padding(.horizontal)
             //.shadow(color: .purple, radius: 1)
@@ -156,7 +159,7 @@ struct SignInUp: View {
                 //                .background()
                 //                .cornerRadius(45)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
                 )
                 .padding(.horizontal)
                 //                .shadow(color: .purple, radius: 1)
@@ -241,7 +244,7 @@ struct SignInUp: View {
     
     //MARK: - SignUp
     func signUp() {
-        
+                
         FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
             
             if let err = err {
@@ -259,12 +262,12 @@ struct SignInUp: View {
             alertMessenger = "Your account has been successfully cereated!"
             
             //Upload image to Firebase
-            persistImageToStorage()
+            uploadImageToStorage()
         }
     }
     
-    //MARK: - Upload image to Firebase
-    func persistImageToStorage() {
+    //MARK: - This will upload images into Storage and prints out the locations as well
+    func uploadImageToStorage() {
             guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
             let ref = FirebaseManager.shared.storage.reference(withPath: uid)
             guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
@@ -286,11 +289,27 @@ struct SignInUp: View {
 
 //                    alertMessenger = "Successfully stored image with url: \(url?.absoluteString ?? "")"
                     
-//                    guard let url = url else { return }
+                    guard let url = url else { return }
+                    storeUserInformation(imageProfileUrl: url)
 //                    print(url.absoluteString)
                 }
             }
         }
+    
+    //MARK: - This will save newly created users to Firestore database collections
+    func storeUserInformation(imageProfileUrl: URL) {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        let userData = ["username": username,"email": email, "uid": uid, "profileImageUrl": imageProfileUrl.absoluteString]
+        FirebaseManager.shared.firestore.collection("users")
+            .document(uid).setData(userData) { err in
+                if let err = err {
+                    isShowAlert = true
+                    alertMessenger = err.localizedDescription
+                    return
+                }
+                print("Success")
+            }
+    }
 }
 
 struct SignInUp_Previews: PreviewProvider {
