@@ -14,43 +14,31 @@ struct Home: View {
     
     var body: some View {
         
-        VStack {
+        NavigationView{
             
-            Spacer(minLength: 0)
-            
-            Image("LotusLogo")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 100, height: 100, alignment: .center)
-                .mask(Circle())
-                .padding(.vertical)
-                .shadow(color: .black, radius: 10)
-            
-            Text("Feel free to talk to your friends about anything!")
-                .font(.system(size: 12, weight: .semibold, design: .serif))
-                .foregroundColor(.purple)
-                .padding(.bottom)
-            
-            Spacer(minLength: 120)
-            
-            ScrollView {
-                SignInUp()
+            VStack {
+                
+                Image("ImageSignInUpPage")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 250, height: 250, alignment: .center)
+                    //.mask(Circle())
+                    //.padding()
+                    //.shadow(color: .purple, radius: 10)
+    
+                
+    //            Text("Feel free to talk to your friends about anything!")
+    //                .font(.system(size: 12, weight: .semibold, design: .serif))
+    //                .foregroundColor(.purple)
+    //                .padding(.bottom)
+                                            
+                ScrollView {
+                    SignInUp()
+                }
             }
-            //                    .background(
-            //                        Image("BG")
-            //                            .resizable()
-            //                            .scaledToFill()
-            //                            .ignoresSafeArea()
-            //                            .blur(radius: 10)
-            //                    )
+            .navigationBarHidden(true)
+            //.background(.black)
         }
-        .background(
-            Image("BG1")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-                .blur(radius: 4)
-        )
     }
 }
 

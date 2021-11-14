@@ -35,7 +35,7 @@ struct SignInUp: View {
     @State var password :  String = ""
     @State var isHidePassword : Bool = true
     @State var isShowAlert : Bool = false
-    @State var alertMessenger : String = ""
+    @State var alertMessage : String = ""
     
     //Get Avatar Image
     @State var shouldShowImagePicker = false
@@ -49,154 +49,159 @@ struct SignInUp: View {
     
     var body: some View {
         
-        Picker("", selection: $isSignInMode) {
-            Text("SIGN IN")
-                .tag(true)
-            Text("SIGN UP")
-                .tag(false)
-        }.pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.bottom)
-        
-        VStack(spacing: 30) {
+        //NavigationView {
             
-            if !isSignInMode {
-                HStack {
-                    Image(systemName: "person.fill")
-                        .foregroundColor(.purple)
-                    TextField("User name", text: $username)
-                }
-                .autocapitalization(.none)
-                .padding()
-                //                .background()
-                //                .cornerRadius(45)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
-                )
-                .padding(.horizontal)
-                //                .shadow(color: .purple, radius: 1)
-                //                .overlay(
-                //                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
-                //                )
-                .overlay (
-                    //Add avatar in here
-                    Button {
+            //VStack {
+                Picker("", selection: $isSignInMode) {
+                    Text("SIGN IN")
+                        .tag(true)
+                    Text("SIGN UP")
+                        .tag(false)
+                }.pickerStyle(.segmented)
+                    .padding(.horizontal)
+                .padding(.bottom)
+//                .shadow(color: .white, radius: 5)
+                
+                VStack(spacing: 30) {
+                    
+                    if !isSignInMode {
+                        HStack {
+                            Image(systemName: "person.fill")
+                                .foregroundColor(.purple)
+                            TextField("User name", text: $username)
+                        }
+                        .autocapitalization(.none)
+                        .padding()
+                        //                .background()
+                        //                .cornerRadius(45)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
+                        )
+                        .padding(.horizontal)
+                        //                .shadow(color: .purple, radius: 1)
+                        //                .overlay(
+                        //                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
+                        //                )
+                        .overlay (
+                            //Add avatar in here
+                            Button {
+                                
+                                shouldShowImagePicker.toggle()
+                            } label: {
+                                VStack {
+                                    if let image = self.image {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 55, height: 55)
+                                            .mask(Circle())
+                                    } else {
+                                        Image(systemName: "person.crop.circle.badge.plus")
+                                            .padding()
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                .overlay(RoundedRectangle(cornerRadius: 27)
+                                            .stroke(.gray, lineWidth: 1)
+                                )
+                            }
+                                .padding()
+                            ,alignment: .trailing
+                        )
+                    }
+                    
+                    HStack {
                         
-                        shouldShowImagePicker.toggle()
-                    } label: {
-                        VStack {
-                            if let image = self.image {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 55, height: 55)
-                                    .mask(Circle())
+                        Image(systemName: "envelope.fill")
+                            .foregroundColor(.purple)
+                        
+                        TextField("Email", text: $email, onEditingChanged: { (isChanged) in
+                            if !isChanged {
+                                if !self.isValidEmail(self.email) {
+                                    isShowAlert = true
+                                    alertMessage = "Invalidate email format!"
+                                }
+                            }
+                        }
+                        )
+                    }
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+                    .padding()
+                    //.background()
+                    //.cornerRadius(45)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    //.shadow(color: .purple, radius: 1)
+                    
+                    
+                    VStack(alignment: .trailing) {
+                        
+                        HStack {
+                            Image(systemName: "key.fill")
+                                .foregroundColor(.purple)
+                            
+                            if isHidePassword {
+                                SecureField(" Password ", text: $password)
+                                
                             } else {
-                                Image(systemName: "person.crop.circle.badge.plus")
-                                    .padding()
+                                TextField(" Password ", text: $password)
+                                
+                            }
+                            Button(action: {
+                                isHidePassword.toggle()
+                            }) {
+                                Image(systemName: self.isHidePassword ? "eye.slash" : "eye")
+                                    .accentColor(.gray)
                                     .foregroundColor(.gray)
                             }
                         }
-                        .overlay(RoundedRectangle(cornerRadius: 27)
-                                    .stroke(.gray, lineWidth: 1)
-                        )
-                    }
+                        .autocapitalization(.none)
                         .padding()
-                    ,alignment: .trailing
-                )
-            }
-            
-            HStack {
-                
-                Image(systemName: "envelope.fill")
-                    .foregroundColor(.purple)
-                
-                TextField("Email", text: $email, onEditingChanged: { (isChanged) in
-                    if !isChanged {
-                        if !self.isValidEmail(self.email) {
-                            isShowAlert = true
-                            alertMessenger = "Invalidate email format!"
+                        //                .background()
+                        //                .cornerRadius(45)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
+                        )
+                        .padding(.horizontal)
+                        //                .shadow(color: .purple, radius: 1)
+                        
+                        if isSignInMode {
+                            Button {
+                                
+                            } label: {
+                                Text("Fogot your password ?")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(.purple)
+                                    .padding(.trailing)
+                            }
                         }
                     }
-                }
-                )
-            }
-            .keyboardType(.emailAddress)
-            .autocapitalization(.none)
-            .padding()
-            //.background()
-            //.cornerRadius(45)
-            .overlay(
-                RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
-            )
-            .padding(.horizontal)
-            //.shadow(color: .purple, radius: 1)
-            
-            
-            VStack(alignment: .trailing) {
-                
-                HStack {
-                    Image(systemName: "key.fill")
-                        .foregroundColor(.purple)
                     
-                    if isHidePassword {
-                        SecureField(" Password ", text: $password)
-                        
-                    } else {
-                        TextField(" Password ", text: $password)
-                        
-                    }
-                    Button(action: {
-                        isHidePassword.toggle()
-                    }) {
-                        Image(systemName: self.isHidePassword ? "eye.slash" : "eye")
-                            .accentColor(.gray)
-                            .foregroundColor(.gray)
-                    }
-                }
-                .autocapitalization(.none)
-                .padding()
-                //                .background()
-                //                .cornerRadius(45)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
-                )
-                .padding(.horizontal)
-                //                .shadow(color: .purple, radius: 1)
-                
-                if isSignInMode {
+                    Spacer()
+                    
                     Button {
                         
+                        handleSignOption()
                     } label: {
-                        Text("Fogot your password ?")
-                            .font(.system(size: 12, weight: .semibold))
+                        Text(isSignInMode ? "SIGN IN" : "SIGN UP")
+                            .underline()
+                            .font(.system(size: 25, weight: .semibold))
                             .foregroundColor(.purple)
-                            .padding(.trailing)
                     }
                 }
-            }
-            
-            Spacer(minLength: 20)
-            
-            Button {
-                
-                handleSignOption()
-            } label: {
-                Text(isSignInMode ? "SIGN IN" : "SIGN UP")
-                    .underline()
-                    .font(.system(size: 25, weight: .semibold))
-                    .foregroundColor(.purple)
-            }
-        }
-        .alert(isPresented: $isShowAlert) {
-            //Alert(title: Text(alertMessenger))
-            Alert(title: Text("Messenger"), message: Text(alertMessenger), dismissButton: .default(Text("Got it!")))
-        }
-        .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil) {
-            ImagePicker(image: $image)
-            //                .ignoresSafeArea()
-        }
-        
+                .alert(isPresented: $isShowAlert) {
+                    //Alert(title: Text(alertMessenger))
+                    Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
+                }
+                .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil) {
+                    ImagePicker(image: $image)
+                    //                .ignoresSafeArea()
+                }
+            //}
+        //}
     }
     
     
@@ -220,6 +225,7 @@ struct SignInUp: View {
         if isSignInMode {
             
             signIn()
+            
         } else {
             
             signUp()
@@ -235,7 +241,7 @@ struct SignInUp: View {
             if let err = err {
                 
                 isShowAlert = true
-                alertMessenger = err.localizedDescription
+                alertMessage = err.localizedDescription
                 return
             }
         }
@@ -250,7 +256,7 @@ struct SignInUp: View {
             if let err = err {
                 
                 isShowAlert = true
-                alertMessenger = err.localizedDescription
+                alertMessage = err.localizedDescription
                 return
             }
             
@@ -259,7 +265,7 @@ struct SignInUp: View {
             
             //...and show alert successfully created
             isShowAlert = true
-            alertMessenger = "Your account has been successfully cereated!"
+            alertMessage = "Your account has been successfully cereated!"
             
             //Upload image to Firebase
             uploadImageToStorage()
@@ -275,7 +281,7 @@ struct SignInUp: View {
                 if let err = err {
 //                    alertMessenger = "Failed to push image to Storage: \(err)"
                     isShowAlert = true
-                    alertMessenger = err.localizedDescription
+                    alertMessage = err.localizedDescription
                     return
                 }
 
@@ -283,7 +289,7 @@ struct SignInUp: View {
                     if let err = err {
 //                        alertMessenger = "Failed to retrieve downloadURL: \(err)"
                         isShowAlert = true
-                        alertMessenger = err.localizedDescription
+                        alertMessage = err.localizedDescription
                         return
                     }
 
@@ -304,7 +310,7 @@ struct SignInUp: View {
             .document(uid).setData(userData) { err in
                 if let err = err {
                     isShowAlert = true
-                    alertMessenger = err.localizedDescription
+                    alertMessage = err.localizedDescription
                     return
                 }
                 print("Success")
