@@ -8,74 +8,85 @@
 import SwiftUI
 
 struct DasboardMessenge: View {
+    
     @State var isShowSetting : Bool = false
+    @State var searchUser : String = ""
+    
     
     var body: some View {
         
         VStack {
             topbarMessenges
             messengesView
-            newMessenges
         }
     }
     
     //MARK: - topbarMessenges
     var topbarMessenges : some View {
         
-        HStack(spacing: 20) {
-            
-            Image(systemName: "person.fill")
-                .font(.system(size: 25))
-            
-            VStack(alignment: .leading, spacing: 5) {
+        VStack {
+            HStack(spacing: 20) {
+                
+                Button {
+                    isShowSetting.toggle()
+                } label: {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 25))
+                        .padding(10)
+                        .foregroundColor(.black)
+                        .background(
+                            Circle()
+                                .stroke(.black)
+                        )
+                }
                 
                 Text("USERNAME")
-                    .font(.system(size: 25, weight: .bold))
+                    .font(.system(size: 20, weight: .bold))
+                //.foregroundColor(.purple)
                 
-                HStack {
+                Spacer()
+                
+                Button {
                     
-                    Circle()
-                        .frame(width: 15, height: 15)
-                        .foregroundColor(.green)
-                    
-                    Text("online")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                } label: {
+                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                        .font(.system(size: 25, weight: .bold))
+                        .foregroundColor(.blue)
                 }
             }
-            
-            Spacer()
-            
-            Button {
-                
-                isShowSetting.toggle()
-            } label: {
-                Image(systemName: "gear")
-                    .font(.system(size: 25, weight: .bold))
-                    .foregroundColor(.black)
+            .actionSheet(isPresented: $isShowSetting) {
+                ActionSheet(
+                    title: Text("Setting"),
+                    message: Text("What do you want to do?"),
+                    buttons: [
+                        .cancel(),
+                        .destructive(
+                            Text("Switch account"),
+                            action: {
+                                print("Switch account")
+                                
+                            }),
+                        .destructive(
+                            Text("Sign Out"),
+                            action: {
+                                print("Sign Out")
+                                
+                            })
+                    ])
             }
+            
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+                TextField("Search", text: $searchUser)
+                
+            }
+            .padding(15)
+            .background(.gray.opacity(0.08))
+            .cornerRadius(10)
+            
         }
         .padding(.horizontal)
-        .actionSheet(isPresented: $isShowSetting) {
-            ActionSheet(
-                title: Text("Setting"),
-                message: Text("What do you want to do?"),
-                buttons: [
-                    .cancel(),
-                    .destructive(
-                        Text("Switch account"),
-                        action: {
-                            print("Switch account")
-                            
-                        }),
-                    .destructive(
-                        Text("Sign Out"),
-                        action: {
-                            print("Sign Out")
-                            
-                        })
-            ])
-        }
     }
     
     //MARK: - messengesView
@@ -91,11 +102,11 @@ struct DasboardMessenge: View {
                         
                         Image(systemName: "person.fill")
                             .font(.system(size: 30))
-                            .foregroundColor(.purple)
+                            .foregroundColor(.blue)
                             .padding(10)
                             .background(
                                 Circle()
-                                    .stroke(.purple, lineWidth: 1)
+                                    .stroke(.blue)
                             )
                         
                         VStack(alignment: .leading, spacing: 4){
@@ -110,39 +121,12 @@ struct DasboardMessenge: View {
                         
                         Spacer()
                         
-                        Text("22d")
+                        Text("11:20 AM")
                             .font(.system(size: 12))
                     }
                 }
             }
             .padding()
-        }
-    }
-    
-    //MARK: - newMessenge
-    var newMessenges : some View {
-        
-        Button {
-            
-        } label: {
-            
-            HStack {
-                
-                Spacer()
-                
-                Text("+ New Message")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(.blue)
-                    .cornerRadius(45)
-                
-                Spacer()
-            }
-//                .padding()
-//                .background(.purple)
-//                .cornerRadius(45)
-            .padding(.horizontal)
         }
     }
 }
