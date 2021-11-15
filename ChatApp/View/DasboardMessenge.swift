@@ -15,7 +15,7 @@ struct DasboardMessenge: View {
         VStack {
             topbarMessenges
             messengesView
-            newMessenge
+            newMessenges
         }
     }
     
@@ -120,7 +120,7 @@ struct DasboardMessenge: View {
     }
     
     //MARK: - newMessenge
-    var newMessenge : some View {
+    var newMessenges : some View {
         
         Button {
             

@@ -41,6 +41,9 @@ struct SignInUp: View {
     @State var shouldShowImagePicker = false
     @State var image: UIImage?
     
+    //DashboardMessenge
+    @State var isShowDashboardMessenge : Bool = false
+    
     
     
     //    init() {
@@ -49,7 +52,7 @@ struct SignInUp: View {
     
     var body: some View {
         
-        //NavigationView {
+       // NavigationView {
             
             //VStack {
                 Picker("", selection: $isSignInMode) {
@@ -185,6 +188,7 @@ struct SignInUp: View {
                     Button {
                         
                         handleSignOption()
+                        
                     } label: {
                         Text(isSignInMode ? "SIGN IN" : "SIGN UP")
                             .underline()
@@ -199,6 +203,12 @@ struct SignInUp: View {
                 .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil) {
                     ImagePicker(image: $image)
                     //                .ignoresSafeArea()
+                }
+//                .sheet(isPresented: $isShowDashboardMessenge, onDismiss: nil) {
+//                    DasboardMessenge()
+//                }
+                .fullScreenCover(isPresented: $isShowDashboardMessenge) {
+                    DasboardMessenge()
                 }
             //}
         //}
@@ -236,15 +246,17 @@ struct SignInUp: View {
     //MARK: - SignIn
     func signIn() {
         
-        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
-            
-            if let err = err {
-                
-                isShowAlert = true
-                alertMessage = err.localizedDescription
-                return
+            FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
+                    
+                    if let err = err {
+                        
+                        isShowAlert = true
+                        alertMessage = err.localizedDescription
+                        return
+                    } else {
+                        isShowDashboardMessenge.toggle()
+                    }
             }
-        }
     }
     
     

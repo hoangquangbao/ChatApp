@@ -14,7 +14,7 @@ struct Home: View {
     
     var body: some View {
         
-        NavigationView{
+//        NavigationView{
             
             VStack {
                 
@@ -38,7 +38,7 @@ struct Home: View {
             }
             .navigationBarHidden(true)
             //.background(.black)
-        }
+        //}
     }
 }
 
