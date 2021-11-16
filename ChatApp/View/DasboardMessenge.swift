@@ -10,6 +10,8 @@ import Firebase
 
 struct DasboardMessenge: View {
     
+    @ObservedObject var baseViewModel = MainMessagesViewModel()
+    
     @State var isShowSetting : Bool = false
     @State var searchUser : String = ""
     
@@ -40,10 +42,10 @@ struct DasboardMessenge: View {
                         )
                 }
                 
-                Text("Username")
+//                Text("Username")
+                Text(baseViewModel.chatUser!.username)
                     .font(.system(size: 20, weight: .bold))
                 //.foregroundColor(.purple)
-                
                 Spacer()
                 
                 Button {
@@ -64,13 +66,13 @@ struct DasboardMessenge: View {
                             Text("Sign Out"),
                             action: {
 //                                if FirebaseAuth.Auth.auth().currentUser?.uid == nil {
-////                                    print("Sign Out")
+                                    print("Sign Out")
 //                                    handleSignOut()
 //                                }
                                 
-                                if FirebaseManager.shared.auth.currentUser?.uid == nil {
-                                    handleSignOut()
-                                }
+//                                if FirebaseManager.shared.auth.currentUser?.uid != nil {
+//                                    handleSignOut()
+//                                }
                             })
                     ])
             }

@@ -29,6 +29,8 @@ class FirebaseManager : NSObject {
 
 struct SignInUp: View {
     
+    @ObservedObject var baseViewModel = MainMessagesViewModel()
+
     @State var isSignInMode = true
     @State var email : String = ""
     @State var username : String = ""
@@ -254,6 +256,8 @@ struct SignInUp: View {
                 alertMessage = err.localizedDescription
                 return
             } else {
+                
+                baseViewModel.fetchCurrentUser()
                 isShowDashboardMessenge.toggle()
             }
         }
@@ -326,7 +330,7 @@ struct SignInUp: View {
                     return
                 }
                 print("Success")
-            }
+            }        
     }
 }
 
