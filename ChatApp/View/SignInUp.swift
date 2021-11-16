@@ -70,7 +70,7 @@ struct SignInUp: View {
             if !isSignInMode {
                 HStack {
                     Image(systemName: "person.fill")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.orange)
                     TextField("User name", text: $username)
                 }
                 .autocapitalization(.none)
@@ -78,7 +78,7 @@ struct SignInUp: View {
                 //                .background()
                 //                .cornerRadius(45)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
                 )
                 .padding(.horizontal)
                 //                .shadow(color: .purple, radius: 1)
@@ -116,7 +116,7 @@ struct SignInUp: View {
             HStack {
                 
                 Image(systemName: "envelope.fill")
-                    .foregroundColor(.purple)
+                    .foregroundColor(.orange)
                 
                 TextField("Email", text: $email, onEditingChanged: { (isChanged) in
                     if !isChanged {
@@ -134,7 +134,7 @@ struct SignInUp: View {
             //.background()
             //.cornerRadius(45)
             .overlay(
-                RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
             )
             .padding(.horizontal)
             //.shadow(color: .purple, radius: 1)
@@ -144,7 +144,7 @@ struct SignInUp: View {
                 
                 HStack {
                     Image(systemName: "key.fill")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.orange)
                     
                     if isHidePassword {
                         SecureField(" Password ", text: $password)
@@ -166,7 +166,7 @@ struct SignInUp: View {
                 //                .background()
                 //                .cornerRadius(45)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
                 )
                 .padding(.horizontal)
                 //                .shadow(color: .purple, radius: 1)
@@ -177,7 +177,7 @@ struct SignInUp: View {
                     } label: {
                         Text("Fogot your password ?")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.purple)
+                            .foregroundColor(.orange)
                             .padding(.trailing)
                     }
                 }
@@ -193,7 +193,7 @@ struct SignInUp: View {
                 Text(isSignInMode ? "SIGN IN" : "SIGN UP")
                     .underline()
                     .font(.system(size: 25, weight: .semibold))
-                    .foregroundColor(.purple)
+                    .foregroundColor(.orange)
             }
         }
         .alert(isPresented: $isShowAlert) {

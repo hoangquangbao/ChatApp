@@ -22,9 +22,9 @@ struct Home: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 250, height: 250, alignment: .center)
-                    //.mask(Circle())
-                    //.padding()
-                    //.shadow(color: .purple, radius: 10)
+                    .mask(Circle())
+                    .padding()
+                    .shadow(color: .white, radius: 2)
     
                 
     //            Text("Feel free to talk to your friends about anything!")

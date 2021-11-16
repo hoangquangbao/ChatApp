@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct DasboardMessenge: View {
     
@@ -33,14 +34,13 @@ struct DasboardMessenge: View {
                     Image(systemName: "person.fill")
                         .font(.system(size: 25))
                         .padding(10)
-                        .foregroundColor(.black)
                         .background(
                             Circle()
-                                .stroke(.black)
+                                .stroke()
                         )
                 }
                 
-                Text("USERNAME")
+                Text("Username")
                     .font(.system(size: 20, weight: .bold))
                 //.foregroundColor(.purple)
                 
@@ -50,8 +50,8 @@ struct DasboardMessenge: View {
                     
                 } label: {
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
-                        .font(.system(size: 25, weight: .bold))
-                        .foregroundColor(.blue)
+                        .font(.system(size: 25))
+                        //.foregroundColor(.blue)
                 }
             }
             .actionSheet(isPresented: $isShowSetting) {
@@ -61,16 +61,16 @@ struct DasboardMessenge: View {
                     buttons: [
                         .cancel(),
                         .destructive(
-                            Text("Switch account"),
-                            action: {
-                                print("Switch account")
-                                
-                            }),
-                        .destructive(
                             Text("Sign Out"),
                             action: {
-                                print("Sign Out")
+//                                if FirebaseAuth.Auth.auth().currentUser?.uid == nil {
+////                                    print("Sign Out")
+//                                    handleSignOut()
+//                                }
                                 
+                                if FirebaseManager.shared.auth.currentUser?.uid == nil {
+                                    handleSignOut()
+                                }
                             })
                     ])
             }
@@ -79,6 +79,7 @@ struct DasboardMessenge: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 TextField("Search", text: $searchUser)
+                    .autocapitalization(.none)
                 
             }
             .padding(15)
@@ -102,11 +103,11 @@ struct DasboardMessenge: View {
                         
                         Image(systemName: "person.fill")
                             .font(.system(size: 30))
-                            .foregroundColor(.blue)
+                            .foregroundColor(.orange)
                             .padding(10)
                             .background(
                                 Circle()
-                                    .stroke(.blue)
+                                    .stroke(.orange)
                             )
                         
                         VStack(alignment: .leading, spacing: 4){
@@ -127,6 +128,17 @@ struct DasboardMessenge: View {
                 }
             }
             .padding()
+        }
+    }
+    
+    func handleSignOut() {
+        
+        do {
+//            try FirebaseAuth.Auth.auth().signOut()
+            try FirebaseManager.shared.auth.signOut()
+        
+        } catch let logoutError {
+            print(logoutError.localizedDescription)
         }
     }
 }
