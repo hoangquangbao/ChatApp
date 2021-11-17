@@ -15,3 +15,11 @@ struct ChatAppApp: App {
         }
     }
 }
+   
+
+
+let array = [1,2,3,4,5]
+
+func addOne(n: Int) -> Int {
+    return n + 1
+}

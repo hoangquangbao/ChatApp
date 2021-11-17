@@ -25,12 +25,6 @@ struct Home: View {
                     .mask(Circle())
                     .padding()
                     .shadow(color: .white, radius: 2)
-    
-                
-    //            Text("Feel free to talk to your friends about anything!")
-    //                .font(.system(size: 12, weight: .semibold, design: .serif))
-    //                .foregroundColor(.purple)
-    //                .padding(.bottom)
                                             
                 ScrollView {
                     SignInUp()

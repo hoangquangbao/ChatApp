@@ -8,28 +8,10 @@
 import SwiftUI
 import Firebase
 
-class FirebaseManager : NSObject {
-    
-    let auth : Auth
-    //Upload image to Firebase
-    let storage : Storage
-    let firestore : Firestore
-    
-    static let shared = FirebaseManager()
-    
-    override init() {
-        
-        FirebaseApp.configure()
-        auth = Auth.auth()
-        storage = Storage.storage()
-        firestore = Firestore.firestore()
-        super.init()
-    }
-}
 
 struct SignInUp: View {
     
-    @ObservedObject var baseViewModel = MainMessagesViewModel()
+    @ObservedObject var baseViewModel = HomeViewModel()
 
     @State var isSignInMode = true
     @State var email : String = ""
@@ -44,13 +26,12 @@ struct SignInUp: View {
     @State var image: UIImage?
     
     //DashboardMessenge
-    @State var isShowDashboardMessenge : Bool = false
+    @State var isShowMainMessengeView : Bool = false
     
     
-    
-    //    init() {
-    //        FirebaseApp.configure()
-    //    }
+//        init() {
+//            FirebaseApp.configure()
+//        }
     
     var body: some View {
         
@@ -65,7 +46,6 @@ struct SignInUp: View {
         }.pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.bottom)
-        //                .shadow(color: .white, radius: 5)
         
         VStack(spacing: 30) {
             
@@ -77,16 +57,10 @@ struct SignInUp: View {
                 }
                 .autocapitalization(.none)
                 .padding()
-                //                .background()
-                //                .cornerRadius(45)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
                 )
                 .padding(.horizontal)
-                //                .shadow(color: .purple, radius: 1)
-                //                .overlay(
-                //                    RoundedRectangle(cornerRadius: 45).stroke(Color.purple, lineWidth: 1)
-                //                )
                 .overlay (
                     //Add avatar in here
                     Button {
@@ -116,7 +90,6 @@ struct SignInUp: View {
             }
             
             HStack {
-                
                 Image(systemName: "envelope.fill")
                     .foregroundColor(.orange)
                 
@@ -175,7 +148,6 @@ struct SignInUp: View {
                 
                 if isSignInMode {
                     Button {
-                        
                     } label: {
                         Text("Fogot your password ?")
                             .font(.system(size: 12, weight: .semibold))
@@ -188,9 +160,7 @@ struct SignInUp: View {
             Spacer()
             
             Button {
-                
                 handleSignOption()
-                
             } label: {
                 Text(isSignInMode ? "SIGN IN" : "SIGN UP")
                     .underline()
@@ -209,8 +179,8 @@ struct SignInUp: View {
         //                .sheet(isPresented: $isShowDashboardMessenge, onDismiss: nil) {
         //                    DasboardMessenge()
         //                }
-        .fullScreenCover(isPresented: $isShowDashboardMessenge) {
-            DasboardMessenge()
+        .fullScreenCover(isPresented: $isShowMainMessengeView) {
+            MainMessenger()
         }
         //}
         //}
@@ -235,15 +205,11 @@ struct SignInUp: View {
     func handleSignOption() {
         
         if isSignInMode {
-            
             signIn()
-            
         } else {
-            
             signUp()
         }
     }
-    
     
     //MARK: - SignIn
     func signIn() {
@@ -251,18 +217,19 @@ struct SignInUp: View {
         FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
             
             if let err = err {
-                
                 isShowAlert = true
                 alertMessage = err.localizedDescription
                 return
             } else {
                 
+//                baseViewModel.fetchCurrentUser {
+//                    isShowDashboardMessenge.toggle()
+//                }
                 baseViewModel.fetchCurrentUser()
-                isShowDashboardMessenge.toggle()
+                isShowMainMessengeView.toggle()
             }
         }
     }
-    
     
     //MARK: - SignUp
     func signUp() {
@@ -270,7 +237,6 @@ struct SignInUp: View {
         FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
             
             if let err = err {
-                
                 isShowAlert = true
                 alertMessage = err.localizedDescription
                 return
@@ -308,9 +274,7 @@ struct SignInUp: View {
                     alertMessage = err.localizedDescription
                     return
                 }
-                
                 //                    alertMessenger = "Successfully stored image with url: \(url?.absoluteString ?? "")"
-                
                 guard let url = url else { return }
                 storeUserInformation(imageProfileUrl: url)
                 //                    print(url.absoluteString)

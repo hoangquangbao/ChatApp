@@ -7,45 +7,72 @@
 
 import SwiftUI
 import Firebase
+import SDWebImageSwiftUI
 
-struct DasboardMessenge: View {
+struct MainMessenger: View {
     
-    @ObservedObject var baseViewModel = MainMessagesViewModel()
+    @ObservedObject var baseViewModel = HomeViewModel()
     
     @State var isShowSetting : Bool = false
     @State var searchUser : String = ""
     
-    
     var body: some View {
-        
         VStack {
             topbarMessenges
-            messengesView
+            messengerView
         }
     }
     
     //MARK: - topbarMessenges
     var topbarMessenges : some View {
-        
         VStack {
             HStack(spacing: 20) {
-                
                 Button {
                     isShowSetting.toggle()
                 } label: {
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 25))
-                        .padding(10)
-                        .background(
-                            Circle()
-                                .stroke()
-                        )
+                    //                    if let url = baseViewModel.chatUser?.profileImageUrl {
+                    //
+                    //                        WebImage(url: URL(string: url))
+                    //                            .resizable()
+                    //                            .scaledToFill()
+                    //                            .frame(width: 50, height: 50)
+                    //                            .mask(Circle())
+                    //
+                    //                    } else {
+                    //
+                    //                        Image(systemName: "person.fill")
+                    //                            .font(.system(size: 25))
+                    //                            .padding(10)
+                    //                            .background(
+                    //                                Circle()
+                    //                                    .stroke()
+                    //                            )
+                    //                    }
+                    let img = baseViewModel.chatUser?.profileImageUrl
+                    if img != "" {
+                        WebImage(url: URL(string: baseViewModel.chatUser?.profileImageUrl ?? ""))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .mask(Circle())
+                    } else {
+                        Image("LotusLogo")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .mask(Circle())
+                    }
+                }
+
+                let usn = baseViewModel.chatUser?.username
+                if usn != "" {
+                    Text(baseViewModel.chatUser?.username ?? "")
+                        .font(.system(size: 20, weight: .bold))
+                } else {
+                    Text("Me")
+                        .font(.system(size: 20, weight: .bold))
                 }
                 
-//                Text("Username")
-                Text(baseViewModel.chatUser!.username)
-                    .font(.system(size: 20, weight: .bold))
-                //.foregroundColor(.purple)
                 Spacer()
                 
                 Button {
@@ -53,7 +80,6 @@ struct DasboardMessenge: View {
                 } label: {
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                         .font(.system(size: 25))
-                        //.foregroundColor(.blue)
                 }
             }
             .actionSheet(isPresented: $isShowSetting) {
@@ -82,18 +108,16 @@ struct DasboardMessenge: View {
                     .foregroundColor(.gray)
                 TextField("Search", text: $searchUser)
                     .autocapitalization(.none)
-                
             }
             .padding(15)
             .background(.gray.opacity(0.08))
             .cornerRadius(10)
-            
         }
         .padding(.horizontal)
     }
     
     //MARK: - messengesView
-    var messengesView : some View {
+    var messengerView : some View {
         
         ScrollView {
             
@@ -102,7 +126,6 @@ struct DasboardMessenge: View {
                 ForEach(1...20, id: \.self) { userNumber in
                     
                     HStack(spacing: 10){
-                        
                         Image(systemName: "person.fill")
                             .font(.system(size: 30))
                             .foregroundColor(.orange)
@@ -113,7 +136,6 @@ struct DasboardMessenge: View {
                             )
                         
                         VStack(alignment: .leading, spacing: 4){
-                            
                             Text("Username")
                                 .font(.system(size: 17, weight: .bold))
                             
@@ -147,6 +169,6 @@ struct DasboardMessenge: View {
 
 struct DasboardMessenge_Previews: PreviewProvider {
     static var previews: some View {
-        DasboardMessenge()
+        MainMessenger()
     }
 }
