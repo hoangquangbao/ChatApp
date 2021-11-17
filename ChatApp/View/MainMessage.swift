@@ -65,7 +65,6 @@ struct MainMessage: View {
                 }
 
                 let usn = vm.anUser?.username
-                
                 if usn != "" {
                     Text(vm.anUser?.username ?? "")
                         .font(.system(size: 20, weight: .bold))
@@ -120,32 +119,35 @@ struct MainMessage: View {
             
             VStack(spacing: 30){
                 
-                ForEach(1...20, id: \.self) { userNumber in
-                    
-                    HStack(spacing: 10){
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 30))
-                            .foregroundColor(.orange)
-                            .padding(10)
-                            .background(
-                                Circle()
-                                    .stroke(.orange)
-                            )
-                        
-                        VStack(alignment: .leading, spacing: 4){
-                            Text("Username")
-                                .font(.system(size: 17, weight: .bold))
+//                ForEach(1...20, id: \.self) { userNumber in
+                ForEach(vm.allUser) { user in
+
+                    if vm.anUser?.uid != user.uid {
+                        HStack(spacing: 10){
                             
-                            Text("Messenge send to user")
+                            WebImage(url: URL(string: user.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50, height: 50)
+                                .mask(Circle())
+
+                            
+                            VStack(alignment: .leading, spacing: 4){
+                                Text(user.username)
+                                    .font(.system(size: 17, weight: .bold))
+                                
+                                Text("Messenge send to user")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            Text("11:20 AM")
                                 .font(.system(size: 12))
-                                .foregroundColor(.gray)
                         }
-                        
-                        Spacer()
-                        
-                        Text("11:20 AM")
-                            .font(.system(size: 12))
                     }
+
                 }
             }
             .padding()

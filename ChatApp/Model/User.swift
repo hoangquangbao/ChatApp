@@ -7,6 +7,7 @@
 
 import SwiftUI
 
-struct User {
+struct User: Identifiable {
+    let id: String
     let uid, email, profileImageUrl, username: String
 }
