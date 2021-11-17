@@ -9,15 +9,11 @@ import SwiftUI
 
 struct Home: View {
     
-    @State var isSignMode : Bool = false
-    
-    
     var body: some View {
         
 //        NavigationView{
             
             VStack {
-                
                 Image("ImageSignInUpPage")
                     .resizable()
                     .scaledToFill()
@@ -27,11 +23,10 @@ struct Home: View {
                     .shadow(color: .white, radius: 2)
                                             
                 ScrollView {
-                    SignInUp()
+                    SignInUpPage()
                 }
             }
             .navigationBarHidden(true)
-            //.background(.black)
         //}
     }
 }

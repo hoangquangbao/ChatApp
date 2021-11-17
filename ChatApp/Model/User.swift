@@ -7,6 +7,6 @@
 
 import SwiftUI
 
-struct ChatUser {
+struct User {
     let uid, email, profileImageUrl, username: String
 }

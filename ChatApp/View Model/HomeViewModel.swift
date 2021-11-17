@@ -11,10 +11,15 @@ import SDWebImageSwiftUI
 class HomeViewModel: ObservableObject {
 
     @Published var errorMessage = ""
-    @Published var chatUser: ChatUser?
+    @Published var anUser: User?
+    @Published var isUserCurrenlyLoggedOut = false
 
     init() {
         fetchCurrentUser()
+        
+        DispatchQueue.main.async {
+            self.isUserCurrenlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
+        }
     }
 
 //    func fetchCurrentUser(completion: @escaping ()->()) {
@@ -42,10 +47,15 @@ class HomeViewModel: ObservableObject {
             let profileImageUrl = data["profileImageUrl"] as? String ?? ""
             let username = data["username"] as? String ?? ""
             
-                self.chatUser = ChatUser(uid: uid, email: email, profileImageUrl: profileImageUrl, username: username)
+                self.anUser = User(uid: uid, email: email, profileImageUrl: profileImageUrl, username: username)
 
             print(email)
 //            completion()
         }
+    }
+    
+    func handleSignOut() {
+        isUserCurrenlyLoggedOut.toggle()
+        try? FirebaseManager.shared.auth.signOut()
     }
 }

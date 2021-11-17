@@ -9,9 +9,9 @@ import SwiftUI
 import Firebase
 
 
-struct SignInUp: View {
+struct SignInUpPage: View {
     
-    @ObservedObject var baseViewModel = HomeViewModel()
+    @ObservedObject var vm = HomeViewModel()
 
     @State var isSignInMode = true
     @State var email : String = ""
@@ -25,8 +25,8 @@ struct SignInUp: View {
     @State var shouldShowImagePicker = false
     @State var image: UIImage?
     
-    //DashboardMessenge
-    @State var isShowMainMessengeView : Bool = false
+    //DashboardMessage
+    @State var isShowMainMessageView : Bool = false
     
     
 //        init() {
@@ -179,8 +179,8 @@ struct SignInUp: View {
         //                .sheet(isPresented: $isShowDashboardMessenge, onDismiss: nil) {
         //                    DasboardMessenge()
         //                }
-        .fullScreenCover(isPresented: $isShowMainMessengeView) {
-            MainMessenger()
+        .fullScreenCover(isPresented: $isShowMainMessageView) {
+            MainMessage()
         }
         //}
         //}
@@ -225,8 +225,8 @@ struct SignInUp: View {
 //                baseViewModel.fetchCurrentUser {
 //                    isShowDashboardMessenge.toggle()
 //                }
-                baseViewModel.fetchCurrentUser()
-                isShowMainMessengeView.toggle()
+                vm.fetchCurrentUser()
+                isShowMainMessageView.toggle()
             }
         }
     }

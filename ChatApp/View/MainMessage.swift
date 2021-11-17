@@ -9,26 +9,26 @@ import SwiftUI
 import Firebase
 import SDWebImageSwiftUI
 
-struct MainMessenger: View {
+struct MainMessage: View {
     
-    @ObservedObject var baseViewModel = HomeViewModel()
+    @ObservedObject var vm = HomeViewModel()
     
-    @State var isShowSetting : Bool = false
+    @State var isShowSignOutButton : Bool = false
     @State var searchUser : String = ""
     
     var body: some View {
         VStack {
-            topbarMessenges
-            messengerView
+            topbarMessage
+            messageView
         }
     }
     
     //MARK: - topbarMessenges
-    var topbarMessenges : some View {
+    private var topbarMessage : some View {
         VStack {
             HStack(spacing: 20) {
                 Button {
-                    isShowSetting.toggle()
+                    isShowSignOutButton.toggle()
                 } label: {
                     //                    if let url = baseViewModel.chatUser?.profileImageUrl {
                     //
@@ -48,9 +48,9 @@ struct MainMessenger: View {
                     //                                    .stroke()
                     //                            )
                     //                    }
-                    let img = baseViewModel.chatUser?.profileImageUrl
+                    let img = vm.anUser?.profileImageUrl
                     if img != "" {
-                        WebImage(url: URL(string: baseViewModel.chatUser?.profileImageUrl ?? ""))
+                        WebImage(url: URL(string: vm.anUser?.profileImageUrl ?? ""))
                             .resizable()
                             .scaledToFill()
                             .frame(width: 50, height: 50)
@@ -64,9 +64,10 @@ struct MainMessenger: View {
                     }
                 }
 
-                let usn = baseViewModel.chatUser?.username
+                let usn = vm.anUser?.username
+                
                 if usn != "" {
-                    Text(baseViewModel.chatUser?.username ?? "")
+                    Text(vm.anUser?.username ?? "")
                         .font(.system(size: 20, weight: .bold))
                 } else {
                     Text("Me")
@@ -82,25 +83,21 @@ struct MainMessenger: View {
                         .font(.system(size: 25))
                 }
             }
-            .actionSheet(isPresented: $isShowSetting) {
+            .actionSheet(isPresented: $isShowSignOutButton) {
                 ActionSheet(
                     title: Text("Setting"),
-                    message: Text("What do you want to do?"),
+                    message: Text("Do you want to SignOut?"),
                     buttons: [
                         .cancel(),
                         .destructive(
                             Text("Sign Out"),
                             action: {
-//                                if FirebaseAuth.Auth.auth().currentUser?.uid == nil {
-                                    print("Sign Out")
-//                                    handleSignOut()
-//                                }
-                                
-//                                if FirebaseManager.shared.auth.currentUser?.uid != nil {
-//                                    handleSignOut()
-//                                }
+                                vm.handleSignOut()
                             })
                     ])
+            }
+            .fullScreenCover(isPresented: $vm.isUserCurrenlyLoggedOut, onDismiss: nil) {
+                Home()
             }
             
             HStack {
@@ -117,7 +114,7 @@ struct MainMessenger: View {
     }
     
     //MARK: - messengesView
-    var messengerView : some View {
+    private var messageView : some View {
         
         ScrollView {
             
@@ -169,6 +166,6 @@ struct MainMessenger: View {
 
 struct DasboardMessenge_Previews: PreviewProvider {
     static var previews: some View {
-        MainMessenger()
+        MainMessage()
     }
 }
