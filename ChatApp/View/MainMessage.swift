@@ -14,13 +14,14 @@ struct MainMessage: View {
     @ObservedObject var vm = HomeViewModel()
     
     @State var isShowSignOutButton : Bool = false
+    @State var isShowNewMessage : Bool = false
     @State var searchUser : String = ""
     
     var body: some View {
-        VStack {
-            topbarMessage
-            messageView
-        }
+            VStack {
+                topbarMessage
+                messageView
+            }
     }
     
     //MARK: - topbarMessenges
@@ -55,6 +56,7 @@ struct MainMessage: View {
                             .scaledToFill()
                             .frame(width: 50, height: 50)
                             .mask(Circle())
+                            .shadow(color: .black, radius: 2)
                     } else {
                         Image("LotusLogo")
                             .resizable()
@@ -75,13 +77,14 @@ struct MainMessage: View {
                 
                 Spacer()
                 
-                Button {
-                    
-                } label: {
-                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
-                        .font(.system(size: 25))
-                }
+                    Button {
+                        isShowNewMessage.toggle()
+                    } label: {
+                        Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                            .font(.system(size: 25))
+                    }
             }
+            .padding(.horizontal)
             .actionSheet(isPresented: $isShowSignOutButton) {
                 ActionSheet(
                     title: Text("Setting"),
@@ -98,18 +101,20 @@ struct MainMessage: View {
             .fullScreenCover(isPresented: $vm.isUserCurrenlyLoggedOut, onDismiss: nil) {
                 Home()
             }
+            .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
+                NewMessage()
+            }
             
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                TextField("Search", text: $searchUser)
+                TextField("Type a name", text: $searchUser)
                     .autocapitalization(.none)
             }
             .padding(15)
             .background(.gray.opacity(0.08))
             .cornerRadius(10)
         }
-        .padding(.horizontal)
     }
     
     //MARK: - messengesView
@@ -121,8 +126,6 @@ struct MainMessage: View {
                 
 //                ForEach(1...20, id: \.self) { userNumber in
                 ForEach(vm.allUser) { user in
-
-                    if vm.anUser?.uid != user.uid {
                         HStack(spacing: 10){
                             
                             WebImage(url: URL(string: user.profileImageUrl))
@@ -130,7 +133,13 @@ struct MainMessage: View {
                                 .scaledToFill()
                                 .frame(width: 50, height: 50)
                                 .mask(Circle())
+                                .shadow(color: .gray, radius: 2)
 
+//                                .clipped()
+//                                .cornerRadius(50)
+//                                .overlay(RoundedRectangle(cornerRadius: 45)
+//                                            .stroke(.black, lineWidth: 1)
+//                                )
                             
                             VStack(alignment: .leading, spacing: 4){
                                 Text(user.username)
@@ -146,8 +155,6 @@ struct MainMessage: View {
                             Text("11:20 AM")
                                 .font(.system(size: 12))
                         }
-                    }
-
                 }
             }
             .padding()

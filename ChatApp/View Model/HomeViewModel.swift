@@ -13,12 +13,12 @@ class HomeViewModel: ObservableObject {
 
     @Published var alertMessage : String = ""
     @Published var anUser : User?
-    @Published var allUser : [User] = []
+    @Published var allUser = [User]()
     @Published var isUserCurrenlyLoggedOut : Bool = false
 
     init() {
         fetchCurrentUser()
-        fetchAllUser()
+//        fetchAllUser()
         DispatchQueue.main.async {
             self.isUserCurrenlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
         }
@@ -26,58 +26,42 @@ class HomeViewModel: ObservableObject {
 
 //    func fetchCurrentUser(completion: @escaping ()->()) {
     func fetchCurrentUser() {
-        
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             self.alertMessage = "Could not find firebase uid"
             return
         }
         
-        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument { snap, err in
-            if let error = err {
+        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument { snapshot, error in
+            if let error = error {
                 self.alertMessage = "Failed to fetch current user: \(error)"
                 print("Failed to fetch current user:", error)
                 return
             }
 
-            guard let data = snap?.data() else {
+            guard let data = snapshot?.data() else {
                 self.alertMessage = "No data found"
                 return
             }
             
-            let id = ""
-            let uid = data["uid"] as? String ?? ""
-            let email = data["email"] as? String ?? ""
-            let profileImageUrl = data["profileImageUrl"] as? String ?? ""
-            let username = data["username"] as? String ?? ""
-            
-            self.anUser = User(id: id, uid: uid, email: email, profileImageUrl: profileImageUrl, username: username)
+            self.anUser = .init(data: data)
 //            completion()
         }
     }
     
     func fetchAllUser() {
-        
-        FirebaseManager.shared.firestore.collection("users").getDocuments { snap, err in
-            if let error = err {
+        FirebaseManager.shared.firestore.collection("users").getDocuments { documentsSnapshot, error in
+            if let error = error {
                 self.alertMessage = "Failed to fetch current user: \(error)"
                 print("Failed to fetch current user:", error)
                 return
             }
             
-            guard let arrayData = snap else {
-                self.alertMessage = "No data found"
-                return
-            }
-            
-            self.allUser = arrayData.documents.compactMap({ data in
-                
-                let id = data.documentID
-                let uid = data.get("uid") as? String ?? ""
-                let email = data.get("email") as? String ?? ""
-                let profileImageUrl = data.get("profileImageUrl") as? String ?? ""
-                let username = data.get("username") as? String ?? ""
-                
-                return User(id: id, uid: uid, email: email, profileImageUrl: profileImageUrl, username: username)
+            documentsSnapshot?.documents.forEach({ snapshot in
+                let data = snapshot.data()
+                let user = User(data: data)
+                if user.uid != FirebaseManager.shared.auth.currentUser?.uid{
+                    self.allUser.append(.init(data: data))
+                }
             })
         }
     }

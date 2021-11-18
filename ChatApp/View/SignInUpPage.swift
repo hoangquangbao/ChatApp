@@ -29,10 +29,6 @@ struct SignInUpPage: View {
     @State var isShowMainMessageView : Bool = false
     
     
-//        init() {
-//            FirebaseApp.configure()
-//        }
-    
     var body: some View {
         
         // NavigationView {
@@ -225,7 +221,7 @@ struct SignInUpPage: View {
 //                baseViewModel.fetchCurrentUser {
 //                    isShowDashboardMessenge.toggle()
 //                }
-                vm.fetchCurrentUser()
+//                vm.fetchCurrentUser()
                 isShowMainMessageView.toggle()
             }
         }
