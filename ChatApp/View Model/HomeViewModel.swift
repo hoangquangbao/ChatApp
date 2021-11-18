@@ -18,7 +18,7 @@ class HomeViewModel: ObservableObject {
 
     init() {
         fetchCurrentUser()
-//        fetchAllUser()
+        fetchAllUser()
         DispatchQueue.main.async {
             self.isUserCurrenlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
         }

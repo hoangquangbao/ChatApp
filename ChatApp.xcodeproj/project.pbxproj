@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		063967732746497500A99EEA /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063967722746497500A99EEA /* ChatMessage.swift */; };
 		065134C0273E109800A5A530 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065134BF273E109800A5A530 /* ImagePicker.swift */; };
 		065C03E5273A59E9009016C3 /* ChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065C03E4273A59E9009016C3 /* ChatAppApp.swift */; };
 		065C03E7273A59E9009016C3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065C03E6273A59E9009016C3 /* ContentView.swift */; };
@@ -49,6 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		063967722746497500A99EEA /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		064DEAFE2742C9B7004E9B10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		065134BF273E109800A5A530 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		065C03E1273A59E9009016C3 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -182,6 +184,7 @@
 				065134BF273E109800A5A530 /* ImagePicker.swift */,
 				06A4065A27415768004C0D23 /* MainMessage.swift */,
 				06CFE6602745FDB6005BC5B6 /* NewMessage.swift */,
+				063967722746497500A99EEA /* ChatMessage.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -479,6 +482,7 @@
 				06CFE6612745FDB6005BC5B6 /* NewMessage.swift in Sources */,
 				06A4065B27415768004C0D23 /* MainMessage.swift in Sources */,
 				066542AF2744E260008B79C1 /* FirebaseManager.swift in Sources */,
+				063967732746497500A99EEA /* ChatMessage.swift in Sources */,
 				065C0410273A6173009016C3 /* Home.swift in Sources */,
 				065134C0273E109800A5A530 /* ImagePicker.swift in Sources */,
 				065C0415273ACAB1009016C3 /* SignInUpPage.swift in Sources */,

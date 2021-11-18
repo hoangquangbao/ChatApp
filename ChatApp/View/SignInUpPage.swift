@@ -52,6 +52,7 @@ struct SignInUpPage: View {
                     TextField("User name", text: $username)
                 }
                 .autocapitalization(.none)
+                .submitLabel(.go)
                 .padding()
                 .overlay(
                     RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
@@ -101,6 +102,7 @@ struct SignInUpPage: View {
             }
             .keyboardType(.emailAddress)
             .autocapitalization(.none)
+            .submitLabel(.go)
             .padding()
             //.background()
             //.cornerRadius(45)
@@ -133,6 +135,7 @@ struct SignInUpPage: View {
                     }
                 }
                 .autocapitalization(.none)
+                .submitLabel(.go)
                 .padding()
                 //                .background()
                 //                .cornerRadius(45)

@@ -11,83 +11,101 @@ import SDWebImageSwiftUI
 struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
-    @Environment(\.presentationMode) var presentationMode
+//    @Environment(\.presentationMode) var presentationMode
     @State var searchUser : String = ""
+    @Binding var isShowNewMessage : Bool
+    @Binding var isShowChat : Bool
     
-//    init() {
-//        fetchAllUsers()
-//    }
-    
-    init() {
-        vm.fetchAllUser()
-        UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
-    }
+    //    init() {
+    //        vm.fetchAllUser()
+    //        UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
+    //    }
     
     var body: some View {
+        
         NavigationView{
             VStack{
-                HStack {
-                    Text("To: ")
-                        .foregroundColor(.gray)
-                    TextField("Type a name", text: $searchUser)
-                        .autocapitalization(.none)
-                }
-                .padding(15)
-                .background(.gray.opacity(0.08))
-                .cornerRadius(10)
-                
-                VStack(alignment: .leading){
-                    Text("Suggested")
-                        .font(.system(size: 15))
-                        .foregroundColor(.gray)
-                        .padding(.horizontal)
+                topbarNewMassage
+                mainNewMessage
+            }
+            .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
+                ChatMessage(isShowChat: $isShowChat)
+            }
+            .navigationBarTitle("New Message", displayMode: .inline)
+            
+            .navigationBarItems(leading:
+                                    Button(action: {
+                self.isShowNewMessage.toggle()
+            }, label: {
+                Image(systemName: "arrow.backward")
+                    .font(.system(size: 15, weight: .bold))
+            })
+            )
+        }
+    }
+    
+    //MARK: - topbarNewMessage
+    private var topbarNewMassage : some View {
+        HStack {
+            Text("To: ")
+                .foregroundColor(.gray)
+            TextField("Type a name", text: $searchUser)
+                .autocapitalization(.none)
+                .submitLabel(.search)
+        }
+        .padding(15)
+        .background(.gray.opacity(0.08))
+        .cornerRadius(10)
+        .padding(.horizontal)
+    }
+    
+    //MARK: - mainNewMessage
+    private var mainNewMessage : some View {
+        VStack(alignment: .leading){
+            Text("Suggested")
+                .font(.system(size: 15))
+                .foregroundColor(.gray)
+                .padding(.horizontal)
+            
+            ScrollView{
+                ForEach(vm.allUser) { user in
                     
-                    ScrollView{
-                        ForEach(vm.allUser) { user in
+                    Button {
+                        isShowChat.toggle()
+                    } label: {
+                        HStack(spacing: 10){
                             
-                            Button {
-                                
-                            } label: {
-                                HStack(spacing: 10){
-                                    
-                                    WebImage(url: URL(string: user.profileImageUrl))
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 50, height: 50)
-                                        .mask(Circle())
-                                        .shadow(color: .gray, radius: 2)
-                                    
-                                    Text(user.username)
-                                        .font(.system(size: 17, weight: .bold))
-                                        .foregroundColor(.black)
-                                    
-                                    Spacer()
-                                }
-                                .padding(.horizontal)
-                            }
-                            .padding(.vertical, 10)
+                            WebImage(url: URL(string: user.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50, height: 50)
+                                .mask(Circle())
+                                .shadow(color: .gray, radius: 2)
+                            
+                            Text(user.username)
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundColor(.black)
+                            
+                            Spacer()
                         }
+                        .padding(.horizontal)
                     }
-                    .navigationTitle("New Messages")
-                    .toolbar {
-                        ToolbarItemGroup(placement: .navigationBarLeading) {
-                            Button {
-                                presentationMode.wrappedValue.dismiss()
-                            } label: {
-                                Image(systemName: "arrow.backward")
-                                    .font(.system(size: 20, weight: .bold))
-                            }
-                        }
-                    }
+                    .padding(.vertical, 10)
                 }
             }
+            //                    .navigationTitle("New Messages")
+            //                    .toolbar {
+            //                        ToolbarItemGroup(placement: .navigationBarLeading) {
+            //                            Button {
+            //                                presentationMode.wrappedValue.dismiss()
+            //                            } label: {
+            //                                Image(systemName: "arrow.backward")
+            //                                    .font(.system(size: 20, weight: .bold))
+            //                            }
+            //                        }
+            //                    }
+            
         }
-        
     }
 }
 
-struct NewMessages_Previews: PreviewProvider {
-    static var previews: some View {
-        NewMessage()
-    }
-}
