@@ -10,5 +10,7 @@ https://github.com/firebase/firebase-ios-sdk/blob/master/SwiftPackageManager.md
     https://github.com/firebase/firebase-ios-sdk.git
   - #### FirebaseFirestorage using pod file
     https://github.com/invertase/firestore-ios-sdk-frameworks
+  - #### SDwebimageSwiftUI
+    https://github.com/SDWebImage/SDWebImageSwiftUI
 
 >Quang Bao
