@@ -17,33 +17,15 @@ struct MainMessage: View {
     @State var isShowNewMessage : Bool = false
     @State var isShowChat : Bool = false
     @State var searchUser : String = ""
+
+//    init(){
+//        vm.fetchCurrentUser()
+//    }
     
     var body: some View {
             VStack {
                 topNav
                 mainMessageView
-            }
-            .actionSheet(isPresented: $isShowSignOutButton) {
-                ActionSheet(
-                    title: Text("Setting"),
-                    message: Text("Do you want to SignOut?"),
-                    buttons: [
-                        .cancel(),
-                        .destructive(
-                            Text("Sign Out"),
-                            action: {
-                                vm.handleSignOut()
-                            })
-                    ])
-            }
-            .fullScreenCover(isPresented: $vm.isUserCurrenlyLoggedOut, onDismiss: nil) {
-                Home()
-            }
-            .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
-                NewMessage(isShowNewMessage: $isShowNewMessage, isShowChat: $isShowChat)
-            }
-            .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
-                ChatMessage(isShowChat: $isShowChat)
             }
     }
     
@@ -54,21 +36,28 @@ struct MainMessage: View {
                 Button {
                     isShowSignOutButton.toggle()
                 } label: {
-                    //                    let img = vm.anUser?.profileImageUrl
-                    //                    if img != "" {
                     WebImage(url: URL(string: vm.anUser?.profileImageUrl ?? ""))
                         .resizable()
                         .scaledToFill()
                         .frame(width: 50, height: 50)
                         .mask(Circle())
                         .shadow(color: .black, radius: 2)
-                    //                    } else {
-                    //                        Image("LotusLogo")
-                    //                            .resizable()
-                    //                            .scaledToFill()
-                    //                            .frame(width: 50, height: 50)
-                    //                            .mask(Circle())
-                    //                    }
+                }
+                .actionSheet(isPresented: $isShowSignOutButton) {
+                    ActionSheet(
+                        title: Text("Setting"),
+                        message: Text("Do you want to SignOut?"),
+                        buttons: [
+                            .cancel(),
+                            .destructive(
+                                Text("Sign Out"),
+                                action: {
+                                    vm.handleSignOut()
+                                })
+                        ])
+                }
+                .fullScreenCover(isPresented: $vm.isUserCurrenlyLoggedOut, onDismiss: nil) {
+                    Home()
                 }
                 
                 let usn = vm.anUser?.username
@@ -88,12 +77,15 @@ struct MainMessage: View {
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                         .font(.system(size: 25))
                 }
+                .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
+                    NewMessage(isShowNewMessage: $isShowNewMessage, isShowChat: $isShowChat)
+                }
             }
             
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                TextField("Type a name", text: $searchUser)
+                TextField("Search", text: $searchUser)
                     .autocapitalization(.none)
                     .submitLabel(.search)
             }
@@ -140,6 +132,9 @@ struct MainMessage: View {
                                 .foregroundColor(.black)
                         }
                     }
+                    .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
+                        ChatMessage(friend: user, isShowChat: $isShowChat)
+                    }
                 }
             }
             .padding()
@@ -147,12 +142,12 @@ struct MainMessage: View {
     }
     
     //MARK: - handleSignOut
-    func handleSignOut() {
-        do {
-            try FirebaseManager.shared.auth.signOut()
-        } catch let logoutError {
-            print(logoutError.localizedDescription)
-        }
-    }
+//    func handleSignOut() {
+//        do {
+//            try FirebaseManager.shared.auth.signOut()
+//        } catch let logoutError {
+//            print(logoutError.localizedDescription)
+//        }
+//    }
 }
 

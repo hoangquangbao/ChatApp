@@ -8,20 +8,28 @@
 import SwiftUI
 
 struct ChatMessage: View {
-    @State var message : String = ""
+    
+    @ObservedObject var vm = HomeViewModel()
+    
+    var friend : User?
+    @State var txt : String = ""
     @Binding var isShowChat : Bool
+    
+//    let didSelectNewUser: (User) -> ()
+//    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView{
             VStack {
-//                topNav
-                mainChatView
-                bottomNav
+//                topbarChat
+                mainChat
+                bottomChat
             }
-            .navigationBarTitle("Chat", displayMode: .inline)
+            .navigationBarTitle("\(friend?.username ?? "Chat")", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
                 isShowChat.toggle()
+//                presentationMode.wrappedValue.dismiss()
             }, label: {
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
@@ -30,8 +38,8 @@ struct ChatMessage: View {
         }
     }
     
-    //MARK: - topNav
-//    var topNav : some View {
+    //MARK: - topbarChat
+//    var topbarChat : some View {
 //
 //            HStack(spacing: 20) {
 //
@@ -54,19 +62,19 @@ struct ChatMessage: View {
 //        }
     
     
-    //MARK: - mainChatView
-    var mainChatView : some View {
+    //MARK: - mainChat
+    var mainChat : some View {
         
         ScrollView {
             Text("Content chat is show here")
         }
     }
     
-    //MARK: - bottomNav
-    var bottomNav : some View {
+    //MARK: - bottomChat
+    var bottomChat : some View {
         
         HStack(spacing: 10) {
-            TextField("Aa", text: $message)
+            TextField("Aa", text: $txt)
                 .autocapitalization(.none)
                 .padding()
                 .background(.gray.opacity(0.1))
@@ -74,7 +82,10 @@ struct ChatMessage: View {
                 .submitLabel(.send)
 
             Button {
-
+                
+//                vm.sendMsg(user: vm.anUser!.username, uid: vm.anUser!.uid, pic: vm.anUser!.profileImageUrl, date: Date(), msg: txt)
+//
+//                txt = ""
             } label: {
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 30, weight: .bold))
@@ -82,4 +93,5 @@ struct ChatMessage: View {
         }
         .padding(.horizontal)
     }
+    
 }

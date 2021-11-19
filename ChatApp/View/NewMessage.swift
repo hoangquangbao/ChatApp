@@ -11,11 +11,19 @@ import SDWebImageSwiftUI
 struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @Environment(\.presentationMode) var presentationMode
+    
     @State var searchUser : String = ""
     @Binding var isShowNewMessage : Bool
     @Binding var isShowChat : Bool
+    @State var currentuser : User?
     
+    @Environment(\.presentationMode) var presentationMode
+//    let didSelectNewUser : (User) -> ()
+
+    
+//    init(){
+//        vm..fetchAllUsers()
+//    }
     //    init() {
     //        vm.fetchAllUser()
     //        UINavigationBar.appearance().largeTitleTextAttributes = [.font : UIFont(name: "Georgia-Bold", size: 20)!]
@@ -28,14 +36,11 @@ struct NewMessage: View {
                 topbarNewMassage
                 mainNewMessage
             }
-            .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
-                ChatMessage(isShowChat: $isShowChat)
-            }
             .navigationBarTitle("New Message", displayMode: .inline)
-            
             .navigationBarItems(leading:
                                     Button(action: {
-                self.isShowNewMessage.toggle()
+//                self.isShowNewMessage.toggle()
+                presentationMode.wrappedValue.dismiss()
             }, label: {
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
@@ -69,8 +74,10 @@ struct NewMessage: View {
             
             ScrollView{
                 ForEach(vm.allUser) { user in
-                    
+                 
                     Button {
+//                        didSelectNewUser(user)
+                        currentuser = user
                         isShowChat.toggle()
                     } label: {
                         HStack(spacing: 10){
@@ -91,7 +98,13 @@ struct NewMessage: View {
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 10)
+//                    .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
+//                        ChatMessage(friend: user, isShowChat: $isShowChat)
+//                    }
                 }
+            }
+            NavigationLink(destination: ChatMessage(friend: currentuser, isShowChat: $isShowChat), isActive: $isShowChat) {
+                EmptyView()
             }
             //                    .navigationTitle("New Messages")
             //                    .toolbar {
