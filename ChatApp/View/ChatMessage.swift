@@ -10,22 +10,21 @@ import SwiftUI
 struct ChatMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
-    
-    var friend : User?
     @State var txt : String = ""
     @Binding var isShowChat : Bool
     
-//    let didSelectNewUser: (User) -> ()
-//    @Environment(\.presentationMode) var presentationMode
-    
     var body: some View {
+        
         NavigationView{
+            
             VStack {
+                
 //                topbarChat
                 mainChat
                 bottomChat
+                
             }
-            .navigationBarTitle("\(friend?.username ?? "Chat")", displayMode: .inline)
+            .navigationBarTitle("Chat", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
                 isShowChat.toggle()
@@ -36,6 +35,7 @@ struct ChatMessage: View {
             )
         }
     }
+    
     
     //MARK: - topbarChat
 //    var topbarChat : some View {
@@ -66,6 +66,7 @@ struct ChatMessage: View {
         
         ScrollView {
             Text("Content chat is show here")
+            
         }
     }
     
@@ -73,6 +74,7 @@ struct ChatMessage: View {
     var bottomChat : some View {
         
         HStack(spacing: 10) {
+            
             TextField("Aa", text: $txt)
                 .autocapitalization(.none)
                 .padding()
@@ -81,16 +83,14 @@ struct ChatMessage: View {
                 .submitLabel(.send)
 
             Button {
-                
-//                vm.sendMsg(user: vm.anUser!.username, uid: vm.anUser!.uid, pic: vm.anUser!.profileImageUrl, date: Date(), msg: txt)
-//
-//                txt = ""
+        
             } label: {
+                
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 30, weight: .bold))
+                
             }
         }
         .padding(.horizontal)
     }
-    
 }

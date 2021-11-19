@@ -25,24 +25,29 @@ class HomeViewModel: ObservableObject {
 //        }
     }
 
-    
 //    func fetchCurrentUser(completion: @escaping ()->()) {
     func fetchCurrentUser() {
+        
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             self.alertMessage = "Could not find firebase uid"
             return
+            
         }
 
         FirebaseManager.shared.firestore.collection("users").document(uid).getDocument { snapshot, error in
             if let error = error {
+                
                 self.alertMessage = "Failed to fetch current user: \(error)"
                 print("Failed to fetch current user:", error)
                 return
+                
             }
 
             guard let data = snapshot?.data() else {
+                
                 self.alertMessage = "No data found"
                 return
+                
             }
 
             self.anUser = .init(data: data)
@@ -51,11 +56,14 @@ class HomeViewModel: ObservableObject {
     }
     
     func fetchAllUsers() {
+        
         FirebaseManager.shared.firestore.collection("users").getDocuments { documentsSnapshot, error in
             if let error = error {
+                
                 self.alertMessage = "Failed to fetch current user: \(error)"
                 print("Failed to fetch current user:", error)
                 return
+                
             }
             
             documentsSnapshot?.documents.forEach({ snapshot in
@@ -70,8 +78,10 @@ class HomeViewModel: ObservableObject {
    
     //MARK: - handleSignOut
     func handleSignOut() {
+        
         isUserCurrenlyLoggedOut.toggle()
         try? FirebaseManager.shared.auth.signOut()
+        
     }
     
 //    func sendMsg(user: String,uid: String,pic: String,date: Date,msg: String){
