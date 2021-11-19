@@ -18,6 +18,7 @@ struct MainMessage: View {
     @State var isShowChat : Bool = false
     @State var searchUser : String = ""
 
+
 //    init(){
 //        vm.fetchCurrentUser()
 //    }
@@ -101,8 +102,8 @@ struct MainMessage: View {
         
         ScrollView {
             VStack(spacing: 30){
+                
                 ForEach(vm.allUser) { user in
-                    
                     Button {
                         isShowChat.toggle()
                     } label: {
@@ -135,6 +136,9 @@ struct MainMessage: View {
                     .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
                         ChatMessage(friend: user, isShowChat: $isShowChat)
                     }
+//                    NavigationLink(destination: ChatMessage(friend: currentUser, isShowChat: $isShowChat), isActive: $isShowChat) {
+//                        EmptyView()
+//                    }
                 }
             }
             .padding()

@@ -212,22 +212,22 @@ struct SignInUpPage: View {
     
     //MARK: - SignIn
     func signIn() {
-        
-        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
-            
-            if let err = err {
-                isShowAlert = true
-                alertMessage = err.localizedDescription
-                return
-            } else {
-                
-//                baseViewModel.fetchCurrentUser {
-//                    isShowDashboardMessenge.toggle()
-//                }
-//                vm.fetchCurrentUser()
-                isShowMainMessageView.toggle()
-            }
-        }
+        isShowMainMessageView = true
+//        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
+//
+//            if let err = err {
+//                isShowAlert = true
+//                alertMessage = err.localizedDescription
+//                return
+//            } else {
+//
+////                baseViewModel.fetchCurrentUser {
+////                    isShowDashboardMessenge.toggle()
+////                }
+////                vm.fetchCurrentUser()
+//                isShowMainMessageView.toggle()
+//            }
+//        }
     }
     
     //MARK: - SignUp

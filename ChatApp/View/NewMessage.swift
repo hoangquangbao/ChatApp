@@ -15,7 +15,6 @@ struct NewMessage: View {
     @State var searchUser : String = ""
     @Binding var isShowNewMessage : Bool
     @Binding var isShowChat : Bool
-    @State var currentuser : User?
     
     @Environment(\.presentationMode) var presentationMode
 //    let didSelectNewUser : (User) -> ()
@@ -66,6 +65,7 @@ struct NewMessage: View {
     
     //MARK: - mainNewMessage
     private var mainNewMessage : some View {
+
         VStack(alignment: .leading){
             Text("Suggested")
                 .font(.system(size: 15))
@@ -74,10 +74,8 @@ struct NewMessage: View {
             
             ScrollView{
                 ForEach(vm.allUser) { user in
-                 
                     Button {
 //                        didSelectNewUser(user)
-                        currentuser = user
                         isShowChat.toggle()
                     } label: {
                         HStack(spacing: 10){
@@ -96,16 +94,20 @@ struct NewMessage: View {
                             Spacer()
                         }
                         .padding(.horizontal)
+//                        NavigationLink(destination: ChatMessage(friend: user, isShowChat: $isShowChat), isActive: $isShowChat) {
+//                            EmptyView()
+//                        }
                     }
                     .padding(.vertical, 10)
-//                    .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
-//                        ChatMessage(friend: user, isShowChat: $isShowChat)
-//                    }
+                    .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
+                        ChatMessage(friend: user, isShowChat: $isShowChat)
+                    }
+
                 }
             }
-            NavigationLink(destination: ChatMessage(friend: currentuser, isShowChat: $isShowChat), isActive: $isShowChat) {
-                EmptyView()
-            }
+
+            
+
             //                    .navigationTitle("New Messages")
             //                    .toolbar {
             //                        ToolbarItemGroup(placement: .navigationBarLeading) {

@@ -29,7 +29,6 @@ struct ChatMessage: View {
             .navigationBarItems(leading:
                                     Button(action: {
                 isShowChat.toggle()
-//                presentationMode.wrappedValue.dismiss()
             }, label: {
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
