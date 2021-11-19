@@ -29,6 +29,7 @@ struct NewMessage: View {
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
+                isShowNewMessage.toggle()
             }, label: {
                 
                 Image(systemName: "arrow.backward")

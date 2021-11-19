@@ -267,7 +267,6 @@ struct Home: View {
                 //                baseViewModel.fetchCurrentUser {
                 //                    isShowDashboardMessenge.toggle()
                 //                }
-                //                vm.fetchCurrentUser()
                 isShowMainMessageView.toggle()
             }
         }
