@@ -49,6 +49,7 @@ struct Home: View {
                 
                 Text("SIGN IN")
                     .tag(true)
+                
                 Text("SIGN UP")
                     .tag(false)
                 
@@ -139,7 +140,6 @@ struct Home: View {
                 )
                 .padding(.horizontal)
                 //.shadow(color: .purple, radius: 1)
-                
                 
                 VStack(alignment: .trailing) {
                     

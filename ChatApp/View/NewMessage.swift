@@ -13,8 +13,10 @@ struct NewMessage: View {
     @ObservedObject var vm = HomeViewModel()
     
     @State var searchUser : String = ""
-    @Binding var isShowNewMessage : Bool
-    @Binding var isShowChat : Bool
+    @State var isShowChatMessage : Bool = false
+    @State var selectedUser : User?
+    
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         
@@ -29,7 +31,7 @@ struct NewMessage: View {
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
-                isShowNewMessage.toggle()
+                presentationMode.wrappedValue.dismiss()
             }, label: {
                 
                 Image(systemName: "arrow.backward")
@@ -43,20 +45,26 @@ struct NewMessage: View {
     //MARK: - topbarNewMessage
     private var topbarNewMassage : some View {
         
-        HStack {
+        VStack{
             
-            Text("To: ")
-                .foregroundColor(.gray)
+            HStack {
+                
+                Text("To: ")
+                    .foregroundColor(.gray)
+                
+                TextField("Type a name", text: $searchUser)
+                    .autocapitalization(.none)
+                    .submitLabel(.search)
+                
+            }
             
-            TextField("Type a name", text: $searchUser)
-                .autocapitalization(.none)
-                .submitLabel(.search)
+            Divider()
+             .frame(height: 2)
+             .padding(.horizontal, 30)
+             .background(Color.gray)
             
         }
-        .padding(15)
-        .background(.gray.opacity(0.08))
-        .cornerRadius(10)
-        .padding(.horizontal)
+        .padding()
         
     }
     
@@ -67,8 +75,7 @@ struct NewMessage: View {
         VStack(alignment: .leading){
             
             Text("Suggested")
-                .font(.system(size: 15))
-                .foregroundColor(.gray)
+                .font(.system(size: 20))
                 .padding(.horizontal)
             
             ScrollView{
@@ -77,7 +84,8 @@ struct NewMessage: View {
                     
                     Button {
                         
-                        isShowChat.toggle()
+                        selectedUser = user
+                        isShowChatMessage.toggle()
                         
                     } label: {
                         
@@ -98,27 +106,13 @@ struct NewMessage: View {
                             
                         }
                         .padding(.horizontal)
-//                        NavigationLink(destination: ChatMessage(friend: user, isShowChat: $isShowChat), isActive: $isShowChat) {
-//                            EmptyView()
-//                        }
                     }
                     .padding(.vertical, 10)
-                    .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
-                        ChatMessage(isShowChat: $isShowChat)
+                    NavigationLink(destination: ChatMessage(friend: selectedUser), isActive: $isShowChatMessage) {
+                        EmptyView()
                     }
                 }
             }
-            //                    .navigationTitle("New Messages")
-            //                    .toolbar {
-            //                        ToolbarItemGroup(placement: .navigationBarLeading) {
-            //                            Button {
-            //                                presentationMode.wrappedValue.dismiss()
-            //                            } label: {
-            //                                Image(systemName: "arrow.backward")
-            //                                    .font(.system(size: 20, weight: .bold))
-            //                            }
-            //                        }
-            //                    }
         }
     }
 }

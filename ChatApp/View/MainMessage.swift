@@ -14,24 +14,29 @@ struct MainMessage : View {
     @ObservedObject var vm = HomeViewModel()
     @State var isShowSignOutButton : Bool = false
     @State var isShowNewMessage : Bool = false
-    @State var isShowChat : Bool = false
+    @State var isShowChatMessage : Bool = false
     @State var searchUser : String = ""
+    @State var selectedUser : User?
     
     var body: some View {
         
+        NavigationView{
+            
             VStack {
                 
                 topNav
                 mainMessageView
                 
             }
+            .navigationBarHidden(true)
+        }
     }
     
     
     //MARK: - topbarMessenges
     private var topNav : some View {
         
-        VStack {
+        VStack(alignment: .leading){
             
             HStack(spacing: 20) {
                 
@@ -63,7 +68,9 @@ struct MainMessage : View {
                         ])
                 }
                 .fullScreenCover(isPresented: $vm.isUserCurrenlyLoggedOut, onDismiss: nil) {
+                    
                     Home()
+                    
                 }
                 
                 let usn = vm.anUser?.username
@@ -93,23 +100,33 @@ struct MainMessage : View {
                     
                 }
                 .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
-                    NewMessage(isShowNewMessage: $isShowNewMessage, isShowChat: $isShowChat)
+                    NewMessage()
                 }
             }
             
-            HStack {
+            VStack{
                 
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                
-                TextField("Search", text: $searchUser)
-                    .autocapitalization(.none)
-                    .submitLabel(.search)
+                HStack {
+                    
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    
+                    TextField("Search", text: $searchUser)
+                        .autocapitalization(.none)
+                        .submitLabel(.search)
+                    
+                }
+
+                Divider()
+                 .frame(height: 2)
+                 .padding(.horizontal, 30)
+                 .background(Color.gray)
                 
             }
-            .padding(15)
-            .background(.gray.opacity(0.08))
-            .cornerRadius(10)
+            .padding(.vertical)
+            
+            Text("Recent")
+                .font(.system(size: 20))
             
         }
         .padding(.horizontal)
@@ -120,58 +137,52 @@ struct MainMessage : View {
     private var mainMessageView : some View {
         
         ScrollView {
-            
-            VStack(spacing: 30){
-                
+
                 ForEach(vm.allUser) { user in
-                    
+
                     Button {
-                        
-                        isShowChat.toggle()
-                        
+
+                        selectedUser = user
+                        isShowChatMessage.toggle()
+
                     } label: {
-                        
+
                         HStack(spacing: 10){
-                            
+
                             WebImage(url: URL(string: user.profileImageUrl))
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 50, height: 50)
                                 .mask(Circle())
                                 .shadow(color: .gray, radius: 2)
-                            
+
                             VStack(alignment: .leading, spacing: 4){
+                                
                                 Text(user.username)
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.black)
-                                
+
                                 Text("Messenge send to user")
                                     .font(.system(size: 12))
                                     .foregroundColor(.gray)
-                                
+
                             }
-                            
+
                             Spacer()
-                            
+
                             Text("11:20 AM")
                                 .font(.system(size: 12))
                                 .foregroundColor(.black)
-                            
+
                         }
+                        .padding(.horizontal)
                     }
-                    .fullScreenCover(isPresented: $isShowChat, onDismiss: nil) {
-                        ChatMessage(isShowChat: $isShowChat)
+                    .padding(.vertical, 10)
+                    NavigationLink(destination: ChatMessage(friend: selectedUser), isActive: $isShowChatMessage) {
+                        EmptyView()
                     }
-//                    NavigationLink(destination: ChatMessage(friend: currentUser, isShowChat: $isShowChat), isActive: $isShowChat) {
-//                        EmptyView()
-//                    }
                 }
-            }
-            
-            .padding()
-            
         }
     }
-    
 }
 
