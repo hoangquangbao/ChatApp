@@ -20,3 +20,22 @@ struct User: Identifiable {
         self.username = data["username"] as? String ?? ""
     }
 }
+
+struct Message: Identifiable {
+    
+    var id: String {fromId}
+    
+    let fromId, toId, text: String
+//    let timestamp: Timestamp()
+    
+    init(data: [String: Any]) {
+        self.fromId = data["fromId"] as? String ?? ""
+        self.toId = data["toId"] as? String ?? ""
+        self.text = data["txt"] as? String ?? ""
+    }
+}
+
+
+/*
+ self.timestamp = data["timestamp"] as? Timestamp() ?? Date.now.formatted(date: .long, time: .shortened)
+ */

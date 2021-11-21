@@ -57,7 +57,7 @@ class HomeViewModel: ObservableObject {
     
     func fetchAllUsers() {
         
-        FirebaseManager.shared.firestore.collection("users").getDocuments { documentsSnapshot, error in
+        FirebaseManager.shared.firestore.collection("users").getDocuments { documentSnapshot, error in
             if let error = error {
                 
                 self.alertMessage = "Failed to fetch current user: \(error)"
@@ -66,12 +66,13 @@ class HomeViewModel: ObservableObject {
                 
             }
             
-            documentsSnapshot?.documents.forEach({ snapshot in
+            documentSnapshot?.documents.forEach({ snapshot in
                 let data = snapshot.data()
                 let user = User(data: data)
                 if user.uid != FirebaseManager.shared.auth.currentUser?.uid{
                     self.allUser.append(.init(data: data))
                 }
+                
             })
         }
     }

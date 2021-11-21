@@ -19,6 +19,8 @@ struct ChatMessage: View {
     @State var isShowAlert : Bool = false
     @State var alertMessage : String = ""
     
+    @State var allMessage = [Message]()
+    
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -39,15 +41,20 @@ struct ChatMessage: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-//        .navigationBarTitle("\(friend?.username ?? "Chat")", displayMode: .inline)
-//        .navigationBarItems(leading:
-//                                Button(action: {
-//            presentationMode.wrappedValue.dismiss()
-//        }, label: {
-//            Image(systemName: "arrow.backward")
-//                .font(.system(size: 15, weight: .bold))
-//        })
-//        )
+        //        .navigationBarTitle("\(friend?.username ?? "Chat")", displayMode: .inline)
+        //        .navigationBarItems(leading:
+        //                                Button(action: {
+        //            presentationMode.wrappedValue.dismiss()
+        //        }, label: {
+        //            Image(systemName: "arrow.backward")
+        //                .font(.system(size: 15, weight: .bold))
+        //        })
+        //        )
+        .onAppear {
+            
+            getMessage()
+            
+        }
     }
     
     
@@ -87,7 +94,7 @@ struct ChatMessage: View {
                     
                     Text("\(friend?.username ?? "")")
                         .font(.system(size: 18, weight: .bold, design: .rounded))
-
+                    
                     HStack(spacing: 5){
                         
                         Image(systemName: "circle.fill")
@@ -123,9 +130,9 @@ struct ChatMessage: View {
                 TextField("Search in chat", text: $search)
                 
                 Divider()
-                 .frame(height: 1)
-                 .padding(.horizontal, 30)
-                 .background(Color.gray)
+                    .frame(height: 1)
+                    .padding(.horizontal, 30)
+                    .background(Color.gray)
                 
             }
             .padding(.vertical)
@@ -140,10 +147,14 @@ struct ChatMessage: View {
         
         ScrollView {
             
-            Text("Haven't any message. Start now!")
-                .font(.system(size: 15))
-                .foregroundColor(.gray)
-            
+//            Text("Haven't any message. Start now!")
+            ForEach(allMessage){ i in
+                
+                Text(i.text)
+                    .font(.system(size: 15))
+                    .foregroundColor(.gray)
+    
+            }
         }
     }
     
@@ -154,7 +165,7 @@ struct ChatMessage: View {
         HStack(spacing: 10) {
             
             Button {
-        
+                
             } label: {
                 
                 Image(systemName: "photo.on.rectangle.angled")
@@ -169,11 +180,11 @@ struct ChatMessage: View {
                 .padding()
                 .background(.gray.opacity(0.1))
                 .cornerRadius(45)
-
+            
             Button {
                 
-                handleSend()
-        
+                sendMessage()
+                
             } label: {
                 
                 Image(systemName: "paperplane.fill")
@@ -186,7 +197,7 @@ struct ChatMessage: View {
     
     
     //MARK: - handleSend
-    func handleSend() {
+    func sendMessage() {
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
@@ -229,5 +240,36 @@ struct ChatMessage: View {
             
             print("Recipient saved message as well")
         }
+    }
+    
+    
+    //MARK: - getMessage
+    func getMessage() {
+        
+        //        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        guard let toId = friend?.uid else { return }
+        
+        FirebaseManager.shared.firestore.collection("message").document(fromId)
+            .collection(toId)
+            .getDocuments { documentSnapshot, error in
+                if let error = error {
+                    
+                    isShowAlert = true
+                    alertMessage = error.localizedDescription
+                    return
+                    
+                }
+                
+                documentSnapshot?.documents.forEach({ snapshot in
+                    
+                    let data = snapshot.data()
+                    self.allMessage.append(.init(data: data))
+                    
+                    print("Successfully get message")
+                })
+            }
     }
 }
