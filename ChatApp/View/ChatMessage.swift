@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import Firebase
 
 struct ChatMessage: View {
     
@@ -14,6 +15,9 @@ struct ChatMessage: View {
     @State var txt : String = ""
     @State var friend : User?
     @State var search : String = ""
+    
+    @State var isShowAlert : Bool = false
+    @State var alertMessage : String = ""
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -29,6 +33,9 @@ struct ChatMessage: View {
                 
             }
             .navigationBarHidden(true)
+            .alert(isPresented: $isShowAlert) {
+                Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
+            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -116,7 +123,7 @@ struct ChatMessage: View {
                 TextField("Search in chat", text: $search)
                 
                 Divider()
-                 .frame(height: 2)
+                 .frame(height: 1)
                  .padding(.horizontal, 30)
                  .background(Color.gray)
                 
@@ -164,6 +171,8 @@ struct ChatMessage: View {
                 .cornerRadius(45)
 
             Button {
+                
+                handleSend()
         
             } label: {
                 
@@ -173,5 +182,52 @@ struct ChatMessage: View {
             }
         }
         .padding(.horizontal)
+    }
+    
+    
+    //MARK: - handleSend
+    func handleSend() {
+        
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        guard let toId = friend?.uid else { return }
+        
+        let document = FirebaseManager.shared.firestore.collection("messages")
+            .document(fromId)
+            .collection(toId)
+            .document()
+        
+        let messageData = ["fromId" : fromId, "toId" : toId, "text" : txt, "timestamp" : Timestamp()] as [String : Any]
+        
+        document.setData(messageData) { error in
+            if let error = error {
+                
+                isShowAlert = true
+                alertMessage = error.localizedDescription
+                return
+                
+            }
+            
+            print("Successfully saved current user sending message")
+            txt = ""
+            
+        }
+        
+        let recipientMessageDocument = FirebaseManager.shared.firestore.collection("message")
+            .document(fromId)
+            .collection(toId)
+            .document()
+        
+        recipientMessageDocument.setData(messageData) { error in
+            if let error = error {
+                
+                isShowAlert = true
+                alertMessage = error.localizedDescription
+                return
+                
+            }
+            
+            print("Recipient saved message as well")
+        }
     }
 }

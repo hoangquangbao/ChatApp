@@ -118,7 +118,7 @@ struct MainMessage : View {
                 }
 
                 Divider()
-                 .frame(height: 2)
+                 .frame(height: 1)
                  .padding(.horizontal, 30)
                  .background(Color.gray)
                 
