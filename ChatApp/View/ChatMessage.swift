@@ -12,17 +12,16 @@ import Firebase
 struct ChatMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
-    @State var txt : String = ""
-    @State var friend : User?
+    @State var text : String = ""
+    @State var selectedUser : User?
     @State var search : String = ""
-    
-    @State var isShowAlert : Bool = false
-    @State var alertMessage : String = ""
-    
-    @State var allMessage = [Message]()
     
     @Environment(\.presentationMode) var presentationMode
     
+//    init(){
+//        vm.getMessage(friend: friend)
+//    }
+        
     var body: some View {
         
         NavigationView{
@@ -35,9 +34,11 @@ struct ChatMessage: View {
                 
             }
             .navigationBarHidden(true)
-            .alert(isPresented: $isShowAlert) {
-                Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
-            }
+//            .onAppear{
+//
+//                vm.getMessage(selectedUser: selectedUser)
+//
+//            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -50,11 +51,11 @@ struct ChatMessage: View {
         //                .font(.system(size: 15, weight: .bold))
         //        })
         //        )
-        .onAppear {
-            
-            getMessage()
-            
-        }
+//        .onAppear {
+//
+//            vm.getMessage(friend: friend)
+//
+//        }
     }
     
     
@@ -67,9 +68,9 @@ struct ChatMessage: View {
                 
                 Group{
                     
-                    if friend?.profileImageUrl != nil{
+                    if selectedUser?.profileImageUrl != nil{
                         
-                        WebImage(url: URL(string: friend?.profileImageUrl ?? ""))
+                        WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
                             .resizable()
                             .scaledToFill()
                             .frame(width: 50, height: 50)
@@ -92,7 +93,7 @@ struct ChatMessage: View {
                 
                 VStack(alignment: .leading ,spacing: 5){
                     
-                    Text("\(friend?.username ?? "")")
+                    Text("\(selectedUser?.username ?? "")")
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                     
                     HStack(spacing: 5){
@@ -147,13 +148,22 @@ struct ChatMessage: View {
         
         ScrollView {
             
-//            Text("Haven't any message. Start now!")
-            ForEach(allMessage){ i in
+//            if vm.allMessage.count == 0{
+//
+//                Spacer()
+////                Indicator()
+//                            Text("Haven't any message. Start now!")
+//                Spacer()
                 
-                Text(i.text)
-                    .font(.system(size: 15))
-                    .foregroundColor(.gray)
-    
+//            } else {
+                ForEach(vm.allMessage){ i in
+                    
+                    Text(i.text)
+                        .font(.system(size: 15))
+                        .foregroundColor(.gray)
+        
+//                }
+
             }
         }
     }
@@ -174,7 +184,7 @@ struct ChatMessage: View {
                 
             }
             
-            TextField("Aa", text: $txt)
+            TextField("Aa", text: $text)
                 .autocapitalization(.none)
                 .submitLabel(.send)
                 .padding()
@@ -183,7 +193,8 @@ struct ChatMessage: View {
             
             Button {
                 
-                sendMessage()
+                vm.sendMessage(selectedUser: selectedUser, text: text)
+                text = ""
                 
             } label: {
                 
@@ -195,81 +206,26 @@ struct ChatMessage: View {
         .padding(.horizontal)
     }
     
-    
-    //MARK: - handleSend
-    func sendMessage() {
-        
-        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
-        guard let toId = friend?.uid else { return }
-        
-        let document = FirebaseManager.shared.firestore.collection("messages")
-            .document(fromId)
-            .collection(toId)
-            .document()
-        
-        let messageData = ["fromId" : fromId, "toId" : toId, "text" : txt, "timestamp" : Timestamp()] as [String : Any]
-        
-        document.setData(messageData) { error in
-            if let error = error {
-                
-                isShowAlert = true
-                alertMessage = error.localizedDescription
-                return
-                
-            }
-            
-            print("Successfully saved current user sending message")
-            txt = ""
-            
-        }
-        
-        let recipientMessageDocument = FirebaseManager.shared.firestore.collection("message")
-            .document(fromId)
-            .collection(toId)
-            .document()
-        
-        recipientMessageDocument.setData(messageData) { error in
-            if let error = error {
-                
-                isShowAlert = true
-                alertMessage = error.localizedDescription
-                return
-                
-            }
-            
-            print("Recipient saved message as well")
-        }
-    }
-    
-    
-    //MARK: - getMessage
-    func getMessage() {
-        
-        //        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
-        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
-        guard let toId = friend?.uid else { return }
-        
-        FirebaseManager.shared.firestore.collection("message").document(fromId)
-            .collection(toId)
-            .getDocuments { documentSnapshot, error in
-                if let error = error {
-                    
-                    isShowAlert = true
-                    alertMessage = error.localizedDescription
-                    return
-                    
-                }
-                
-                documentSnapshot?.documents.forEach({ snapshot in
-                    
-                    let data = snapshot.data()
-                    self.allMessage.append(.init(data: data))
-                    
-                    print("Successfully get message")
-                })
-            }
-    }
+//    func readMsg() {
+//
+//        FirebaseManager.shared.firestore.collection("message").addSnapshotListener { snap, err in
+//
+//            if err != nil{
+//                print(err?.localizedDescription)
+//                return
+//            }
+//            guard let data = snap else {return}
+//
+//            data.documentChanges.forEach { doc in
+//                if doc.type == .added{
+//                    let msg = try! doc.document.data(as: Message.self)
+//
+//                    DispatchQueue.main.async {
+//                        self.msgs.append(msg)
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
 }

@@ -17,6 +17,7 @@ struct MainMessage : View {
     @State var isShowChatMessage : Bool = false
     @State var searchUser : String = ""
     @State var selectedUser : User?
+
     
     var body: some View {
         
@@ -143,7 +144,11 @@ struct MainMessage : View {
                     Button {
 
                         selectedUser = user
-                        isShowChatMessage.toggle()
+//                        vm.getMessage(selectedUser: selectedUser)
+//                        isShowChatMessage.toggle()
+                        
+                        vm.getMessage(selectedUser: selectedUser){ isShowChatMessage.toggle()}
+                        
 
                     } label: {
 
@@ -178,7 +183,7 @@ struct MainMessage : View {
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 10)
-                    NavigationLink(destination: ChatMessage(friend: selectedUser), isActive: $isShowChatMessage) {
+                    NavigationLink(destination: ChatMessage(selectedUser: selectedUser), isActive: $isShowChatMessage) {
                         EmptyView()
                     }
                 }
