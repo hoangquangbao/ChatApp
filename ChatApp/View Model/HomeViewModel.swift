@@ -67,25 +67,25 @@ class HomeViewModel: ObservableObject {
         FirebaseManager.shared.firestore
             .collection("users")
             .getDocuments { documentSnapshot, error in
-            if let error = error {
-                
-                self.alertMessage = error.localizedDescription
-                print(error.localizedDescription)
-                return
-                
-            }
-            
-            documentSnapshot?.documents.forEach({ snapshot in
-                let data = snapshot.data()
-                let user = User(data: data)
-                if user.uid != FirebaseManager.shared.auth.currentUser?.uid{
-                    self.allUser.append(.init(data: data))
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    print(error.localizedDescription)
+                    return
+                    
                 }
                 
-                print(data)
-                
-            })
-        }
+                documentSnapshot?.documents.forEach({ snapshot in
+                    let data = snapshot.data()
+                    let user = User(data: data)
+                    if user.uid != FirebaseManager.shared.auth.currentUser?.uid{
+                        self.allUser.append(.init(data: data))
+                    }
+                    
+                    print(data)
+                    
+                })
+            }
     }
     
     //MARK: - handleSignOut
@@ -144,9 +144,37 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - getMessage
-    func getMessage(selectedUser: User?, completion: @escaping ()->()) {
-//    func getMessage(selectedUser: User?) {
-
+    
+    //    func getMessage(selectedUser: User?) {
+    //
+    //        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+    //
+    //        guard let toId = selectedUser?.uid else { return }
+    //
+    //        FirebaseManager.shared.firestore
+    //            .collection("messages")
+    //            .document(fromId)
+    //            .collection(toId)
+    //            .order(by: "timestamp", descending: false)
+    //            .getDocuments { documentSnapshot, error in
+    //                if let error = error {
+    //
+    //                    self.alertMessage = error.localizedDescription
+    //                    print(self.alertMessage)
+    //                    return
+    //
+    //                }
+    //
+    //                documentSnapshot?.documents.forEach({ snapshot in
+    //                    let data = snapshot.data()
+    //                    self.allMessage.append(.init(data: data))
+    //                })
+    //            }
+    //    }
+    
+    //MARK: - getMessage
+    func getMessage(selectedUser: User?) {
+        
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         guard let toId = selectedUser?.uid else { return }
@@ -155,29 +183,22 @@ class HomeViewModel: ObservableObject {
             .collection("messages")
             .document(fromId)
             .collection(toId)
+            .order(by: "timestamp", descending: false)
             .getDocuments { documentSnapshot, error in
-                if let error = error {
-                    
-                    self.alertMessage = error.localizedDescription
-                    print(self.alertMessage)
-                    return
-                    
-                }
                 
-                documentSnapshot?.documents.forEach({ snapshot in
-                    DispatchQueue.main.async {
-                        let data = snapshot.data()
-                        self.allMessage.append(.init(data: data))
-
-                    }
-//                    let data = snapshot.data()
-//                    self.allMessage.append(.init(data: data))
+                guard let data = documentSnapshot else {return}
+                
+                self.allMessage = data.documents.compactMap({ snap in
                     
-//                    print(data)
+                    let id = snap.documentID
+                    let fromId = snap.get("fromId") as! String
+                    let toId = snap.get("toId") as! String
+                    let text = snap.get("text") as! String
+                    let timestamp = snap.get("timestamp") as! Timestamp
+                    
+                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
+                    
                 })
             }
-//        print(self.allMessage)
-
-        completion()
     }
 }

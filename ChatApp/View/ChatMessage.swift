@@ -10,17 +10,13 @@ import SDWebImageSwiftUI
 import Firebase
 
 struct ChatMessage: View {
-    
-    @ObservedObject var vm = HomeViewModel()
+
+    @ObservedObject var vm : HomeViewModel
     @State var text : String = ""
     @State var selectedUser : User?
     @State var search : String = ""
     
     @Environment(\.presentationMode) var presentationMode
-    
-//    init(){
-//        vm.getMessage(friend: friend)
-//    }
         
     var body: some View {
         
@@ -34,28 +30,9 @@ struct ChatMessage: View {
                 
             }
             .navigationBarHidden(true)
-//            .onAppear{
-//
-//                vm.getMessage(selectedUser: selectedUser)
-//
-//            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        //        .navigationBarTitle("\(friend?.username ?? "Chat")", displayMode: .inline)
-        //        .navigationBarItems(leading:
-        //                                Button(action: {
-        //            presentationMode.wrappedValue.dismiss()
-        //        }, label: {
-        //            Image(systemName: "arrow.backward")
-        //                .font(.system(size: 15, weight: .bold))
-        //        })
-        //        )
-//        .onAppear {
-//
-//            vm.getMessage(friend: friend)
-//
-//        }
     }
     
     
@@ -148,22 +125,19 @@ struct ChatMessage: View {
         
         ScrollView {
             
-//            if vm.allMessage.count == 0{
-//
-//                Spacer()
-////                Indicator()
-//                            Text("Haven't any message. Start now!")
-//                Spacer()
+            if vm.allMessage.count == 0{
                 
-//            } else {
+                Spacer()
+                Text("Haven't any message. Start now!")
+                Spacer()
+                
+            } else {
                 ForEach(vm.allMessage){ content in
                     
                     Text(content.text)
                         .font(.system(size: 15))
                         .foregroundColor(.gray)
-        
-//                }
-
+                }
             }
         }
     }

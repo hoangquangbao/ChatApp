@@ -21,10 +21,3 @@ struct User: Identifiable {
         self.username = data["username"] as? String ?? ""
     }
 }
-
-
-
-
-/*
- self.timestamp = data["timestamp"] as? Timestamp() ?? Date.now.formatted(date: .long, time: .shortened)
- */

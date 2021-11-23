@@ -144,15 +144,8 @@ struct MainMessage : View {
                 Button {
                     
                     selectedUser = user
-                    //                        vm.getMessage(selectedUser: selectedUser)
-                    //                        isShowChatMessage.toggle()
-                    
                     vm.getMessage(selectedUser: selectedUser)
-                    {
-                        isShowChatMessage.toggle()
-                        
-                    }
-                    
+                    isShowChatMessage.toggle()
                     
                 } label: {
                     
@@ -187,7 +180,7 @@ struct MainMessage : View {
                     .padding(.horizontal)
                 }
                 .padding(.vertical, 10)
-                NavigationLink(destination: ChatMessage(selectedUser: selectedUser), isActive: $isShowChatMessage) {
+                NavigationLink(destination: ChatMessage(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
                     EmptyView()
                 }
             }
