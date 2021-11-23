@@ -64,10 +64,12 @@ class HomeViewModel: ObservableObject {
     
     func fetchAllUsers() {
         
-        FirebaseManager.shared.firestore.collection("users").getDocuments { documentSnapshot, error in
+        FirebaseManager.shared.firestore
+            .collection("users")
+            .getDocuments { documentSnapshot, error in
             if let error = error {
                 
-                self.alertMessage = "Failed to fetch current user: \(error)"
+                self.alertMessage = error.localizedDescription
                 print(error.localizedDescription)
                 return
                 
@@ -79,6 +81,9 @@ class HomeViewModel: ObservableObject {
                 if user.uid != FirebaseManager.shared.auth.currentUser?.uid{
                     self.allUser.append(.init(data: data))
                 }
+                
+                print(data)
+                
             })
         }
     }
@@ -140,12 +145,15 @@ class HomeViewModel: ObservableObject {
     
     //MARK: - getMessage
     func getMessage(selectedUser: User?, completion: @escaping ()->()) {
-        
+//    func getMessage(selectedUser: User?) {
+
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         guard let toId = selectedUser?.uid else { return }
         
-        FirebaseManager.shared.firestore.collection("message").document(fromId)
+        FirebaseManager.shared.firestore
+            .collection("messages")
+            .document(fromId)
             .collection(toId)
             .getDocuments { documentSnapshot, error in
                 if let error = error {
@@ -157,15 +165,19 @@ class HomeViewModel: ObservableObject {
                 }
                 
                 documentSnapshot?.documents.forEach({ snapshot in
-                    
                     DispatchQueue.main.async {
                         let data = snapshot.data()
                         self.allMessage.append(.init(data: data))
-                        
-                        print(data)
+
                     }
+//                    let data = snapshot.data()
+//                    self.allMessage.append(.init(data: data))
+                    
+//                    print(data)
                 })
             }
+//        print(self.allMessage)
+
         completion()
     }
 }

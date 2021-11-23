@@ -156,9 +156,9 @@ struct ChatMessage: View {
 //                Spacer()
                 
 //            } else {
-                ForEach(vm.allMessage){ i in
+                ForEach(vm.allMessage){ content in
                     
-                    Text(i.text)
+                    Text(content.text)
                         .font(.system(size: 15))
                         .foregroundColor(.gray)
         

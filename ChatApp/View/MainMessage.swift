@@ -138,55 +138,59 @@ struct MainMessage : View {
     private var mainMessageView : some View {
         
         ScrollView {
-
-                ForEach(vm.allUser) { user in
-
-                    Button {
-
-                        selectedUser = user
-//                        vm.getMessage(selectedUser: selectedUser)
-//                        isShowChatMessage.toggle()
+            
+            ForEach(vm.allUser) { user in
+                
+                Button {
+                    
+                    selectedUser = user
+                    //                        vm.getMessage(selectedUser: selectedUser)
+                    //                        isShowChatMessage.toggle()
+                    
+                    vm.getMessage(selectedUser: selectedUser)
+                    {
+                        isShowChatMessage.toggle()
                         
-                        vm.getMessage(selectedUser: selectedUser){ isShowChatMessage.toggle()}
+                    }
+                    
+                    
+                } label: {
+                    
+                    HStack(spacing: 10){
                         
-
-                    } label: {
-
-                        HStack(spacing: 10){
-
-                            WebImage(url: URL(string: user.profileImageUrl))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .mask(Circle())
-                                .shadow(color: .gray, radius: 2)
-
-                            VStack(alignment: .leading, spacing: 4){
-                                
-                                Text(user.username)
-                                    .font(.system(size: 17, weight: .bold))
-                                    .foregroundColor(.black)
-
-                                Text("Messenge send to user")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.gray)
-
-                            }
-
-                            Spacer()
-
-                            Text("11:20 AM")
-                                .font(.system(size: 12))
+                        WebImage(url: URL(string: user.profileImageUrl))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .mask(Circle())
+                            .shadow(color: .gray, radius: 2)
+                        
+                        VStack(alignment: .leading, spacing: 4){
+                            
+                            Text(user.username)
+                                .font(.system(size: 17, weight: .bold))
                                 .foregroundColor(.black)
-
+                            
+                            Text("Messenge send to user")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
+                            
                         }
-                        .padding(.horizontal)
+                        
+                        Spacer()
+                        
+                        Text("11:20 AM")
+                            .font(.system(size: 12))
+                            .foregroundColor(.black)
+                        
                     }
-                    .padding(.vertical, 10)
-                    NavigationLink(destination: ChatMessage(selectedUser: selectedUser), isActive: $isShowChatMessage) {
-                        EmptyView()
-                    }
+                    .padding(.horizontal)
                 }
+                .padding(.vertical, 10)
+                NavigationLink(destination: ChatMessage(selectedUser: selectedUser), isActive: $isShowChatMessage) {
+                    EmptyView()
+                }
+            }
         }
     }
 }

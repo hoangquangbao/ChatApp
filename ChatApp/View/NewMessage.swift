@@ -71,7 +71,7 @@ struct NewMessage: View {
     
     //MARK: - mainNewMessage
     private var mainNewMessage : some View {
-
+        
         VStack(alignment: .leading){
             
             Text("Suggested")
@@ -85,9 +85,12 @@ struct NewMessage: View {
                     Button {
                         
                         selectedUser = user
-//                        vm.getMessage(selectedUser: selectedUser)
+                        //                        vm.getMessage(selectedUser: selectedUser)
                         //                        isShowChatMessage.toggle()
-                        vm.getMessage(selectedUser: selectedUser){ isShowChatMessage.toggle()}
+                        vm.getMessage(selectedUser: selectedUser)
+                        {
+                            isShowChatMessage.toggle()
+                        }
                         
                     } label: {
                         
