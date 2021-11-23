@@ -98,6 +98,7 @@ struct MainMessage : View {
                     
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                         .font(.system(size: 25))
+                        .foregroundColor(.black)
                     
                 }
                 .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
@@ -174,7 +175,7 @@ struct MainMessage : View {
                         
                         Text("11:20 AM")
                             .font(.system(size: 12))
-                            .foregroundColor(.black)
+                            .foregroundColor(.gray)
                         
                     }
                     .padding(.horizontal)

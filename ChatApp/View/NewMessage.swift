@@ -26,7 +26,7 @@ struct NewMessage: View {
                 
                 topbarNewMassage
                 mainNewMessage
-                
+
             }
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
@@ -36,6 +36,7 @@ struct NewMessage: View {
                 
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.black)
             })
             )
         }

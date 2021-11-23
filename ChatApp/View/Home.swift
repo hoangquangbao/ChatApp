@@ -36,7 +36,7 @@ struct Home: View {
                 .shadow(color: .white, radius: 2)
             
             
-            SignView
+            signView
         }
         .navigationBarHidden(true)
         .alert(isPresented: $isShowAlert) {
@@ -44,7 +44,9 @@ struct Home: View {
         }
     }
     
-    private var SignView : some View{
+    
+    //MARK: - signView
+    private var signView : some View{
         
         ScrollView{
             
@@ -211,9 +213,6 @@ struct Home: View {
                     
                 }
             }
-//            .alert(isPresented: $isShowAlert) {
-//                Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
-//            }
             .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil) {
                 ImagePicker(image: $image)
             }

@@ -66,7 +66,7 @@ struct ChatMessage: View {
                         
                     }
                 }
-                .shadow(color: .gray, radius: 2)
+                .shadow(color: .black, radius: 2)
                 
                 VStack(alignment: .leading ,spacing: 5){
                     
@@ -123,25 +123,59 @@ struct ChatMessage: View {
     //MARK: - mainChat
     var mainChat : some View {
         
-        ScrollView {
+        VStack{
             
             if vm.allMessage.count == 0{
                 
                 Spacer()
                 Text("Haven't any message. Start now!")
+                    .foregroundColor(.gray)
                 Spacer()
                 
             } else {
-                ForEach(vm.allMessage){ content in
+                
+                ScrollView {
                     
-                    Text(content.text)
-                        .font(.system(size: 15))
-                        .foregroundColor(.gray)
+                    VStack{
+                        
+                        
+                        
+                        ForEach(vm.allMessage){ content in
+                            
+                            HStack{
+                                
+                                if content.fromId != selectedUser?.uid{
+                                                                        
+                                    Spacer()
+                                    
+                                    Text(content.text)
+                                        .padding()
+                                        .background(Color("BG_Chat"))
+                                        .clipShape(ChatBubble(mymsg: true))
+                                        .foregroundColor(.white)
+                                    
+                                }
+                                else{
+                                    
+                                    Text(content.text)
+                                        .padding()
+//                                        .frame(maxWidth: .infinity, maxHeight: 20)
+                                        .background(Color.gray.opacity(0.2))
+                                        .clipShape(ChatBubble(mymsg: false))
+                                        //.foregroundColor(.black)
+                                    
+                                    Spacer()
+                                                                        
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
                 }
+                
             }
         }
     }
-    
     
     //MARK: - bottomChat
     var bottomChat : some View {
@@ -174,32 +208,24 @@ struct ChatMessage: View {
                 
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.purple)
                 
             }
         }
         .padding(.horizontal)
     }
-    
-//    func readMsg() {
-//
-//        FirebaseManager.shared.firestore.collection("message").addSnapshotListener { snap, err in
-//
-//            if err != nil{
-//                print(err?.localizedDescription)
-//                return
-//            }
-//            guard let data = snap else {return}
-//
-//            data.documentChanges.forEach { doc in
-//                if doc.type == .added{
-//                    let msg = try! doc.document.data(as: Message.self)
-//
-//                    DispatchQueue.main.async {
-//                        self.msgs.append(msg)
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
 }
+
+
+struct ChatBubble : Shape {
+    
+    var mymsg : Bool
+    
+    func path(in rect: CGRect) -> Path {
+            
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: [.topLeft,.topRight,mymsg ? .bottomLeft : .bottomRight], cornerRadii: CGSize(width: 20, height: 20))
+        
+        return Path(path.cgPath)
+    }
+}
+
