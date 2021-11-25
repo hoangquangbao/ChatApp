@@ -1,7 +1,5 @@
 # ChatApp
-<img width="968" alt="ChatApp" src="https://user-images.githubusercontent.com/66858640/142736253-640150ce-3dca-43b7-bf47-f35e8e4c5f25.png">
-
-
+<img width="719" alt="ChatAppUI" src="https://user-images.githubusercontent.com/66858640/143472609-394ab20c-01f0-466d-aed3-2e4b654ef0c6.png">
 
 ## Using Swift Package Manager for Firebase
 ### Manual 
