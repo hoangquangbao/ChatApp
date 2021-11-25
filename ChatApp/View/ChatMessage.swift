@@ -126,7 +126,7 @@ struct ChatMessage: View {
         
         VStack{
             
-            if vm.allMessage.count == 0{
+            if vm.allMessages.count == 0{
                 
                 Spacer()
                 Text("Haven't any message. Start now!")
@@ -138,10 +138,11 @@ struct ChatMessage: View {
                 ScrollView {
                     
                     VStack{
-                        ForEach(vm.allMessage){ content in
+                        ForEach(vm.allMessages){ content in
                             
                             HStack{
                                 
+                                //For conttent chat
                                 if content.fromId != selectedUser?.uid{
                                     
                                     Spacer()
@@ -154,6 +155,31 @@ struct ChatMessage: View {
                                     
                                 }
                                 else{
+                                    
+                                    //For avatar
+                                    Group{
+                                        
+                                        if selectedUser?.profileImageUrl != nil{
+                                            
+                                            WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 25, height: 25)
+                                                .mask(Circle())
+                                            
+                                        } else {
+                                            
+                                            Image(systemName: "person.fill")
+                                                .font(.system(size: 25))
+                                                .padding(10)
+                                                .foregroundColor(.black)
+                                                .background(
+                                                    Circle()
+                                                        .stroke(.black)
+                                                )
+                                            
+                                        }
+                                    }
                                     
                                     Text(content.text)
                                         .padding()
@@ -202,7 +228,7 @@ struct ChatMessage: View {
                     
                     vm.sendMessage(selectedUser: selectedUser, text: text)
                     text = ""
-                    vm.getMessage(selectedUser: selectedUser)
+                    vm.fetchMessage(selectedUser: selectedUser)
                 }
             } label: {
                 

@@ -12,20 +12,18 @@ class HomeViewModel: ObservableObject {
     
     @Published var alertMessage : String = ""
     @Published var anUser : User?
-    @Published var allUser = [User]()
-    @Published var isUserCurrenlyLoggedOut : Bool = false
-    
-    @Published var allMessage = [Message]()
-    
+    @Published var allSuggestUsers = [User]()
+    @Published var allRecentUsers = [Message]()
+    @Published var allMessages = [Message]()
+    @Published var search = ""
+    @Published var filter = [User]()
     
     
     init(){
         
         fetchCurrentUser()
-        fetchAllUsers()
-        //        DispatchQueue.main.async {
-        //            self.isUserCurrenlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
-        //        }
+        fetchAllUsersToSuggest()
+
     }
     
     func fetchCurrentUser() {
@@ -57,7 +55,7 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    func fetchAllUsers() {
+    func fetchAllUsersToSuggest() {
         
         FirebaseManager.shared.firestore
             .collection("users")
@@ -73,22 +71,12 @@ class HomeViewModel: ObservableObject {
                 documentSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
                     let user = User(data: data)
-                    if user.uid != FirebaseManager.shared.auth.currentUser?.uid{
-                        self.allUser.append(.init(data: data))
+                    if user.uid != FirebaseManager.shared.auth.currentUser?.uid {
+                        self.allSuggestUsers.append(.init(data: data))
                     }
-                    
-                    print(data)
-                    
                 })
+                self.filter = self.allSuggestUsers
             }
-    }
-    
-    //MARK: - handleSignOut
-    func handleSignOut() {
-        
-        isUserCurrenlyLoggedOut.toggle()
-        try? FirebaseManager.shared.auth.signOut()
-        
     }
     
     
@@ -99,12 +87,16 @@ class HomeViewModel: ObservableObject {
         
         guard let toId = selectedUser?.uid else { return }
         
+        guard let username = selectedUser?.username else { return }
+
+        guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
+        
         let document = FirebaseManager.shared.firestore.collection("messages")
             .document(fromId)
             .collection(toId)
             .document()
         
-        let messageData = ["fromId" : fromId, "toId" : toId, "text" : text, "timestamp" : Timestamp()] as [String : Any]
+        let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Timestamp()] as [String : Any]
         
         document.setData(messageData) { error in
             if let error = error {
@@ -132,8 +124,6 @@ class HomeViewModel: ObservableObject {
                 return
 
             }
-            
-//            self.getMessage(selectedUser: selectedUser)
         }
     }
     
@@ -159,16 +149,17 @@ class HomeViewModel: ObservableObject {
 //                        return
 //
 //                    }
+//                    guard let data = documentSnapshot else {return}
 //
-//                    documentSnapshot?.documents.forEach({ snapshot in
+//                        data.documents.forEach({ snapshot in
 //                        let data = snapshot.data()
 //                        self.allMessage.append(.init(data: data))
 //                    })
 //                }
 //        }
     
-    //MARK: - getMessage
-    func getMessage(selectedUser: User?) {
+    //MARK: - fetchMessage
+    func fetchMessage(selectedUser: User?) {
 
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
 
@@ -181,16 +172,25 @@ class HomeViewModel: ObservableObject {
             .order(by: "timestamp", descending: false)
 //            .getDocuments { documentSnapshot, error in
             .addSnapshotListener { documentSnapshot, error in
+                
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    return
+                    
+                }
 
                 guard let data = documentSnapshot else {return}
 
-                self.allMessage = data.documents.compactMap({ snap in
+                self.allMessages = data.documents.compactMap({ snap in
 
                     let id = snap.documentID
-                    let fromId = snap.get("fromId") as! String
-                    let toId = snap.get("toId") as! String
-                    let text = snap.get("text") as! String
-                    let timestamp = snap.get("timestamp") as! Timestamp
+                    let fromId = snap.get("fromId") as? String ?? ""
+                    let toId = snap.get("toId") as? String ?? ""
+                    let profileImageUrl = snap.get("profileImageUrl") as? String ?? ""
+                    let username = snap.get("username") as? String ?? ""
+                    let text = snap.get("text") as? String ?? ""
+                    let timestamp = snap.get("timestamp") as? Timestamp
 
 //                    let formatter = DateFormatter()
 //                    formatter.dateFormat = "MMM d yyyy"
@@ -198,9 +198,47 @@ class HomeViewModel: ObservableObject {
 //                    formatter.dateFormat = "HH:mm"
 //                    let time = formatter.string(from: timestamp.dateValue())
 
-                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
+//                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
+                    return Message(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
 
                 })
             }
+    }
+    
+    
+    //MARK: - fetchAllUsersToRecent
+//    func fetchAllUsersToRecent() {
+//
+//        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+//
+//        FirebaseManager.shared.firestore
+//            .collection("messages")
+//            .document(fromId)
+//            .addSnapshotListener { documentSnapshot, error in
+//
+//                if let error = error {
+//
+//                    self.alertMessage = error.localizedDescription
+//                    return
+//
+//                }
+//
+//                guard let data = documentSnapshot else { return }
+//
+//                self.allRecentUsers = data.data()
+//            }
+//    }
+    
+    
+    //MARK: - filterUser
+    func filterUser() {
+        
+        withAnimation(.linear){
+            self.filter = self.allSuggestUsers.filter{
+                
+                return $0.username.lowercased().contains(self.search.lowercased())
+                
+            }
+        }
     }
 }

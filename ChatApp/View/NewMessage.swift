@@ -12,7 +12,6 @@ struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
     
-    @State var searchUser : String = ""
     @State var isShowChatMessage : Bool = false
     @State var selectedUser : User?
     
@@ -39,6 +38,23 @@ struct NewMessage: View {
                     .foregroundColor(.black)
             })
             )
+            .onChange(of: vm.search, perform: { value in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    
+                    if value == vm.search && vm.search != "" {
+                        
+                        vm.filterUser()
+                    }
+                }
+                
+                if vm.search == ""{
+                    
+                    //do nothing
+                    withAnimation(.linear){
+                        vm.filter = vm.allSuggestUsers
+                    }
+                }
+            })
         }
     }
     
@@ -46,14 +62,14 @@ struct NewMessage: View {
     //MARK: - topbarNewMessage
     private var topbarNewMassage : some View {
         
-        VStack{
+        VStack(alignment: .leading){
             
             HStack {
                 
                 Text("To: ")
                     .foregroundColor(.gray)
                 
-                TextField("Type a name", text: $searchUser)
+                TextField("Type a name", text: $vm.search)
                     .autocapitalization(.none)
                     .submitLabel(.search)
                 
@@ -64,29 +80,26 @@ struct NewMessage: View {
              .padding(.horizontal, 30)
              .background(Color.gray)
             
+            Text("Suggested")
+                .font(.system(size: 20))
+                //.padding(.horizontal)
+            
         }
         .padding()
-        
     }
     
     
     //MARK: - mainNewMessage
     private var mainNewMessage : some View {
         
-        VStack(alignment: .leading){
-            
-            Text("Suggested")
-                .font(.system(size: 20))
-                .padding(.horizontal)
-            
             ScrollView{
                 
-                ForEach(vm.allUser) { user in
+                ForEach(vm.filter) { user in
                     
                     Button {
                         
                         selectedUser = user
-                        vm.getMessage(selectedUser: selectedUser)
+                        vm.fetchMessage(selectedUser: selectedUser)
                         isShowChatMessage.toggle()
                         
                     } label: {
@@ -115,7 +128,6 @@ struct NewMessage: View {
                     }
                 }
             }
-        }
     }
 }
 

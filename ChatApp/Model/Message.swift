@@ -12,7 +12,7 @@ struct Message: Identifiable {
     
     var id: String
     
-    let fromId, toId, text: String
+    let fromId, toId, username, profileImageUrl, text: String
     let timestamp: Timestamp
     
 //    init(data: [String: Any]) {

@@ -13,9 +13,9 @@ struct MainMessage : View {
 
     @ObservedObject var vm = HomeViewModel()
     @State var isShowSignOutButton : Bool = false
+    @State var isShowHomePage : Bool = false
     @State var isShowNewMessage : Bool = false
     @State var isShowChatMessage : Bool = false
-    @State var searchUser : String = ""
     @State var selectedUser : User?
 
     
@@ -30,6 +30,23 @@ struct MainMessage : View {
                 
             }
             .navigationBarHidden(true)
+            .onChange(of: vm.search, perform: { value in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    
+                    if value == vm.search && vm.search != "" {
+                        
+                        vm.filterUser()
+                    }
+                }
+                
+                if vm.search == ""{
+                    
+                    //do nothing
+                    withAnimation(.linear){
+                        vm.filter = vm.allSuggestUsers
+                    }
+                }
+            })
         }
     }
     
@@ -64,11 +81,13 @@ struct MainMessage : View {
                             .destructive(
                                 Text("Sign Out"),
                                 action: {
-                                    vm.handleSignOut()
+                                    try? FirebaseManager.shared.auth.signOut()
+                                    isShowHomePage.toggle()
                                 })
                         ])
                 }
-                .fullScreenCover(isPresented: $vm.isUserCurrenlyLoggedOut, onDismiss: nil) {
+                    .fullScreenCover(isPresented: $isShowHomePage, onDismiss: nil) {
+
                     
                     Home()
                     
@@ -113,7 +132,7 @@ struct MainMessage : View {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     
-                    TextField("Search", text: $searchUser)
+                    TextField("Search", text: $vm.search)
                         .autocapitalization(.none)
                         .submitLabel(.search)
                     
@@ -140,12 +159,12 @@ struct MainMessage : View {
         
         ScrollView {
             
-            ForEach(vm.allUser) { user in
+            ForEach(vm.filter) { user in
                 
                 Button {
                     
                     selectedUser = user
-                    vm.getMessage(selectedUser: selectedUser)
+                    vm.fetchMessage(selectedUser: selectedUser)
                     isShowChatMessage.toggle()
                     
                 } label: {
