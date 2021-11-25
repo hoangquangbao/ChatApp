@@ -16,6 +16,7 @@ struct ChatMessage: View {
     @State var selectedUser : User?
     @State var search : String = ""
     
+    
     @Environment(\.presentationMode) var presentationMode
         
     var body: some View {
@@ -33,6 +34,7 @@ struct ChatMessage: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        //.onAppear{ vm.getMessage(selectedUser: selectedUser)}
     }
     
     
@@ -101,7 +103,7 @@ struct ChatMessage: View {
                     
                 }
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 15)
             
             VStack{
                 
@@ -138,14 +140,12 @@ struct ChatMessage: View {
                     
                     VStack{
                         
-                        
-                        
                         ForEach(vm.allMessage){ content in
                             
                             HStack{
                                 
                                 if content.fromId != selectedUser?.uid{
-                                                                        
+                                                                
                                     Spacer()
                                     
                                     Text(content.text)
@@ -172,7 +172,6 @@ struct ChatMessage: View {
                         }
                     }
                 }
-                
             }
         }
     }
@@ -195,15 +194,18 @@ struct ChatMessage: View {
             TextField("Aa", text: $text)
                 .autocapitalization(.none)
                 .submitLabel(.send)
-                .padding()
-                .background(.gray.opacity(0.1))
-                .cornerRadius(45)
+//                .padding()
+                .background()
+//                .cornerRadius(45)
             
             Button {
                 
-                vm.sendMessage(selectedUser: selectedUser, text: text)
-                text = ""
-                
+                if !text.isEmpty{
+                    
+                    vm.sendMessage(selectedUser: selectedUser, text: text)
+                    text = ""
+                    vm.getMessage(selectedUser: selectedUser)
+                }
             } label: {
                 
                 Image(systemName: "paperplane.fill")
@@ -212,6 +214,9 @@ struct ChatMessage: View {
                 
             }
         }
+        .padding()
+        .background()
+        .cornerRadius(45)
         .padding(.horizontal)
     }
 }

@@ -23,15 +23,11 @@ class HomeViewModel: ObservableObject {
         
         fetchCurrentUser()
         fetchAllUsers()
-        
         //        DispatchQueue.main.async {
         //            self.isUserCurrenlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
         //        }
     }
     
-    
-    
-    //    func fetchCurrentUser(completion: @escaping ()->()) {
     func fetchCurrentUser() {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
@@ -57,7 +53,6 @@ class HomeViewModel: ObservableObject {
             }
             
             self.anUser = .init(data: data)
-            //            completion()
         }
     }
     
@@ -135,69 +130,76 @@ class HomeViewModel: ObservableObject {
                 self.alertMessage = error.localizedDescription
                 print(self.alertMessage)
                 return
-                
+
             }
             
-            print("Recipient saved message as well")
+//            self.getMessage(selectedUser: selectedUser)
         }
     }
     
     
     //MARK: - getMessage
     
-    //    func getMessage(selectedUser: User?) {
-    //
-    //        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-    //
-    //        guard let toId = selectedUser?.uid else { return }
-    //
-    //        FirebaseManager.shared.firestore
-    //            .collection("messages")
-    //            .document(fromId)
-    //            .collection(toId)
-    //            .order(by: "timestamp", descending: false)
-    //            .getDocuments { documentSnapshot, error in
-    //                if let error = error {
-    //
-    //                    self.alertMessage = error.localizedDescription
-    //                    print(self.alertMessage)
-    //                    return
-    //
-    //                }
-    //
-    //                documentSnapshot?.documents.forEach({ snapshot in
-    //                    let data = snapshot.data()
-    //                    self.allMessage.append(.init(data: data))
-    //                })
-    //            }
-    //    }
+//        func getMessage(selectedUser: User?) {
+//
+//            guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+//
+//            guard let toId = selectedUser?.uid else { return }
+//
+//            FirebaseManager.shared.firestore
+//                .collection("messages")
+//                .document(fromId)
+//                .collection(toId)
+//                .order(by: "timestamp", descending: false)
+//                .getDocuments { documentSnapshot, error in
+//                    if let error = error {
+//
+//                        self.alertMessage = error.localizedDescription
+//                        print(self.alertMessage)
+//                        return
+//
+//                    }
+//
+//                    documentSnapshot?.documents.forEach({ snapshot in
+//                        let data = snapshot.data()
+//                        self.allMessage.append(.init(data: data))
+//                    })
+//                }
+//        }
     
     //MARK: - getMessage
     func getMessage(selectedUser: User?) {
-        
+
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
+
         guard let toId = selectedUser?.uid else { return }
-        
+
         FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
             .collection(toId)
             .order(by: "timestamp", descending: false)
-            .getDocuments { documentSnapshot, error in
-                
+//            .getDocuments { documentSnapshot, error in
+            .addSnapshotListener { documentSnapshot, error in
+
                 guard let data = documentSnapshot else {return}
-                
+
                 self.allMessage = data.documents.compactMap({ snap in
-                    
+
                     let id = snap.documentID
                     let fromId = snap.get("fromId") as! String
                     let toId = snap.get("toId") as! String
                     let text = snap.get("text") as! String
                     let timestamp = snap.get("timestamp") as! Timestamp
-                    
+
+//                    let formatter = DateFormatter()
+//                    formatter.dateFormat = "MMM d yyyy"
+//                    let date = formatter.string(from: timestamp.dateValue())
+//                    formatter.dateFormat = "HH:mm"
+//                    let time = formatter.string(from: timestamp.dateValue())
+
                     return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
-                    
+
                 })
             }
     }
