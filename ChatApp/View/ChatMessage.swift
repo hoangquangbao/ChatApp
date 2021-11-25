@@ -116,7 +116,6 @@ struct ChatMessage: View {
                 
             }
             .padding(.vertical)
-            
         }
         .padding(.horizontal)
     }
@@ -139,13 +138,12 @@ struct ChatMessage: View {
                 ScrollView {
                     
                     VStack{
-                        
                         ForEach(vm.allMessage){ content in
                             
                             HStack{
                                 
                                 if content.fromId != selectedUser?.uid{
-                                                                
+                                    
                                     Spacer()
                                     
                                     Text(content.text)
@@ -159,19 +157,19 @@ struct ChatMessage: View {
                                     
                                     Text(content.text)
                                         .padding()
-//                                        .frame(maxWidth: .infinity, maxHeight: 20)
                                         .background(Color.gray.opacity(0.2))
                                         .clipShape(ChatBubble(mymsg: false))
-                                        //.foregroundColor(.black)
                                     
                                     Spacer()
-                                                                        
+                                    
                                 }
                             }
                             .padding(.horizontal)
                         }
                     }
+                    .rotationEffect(.degrees(180))
                 }
+                .rotationEffect(.degrees(180))
             }
         }
     }
