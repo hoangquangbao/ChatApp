@@ -12,7 +12,11 @@ import Firebase
 struct ChatMessage: View {
 
     @ObservedObject var vm : HomeViewModel
+    
+    //Get chat content
     @State var text : String = ""
+    
+    //Get selected user from other Page
     @State var selectedUser : User?
     @State var search : String = ""
     
@@ -31,6 +35,22 @@ struct ChatMessage: View {
                 
             }
             .navigationBarHidden(true)
+            .onChange(of: vm.searchMessage) { newValue in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if newValue == vm.searchMessage && vm.searchMessage != "" {
+                        //Check func in here
+                        vm.filterApplyOnMessages()
+                    }
+                }
+                
+                if vm.searchMessage == ""{
+                    
+                    //do nothing
+                    withAnimation(.linear){
+                        vm.filterMessage = vm.allMessages
+                    }
+                }
+            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -99,7 +119,7 @@ struct ChatMessage: View {
                     
                     Image(systemName: "multiply")
                         .font(.system(size: 25, weight: .bold))
-                        .foregroundColor(.gray)
+//                        .foregroundColor(.gray)
                     
                 }
             }
@@ -107,7 +127,8 @@ struct ChatMessage: View {
             
             VStack{
                 
-                TextField("Search in chat", text: $search)
+                TextField("Search in chat", text: $vm.searchMessage)
+                    .autocapitalization(.none)
                 
                 Divider()
                     .frame(height: 1)
@@ -138,7 +159,7 @@ struct ChatMessage: View {
                 ScrollView {
                     
                     VStack{
-                        ForEach(vm.allMessages){ content in
+                        ForEach(vm.filterMessage){ content in
                             
                             HStack{
                                 
@@ -211,7 +232,7 @@ struct ChatMessage: View {
                 
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.gray)
+//                    .foregroundColor(.gray)
                 
             }
             
@@ -234,7 +255,7 @@ struct ChatMessage: View {
                 
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.purple)
+//                    .foregroundColor(.purple)
                 
             }
         }

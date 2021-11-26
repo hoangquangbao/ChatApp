@@ -12,15 +12,22 @@ struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
     
+    //SignIn/Out Page
     @State var isSignInMode = true
     @State var email : String = ""
     @State var username : String = ""
     @State var password :  String = ""
     @State var isHidePassword : Bool = true
+    
+    //Show error or caution
     @State var isShowAlert : Bool = false
     @State var alertMessage : String = ""
+    
+    //Show image library to change Avatar
     @State var shouldShowImagePicker = false
     @State var image: UIImage?
+    
+    //Show MainMessage Page
     @State var isShowMainMessageView : Bool = false
     
     var body: some View {

@@ -12,6 +12,7 @@ struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
     
+    //Show ChatMessage Page
     @State var isShowChatMessage : Bool = false
     @State var selectedUser : User?
     
@@ -35,26 +36,28 @@ struct NewMessage: View {
                 
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.black)
+//                    .foregroundColor(.purple)
             })
             )
-            .onChange(of: vm.search, perform: { value in
+            .onChange(of: vm.searchUser) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
-                    if value == vm.search && vm.search != "" {
+                    if newValue == vm.searchUser && vm.searchUser != "" {
                         
-                        vm.filterUser()
+                        vm.filterApplyOnUsers()
+                        
                     }
                 }
                 
-                if vm.search == ""{
+                if vm.searchUser == ""{
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filter = vm.allSuggestUsers
+                        vm.filterUser = vm.allSuggestUsers
+                        
                     }
                 }
-            })
+            }
         }
     }
     
@@ -69,7 +72,7 @@ struct NewMessage: View {
                 Text("To: ")
                     .foregroundColor(.gray)
                 
-                TextField("Type a name", text: $vm.search)
+                TextField("Type a name", text: $vm.searchUser)
                     .autocapitalization(.none)
                     .submitLabel(.search)
                 
@@ -94,7 +97,7 @@ struct NewMessage: View {
         
             ScrollView{
                 
-                ForEach(vm.filter) { user in
+                ForEach(vm.filterUser) { user in
                     
                     Button {
                         
@@ -122,7 +125,7 @@ struct NewMessage: View {
                         }
                         .padding(.horizontal)
                     }
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 15)
                     NavigationLink(destination: ChatMessage(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
                         EmptyView()
                     }

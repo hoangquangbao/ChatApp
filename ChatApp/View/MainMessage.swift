@@ -12,9 +12,17 @@ import SDWebImageSwiftUI
 struct MainMessage : View {
 
     @ObservedObject var vm = HomeViewModel()
+    
+    //Show SignOut Button
     @State var isShowSignOutButton : Bool = false
+    
+    //Show SignIn/Out Page
     @State var isShowHomePage : Bool = false
+    
+    //Show NewMessage Page
     @State var isShowNewMessage : Bool = false
+    
+    //Show ChatMessage Page
     @State var isShowChatMessage : Bool = false
     @State var selectedUser : User?
 
@@ -30,23 +38,25 @@ struct MainMessage : View {
                 
             }
             .navigationBarHidden(true)
-            .onChange(of: vm.search, perform: { value in
+            .onChange(of: vm.searchUser) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
-                    if value == vm.search && vm.search != "" {
+                    if newValue == vm.searchUser && vm.searchUser != "" {
                         
-                        vm.filterUser()
+                        vm.filterApplyOnUsers()
+                        
                     }
                 }
                 
-                if vm.search == ""{
+                if vm.searchUser == ""{
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filter = vm.allSuggestUsers
+                        vm.filterUser = vm.allSuggestUsers
+                        
                     }
                 }
-            })
+            }
         }
     }
     
@@ -99,11 +109,13 @@ struct MainMessage : View {
                     
                     Text(vm.anUser?.username ?? "")
                         .font(.system(size: 20, weight: .bold))
+//                        .foregroundColor(.purple)
                     
                 } else {
                     
                     Text("Me")
                         .font(.system(size: 20, weight: .bold))
+//                        .foregroundColor(.purple)
                     
                 }
                 
@@ -117,7 +129,7 @@ struct MainMessage : View {
                     
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                         .font(.system(size: 25))
-                        .foregroundColor(.black)
+//                        .foregroundColor(.purple)
                     
                 }
                 .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
@@ -132,7 +144,7 @@ struct MainMessage : View {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     
-                    TextField("Search", text: $vm.search)
+                    TextField("Search", text: $vm.searchUser)
                         .autocapitalization(.none)
                         .submitLabel(.search)
                     
@@ -159,7 +171,7 @@ struct MainMessage : View {
         
         ScrollView {
             
-            ForEach(vm.filter) { user in
+            ForEach(vm.filterUser) { user in
                 
                 Button {
                     
@@ -199,7 +211,7 @@ struct MainMessage : View {
                     }
                     .padding(.horizontal)
                 }
-                .padding(.vertical, 10)
+                .padding(.vertical, 15)
                 NavigationLink(destination: ChatMessage(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
                     EmptyView()
                 }

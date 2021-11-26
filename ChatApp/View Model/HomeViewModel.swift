@@ -10,13 +10,24 @@ import Firebase
 
 class HomeViewModel: ObservableObject {
     
+    //Show error or caution
     @Published var alertMessage : String = ""
+    
+    //Show owner account
     @Published var anUser : User?
+    
+    //Show User list
     @Published var allSuggestUsers = [User]()
     @Published var allRecentUsers = [Message]()
+    
+    //Show Chat content
     @Published var allMessages = [Message]()
-    @Published var search = ""
-    @Published var filter = [User]()
+    
+    //Search function
+    @Published var searchUser = ""
+    @Published var filterUser = [User]()
+    @Published var searchMessage = ""
+    @Published var filterMessage = [Message]()
     
     
     init(){
@@ -75,7 +86,7 @@ class HomeViewModel: ObservableObject {
                         self.allSuggestUsers.append(.init(data: data))
                     }
                 })
-                self.filter = self.allSuggestUsers
+                self.filterUser = self.allSuggestUsers
             }
     }
     
@@ -202,6 +213,7 @@ class HomeViewModel: ObservableObject {
                     return Message(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
 
                 })
+                self.filterMessage = self.allMessages
             }
     }
     
@@ -230,15 +242,30 @@ class HomeViewModel: ObservableObject {
 //    }
     
     
-    //MARK: - filterUser
-    func filterUser() {
+    //MARK: - filterApplyOnUsers
+    func filterApplyOnUsers() {
         
         withAnimation(.linear){
-            self.filter = self.allSuggestUsers.filter{
+            
+            self.filterUser = self.allSuggestUsers.filter({
                 
-                return $0.username.lowercased().contains(self.search.lowercased())
+                return $0.username.lowercased().contains(self.searchUser.lowercased())
                 
-            }
+            })
+        }
+    }
+    
+    
+    //MARK: - filterApplyOnMessages
+    func filterApplyOnMessages() {
+        
+        withAnimation(.linear){
+            
+            self.filterMessage = self.allMessages.filter({
+                
+                return $0.text.lowercased().contains(self.searchMessage.lowercased())
+                
+            })
         }
     }
 }
