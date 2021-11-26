@@ -18,7 +18,7 @@ class HomeViewModel: ObservableObject {
     
     //Show User list
     @Published var allSuggestUsers = [User]()
-    @Published var allRecentUsers = [Message]()
+    @Published var allRecentUsers = [String]()
     
     //Show Chat content
     @Published var allMessages = [Message]()
@@ -93,43 +93,43 @@ class HomeViewModel: ObservableObject {
     
     //MARK: - handleSend
     func sendMessage(selectedUser: User?, text: String) {
-        
+
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
+
         guard let toId = selectedUser?.uid else { return }
-        
+
         guard let username = selectedUser?.username else { return }
 
         guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
-        
+
         let document = FirebaseManager.shared.firestore.collection("messages")
             .document(fromId)
             .collection(toId)
             .document()
-        
+
         let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Timestamp()] as [String : Any]
-        
+
         document.setData(messageData) { error in
             if let error = error {
-                
+
                 self.alertMessage = error.localizedDescription
                 print(self.alertMessage)
                 return
-                
+
             }
-            
+
             print("Successfully saved current user sending message")
-            
+
         }
-        
+
         let recipientMessageDocument = FirebaseManager.shared.firestore.collection("messages")
             .document(toId)
             .collection(fromId)
             .document()
-        
+
         recipientMessageDocument.setData(messageData) { error in
             if let error = error {
-                
+
                 self.alertMessage = error.localizedDescription
                 print(self.alertMessage)
                 return
@@ -235,9 +235,13 @@ class HomeViewModel: ObservableObject {
 //
 //                }
 //
-//                guard let data = documentSnapshot else { return }
+//                documentSnapshot?.documents.forEach { snapshot in
+//                    let data = String(snapshot)
 //
-//                self.allRecentUsers = data.data()
+//                    self.allRecentUsers = self.
+//                }
+//
+////                self.allRecentUsers = data.data()
 //            }
 //    }
     
@@ -248,10 +252,11 @@ class HomeViewModel: ObservableObject {
         withAnimation(.linear){
             
             self.filterUser = self.allSuggestUsers.filter({
-                
                 return $0.username.lowercased().contains(self.searchUser.lowercased())
-                
             })
+//            self.filterUser = self.allSuggestUsers.filter({ User in
+//                if User.uid == allSuggestUsers1
+//            })
         }
     }
     
