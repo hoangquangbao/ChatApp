@@ -139,9 +139,9 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    //MARK: - getMessage
+    //MARK: - fetchMessage
     
-//        func getMessage(selectedUser: User?) {
+//        func fetchMessage(selectedUser: User?) {
 //
 //            guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
 //
@@ -166,6 +166,7 @@ class HomeViewModel: ObservableObject {
 //                        let data = snapshot.data()
 //                        self.allMessage.append(.init(data: data))
 //                    })
+//                    self.filterMessage = self.allMessages
 //                }
 //        }
     
