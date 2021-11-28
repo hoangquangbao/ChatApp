@@ -36,7 +36,7 @@ struct NewMessage: View {
                 
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
-//                    .foregroundColor(.purple)
+                    .foregroundColor(.purple)
             })
             )
             .onChange(of: vm.searchUser) { newValue in
@@ -84,7 +84,8 @@ struct NewMessage: View {
              .background(Color.gray)
             
             Text("Suggested")
-                .font(.system(size: 20))
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.gray)
                 //.padding(.horizontal)
             
         }
@@ -117,7 +118,7 @@ struct NewMessage: View {
                                 .shadow(color: .gray, radius: 2)
                             
                             Text(user.username)
-                                .font(.system(size: 17, weight: .bold))
+                                .font(.system(size: 17))
                                 .foregroundColor(.black)
                             
                             Spacer()

@@ -129,7 +129,7 @@ struct MainMessage : View {
                     
                     Image(systemName: "rectangle.and.pencil.and.ellipsis")
                         .font(.system(size: 25))
-//                        .foregroundColor(.purple)
+                        .foregroundColor(.purple)
                     
                 }
                 .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
@@ -159,7 +159,8 @@ struct MainMessage : View {
             .padding(.vertical)
             
             Text("Recent")
-                .font(.system(size: 20))
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.gray)
             
         }
         .padding(.horizontal)
@@ -193,7 +194,8 @@ struct MainMessage : View {
                         VStack(alignment: .leading, spacing: 4){
                             
                             Text(user.username)
-                                .font(.system(size: 17, weight: .bold))
+//                                .font(.system(size: 17, weight: .bold))
+                                .font(.system(size: 17))
                                 .foregroundColor(.black)
                             
                             Text("Messenge send to user")

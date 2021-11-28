@@ -14,7 +14,8 @@ struct Message: Identifiable {
     
     let fromId, toId, username, profileImageUrl, text: String
     let timestamp: Timestamp
-    
+//    let timestamp: Date
+
     //    init(data: [String: Any]) {
     //
     //        self.id = UUID().uuidString
@@ -27,3 +28,15 @@ struct Message: Identifiable {
     //
     //    }
 }
+
+//extension Date{
+//    
+//    static func dateFromCustomString(customString: String) -> Date {
+//        
+//        let dateFomatter = DateFormatter()
+//        dateFomatter.dateFormat = "MM/dd/yyyy"
+//        return dateFomatter.date(from: customString) ?? Date()
+//        
+//    }
+//    
+//}

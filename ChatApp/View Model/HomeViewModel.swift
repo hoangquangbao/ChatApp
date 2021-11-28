@@ -185,14 +185,19 @@ class HomeViewModel: ObservableObject {
 //            .getDocuments { documentSnapshot, error in
             .addSnapshotListener { documentSnapshot, error in
                 
-                if let error = error {
+//                if let error = error {
+//
+//                    self.alertMessage = error.localizedDescription
+//                    return
+//
+//                }
+
+                guard let data = documentSnapshot else {
                     
-                    self.alertMessage = error.localizedDescription
+                    self.alertMessage = error!.localizedDescription
                     return
                     
                 }
-
-                guard let data = documentSnapshot else {return}
 
                 self.allMessages = data.documents.compactMap({ snap in
 

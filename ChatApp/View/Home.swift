@@ -77,7 +77,7 @@ struct Home: View {
                     HStack {
                         
                         Image(systemName: "person.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(.purple)
                         TextField("User name", text: $username)
                         
                     }
@@ -85,7 +85,7 @@ struct Home: View {
                     .submitLabel(.go)
                     .padding()
                     .overlay(
-                        RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
                     )
                     .padding(.horizontal)
                     .overlay (
@@ -114,7 +114,7 @@ struct Home: View {
                                 }
                             }
                             .overlay(RoundedRectangle(cornerRadius: 27)
-                                        .stroke(.gray, lineWidth: 1)
+                                        .stroke(.purple, lineWidth: 1)
                             )
                         }
                             .padding()
@@ -125,7 +125,7 @@ struct Home: View {
                 HStack {
                     
                     Image(systemName: "envelope.fill")
-                        .foregroundColor(.orange)
+                        .foregroundColor(.purple)
                     
                     TextField("Email", text: $email, onEditingChanged: { (isChanged) in
                         if !isChanged {
@@ -147,7 +147,7 @@ struct Home: View {
                 //.cornerRadius(45)
                 .overlay(
                     
-                    RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
                     
                 )
                 .padding(.horizontal)
@@ -158,7 +158,7 @@ struct Home: View {
                     HStack {
                         
                         Image(systemName: "key.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(.purple)
                         
                         if isHidePassword {
                             
@@ -186,7 +186,7 @@ struct Home: View {
                     .submitLabel(.go)
                     .padding()
                     .overlay(
-                        RoundedRectangle(cornerRadius: 30).stroke(Color.orange, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
                     )
                     .padding(.horizontal)
                     
@@ -198,7 +198,7 @@ struct Home: View {
                             
                             Text("Fogot your password ?")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(.orange)
+                                .foregroundColor(.purple)
                                 .padding(.trailing)
                             
                         }
@@ -216,7 +216,7 @@ struct Home: View {
                     Text(isSignInMode ? "SIGN IN" : "SIGN UP")
                         .underline()
                         .font(.system(size: 25, weight: .semibold))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.purple)
                     
                 }
             }

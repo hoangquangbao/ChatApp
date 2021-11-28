@@ -119,7 +119,7 @@ struct ChatMessage: View {
                     
                     Image(systemName: "multiply")
                         .font(.system(size: 25, weight: .bold))
-//                        .foregroundColor(.gray)
+                        .foregroundColor(.purple)
                     
                 }
             }
@@ -232,7 +232,7 @@ struct ChatMessage: View {
                 
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.system(size: 20, weight: .bold))
-//                    .foregroundColor(.gray)
+                    .foregroundColor(.purple)
                 
             }
             
@@ -255,7 +255,7 @@ struct ChatMessage: View {
                 
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 20, weight: .bold))
-//                    .foregroundColor(.purple)
+                    .foregroundColor(.purple)
                 
             }
         }
