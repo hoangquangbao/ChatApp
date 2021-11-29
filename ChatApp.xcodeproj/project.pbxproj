@@ -183,10 +183,10 @@
 			children = (
 				065C040F273A6173009016C3 /* Home.swift */,
 				065134BF273E109800A5A530 /* ImagePicker.swift */,
+				0635FCD2275460AE00EA30B1 /* ResetPassword.swift */,
 				06A4065A27415768004C0D23 /* MainMessage.swift */,
 				06CFE6602745FDB6005BC5B6 /* NewMessage.swift */,
 				063967722746497500A99EEA /* ChatMessage.swift */,
-				0635FCD2275460AE00EA30B1 /* ResetPassword.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";

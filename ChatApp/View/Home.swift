@@ -37,24 +37,22 @@ struct Home: View {
     @State var isShowResetPasswordView : Bool = false
     
     var body: some View {
-        
-        VStack {
             
-            Image("ImageSignInUpPage")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 250, height: 250, alignment: .center)
-                .mask(Circle())
-                .padding()
-                .shadow(color: .white, radius: 2)
-            
-            
-            signView
-        }
-        .navigationBarHidden(true)
-        .alert(isPresented: $isShowAlert) {
-            Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
-        }
+            VStack {
+                
+                Image("ImageSignInUpPage")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 250, height: 250, alignment: .center)
+                    .mask(Circle())
+                    .padding()
+                    .shadow(color: .white, radius: 2)
+                signView
+            }
+            .navigationBarHidden(true)
+            .alert(isPresented: $isShowAlert) {
+                Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
+            }
     }
     
     
@@ -235,9 +233,6 @@ struct Home: View {
             .fullScreenCover(isPresented: $isShowMainMessageView) {
                 MainMessage()
             }
-//            NavigationLink(destination: ResetPassword, isActive: $isShowResetPasswordView) {
-//                EmptyView()
-//            }
             .fullScreenCover(isPresented: $isShowResetPasswordView) {
                 ResetPassword()
             }
@@ -288,10 +283,9 @@ struct Home: View {
                 return
                 
             } else {
-                //                baseViewModel.fetchCurrentUser {
-                //                    isShowDashboardMessenge.toggle()
-                //                }
+
                 isShowMainMessageView.toggle()
+                
             }
         }
     }
@@ -300,26 +294,46 @@ struct Home: View {
     //MARK: - SignUp
     func signUp() {
         
-        FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
+        //Check avatar image is set?
+        if self.image == nil {
             
-            if let err = err {
+            isShowAlert = true
+            alertMessage = "You must set avatar image for your account."
+            return
+            
+        } else {
+            
+            //Check username is set?
+            if self.username == "" {
                 
                 isShowAlert = true
-                alertMessage = err.localizedDescription
+                alertMessage = "What is your account name?"
                 return
                 
+            } else {
+                
+                FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
+                    
+                    if let err = err {
+                        
+                        isShowAlert = true
+                        alertMessage = err.localizedDescription
+                        return
+                        
+                    }
+                    
+                    //Auto move SIGN IN tab...
+                    isSignInMode = true
+                    
+                    //...and show alert successfully created
+                    isShowAlert = true
+                    alertMessage = "Your account has been successfully cereated!"
+                    
+                    //Upload image to Firebase
+                    uploadImageToStorage()
+                    
+                }
             }
-            
-            //Auto move SIGN IN tab...
-            isSignInMode = true
-            
-            //...and show alert successfully created
-            isShowAlert = true
-            alertMessage = "Your account has been successfully cereated!"
-            
-            //Upload image to Firebase
-            uploadImageToStorage()
-            
         }
     }
     
@@ -329,7 +343,9 @@ struct Home: View {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        
         guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
+        
         ref.putData(imageData, metadata: nil) { metadata, err in
             
             if let err = err {

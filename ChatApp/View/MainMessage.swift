@@ -26,6 +26,9 @@ struct MainMessage : View {
     @State var isShowChatMessage : Bool = false
     @State var selectedUser : User?
 
+    init(){
+        vm.fetchCurrentUser()
+    }
     
     var body: some View {
         
