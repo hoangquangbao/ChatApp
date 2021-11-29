@@ -118,7 +118,7 @@ struct NewMessage: View {
                                 .shadow(color: .gray, radius: 2)
                             
                             Text(user.username)
-                                .font(.system(size: 17))
+                                .font(.system(size: 17, weight: .bold))
                                 .foregroundColor(.black)
                             
                             Spacer()

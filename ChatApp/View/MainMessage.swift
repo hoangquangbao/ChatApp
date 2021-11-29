@@ -159,7 +159,7 @@ struct MainMessage : View {
             .padding(.vertical)
             
             Text("Recent")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 20))
                 .foregroundColor(.gray)
             
         }
@@ -194,8 +194,7 @@ struct MainMessage : View {
                         VStack(alignment: .leading, spacing: 4){
                             
                             Text(user.username)
-//                                .font(.system(size: 17, weight: .bold))
-                                .font(.system(size: 17))
+                                .font(.system(size: 17, weight: .bold))
                                 .foregroundColor(.black)
                             
                             Text("Messenge send to user")
