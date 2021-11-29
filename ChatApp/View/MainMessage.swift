@@ -126,7 +126,7 @@ struct MainMessage : View {
                 
                 Button {
                     
-                    isShowNewMessage.toggle()
+                    isShowNewMessage = true
                     
                 } label: {
                     
@@ -181,7 +181,7 @@ struct MainMessage : View {
                     
                     selectedUser = user
                     vm.fetchMessage(selectedUser: selectedUser)
-                    isShowChatMessage.toggle()
+                    isShowChatMessage = true
                     
                 } label: {
                     

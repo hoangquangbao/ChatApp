@@ -104,7 +104,7 @@ struct NewMessage: View {
                         
                         selectedUser = user
                         vm.fetchMessage(selectedUser: selectedUser)
-                        isShowChatMessage.toggle()
+                        isShowChatMessage = true
                         
                     } label: {
                         

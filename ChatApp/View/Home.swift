@@ -11,27 +11,23 @@ import Firebase
 struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
+    @State var isSignInMode : Bool = true
+
 //    @EnvironmentObject var vm : HomeViewModel
 //    @StateObject var vm = HomeViewModel()
 
-    
-    //SignIn/Out Page
-    @State var isSignInMode = true
-    @State var email : String = ""
-    @State var username : String = ""
-    @State var password :  String = ""
     @State var isHidePassword : Bool = true
     
     //Show error or caution
-    @State var isShowAlert : Bool = false
-    @State var alertMessage : String = ""
+//    @State var isShowAlert : Bool = false
+//    @State var alertMessage : String = ""
     
     //Show image library to change Avatar
-    @State var shouldShowImagePicker = false
-    @State var image: UIImage?
+//    @State var shouldShowImagePicker = false
+//    @State var image: UIImage?
     
-    //Show MainMessage Page
-    @State var isShowMainMessageView : Bool = false
+//    //Show MainMessage Page
+//    @State var isShowMainMessageView : Bool = false
     
     //Show ResetPassword Page
     @State var isShowResetPasswordView : Bool = false
@@ -50,8 +46,8 @@ struct Home: View {
                 signView
             }
             .navigationBarHidden(true)
-            .alert(isPresented: $isShowAlert) {
-                Alert(title: Text("Messenger"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
+            .alert(isPresented: $vm.isShowAlert) {
+                Alert(title: Text("Messenger"), message: Text(vm.alertMessage), dismissButton: .default(Text("Got it!")))
             }
     }
     
@@ -76,13 +72,13 @@ struct Home: View {
             
             VStack(spacing: 30) {
                 
-                if !isSignInMode {
+                if !self.isSignInMode {
                     
                     HStack {
                         
                         Image(systemName: "person.fill")
                             .foregroundColor(.purple)
-                        TextField("User name", text: $username)
+                        TextField("User name", text: $vm.username)
                         
                     }
                     .autocapitalization(.none)
@@ -96,13 +92,13 @@ struct Home: View {
                         //Add avatar in here
                         Button {
                             
-                            shouldShowImagePicker.toggle()
+                            vm.isShowImagePicker.toggle()
                             
                         } label: {
                             
                             VStack {
                                 
-                                if let image = self.image {
+                                if let image = vm.image {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
@@ -131,13 +127,13 @@ struct Home: View {
                     Image(systemName: "envelope.fill")
                         .foregroundColor(.purple)
                     
-                    TextField("Email", text: $email, onEditingChanged: { (isChanged) in
+                    TextField("Email", text: $vm.email, onEditingChanged: { isChanged in
                         if !isChanged {
                             
-                            if !self.vm.isValidEmail(self.email) {
+                            if !vm.isValidEmail(vm.email) {
                                 
-                                isShowAlert = true
-                                alertMessage = "Invalidate email format!"
+                                vm.isShowAlert = true
+                                vm.alertMessage = "Invalidate email format!"
                                 
                             }
                         }
@@ -167,11 +163,11 @@ struct Home: View {
                         
                         if isHidePassword {
                             
-                            SecureField(" Password ", text: $password)
+                            SecureField(" Password ", text: $vm.password)
                             
                         } else {
                             
-                            TextField(" Password ", text: $password)
+                            TextField(" Password ", text: $vm.password)
                             
                         }
                         
@@ -227,10 +223,10 @@ struct Home: View {
                     
                 }
             }
-            .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil) {
-                ImagePicker(image: $image)
+            .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
+                ImagePicker(image: $vm.image)
             }
-            .fullScreenCover(isPresented: $isShowMainMessageView) {
+            .fullScreenCover(isPresented: $vm.isShowMainMessageView) {
                 MainMessage()
             }
             .fullScreenCover(isPresented: $isShowResetPasswordView) {
@@ -240,159 +236,18 @@ struct Home: View {
     }
     
     
-//    //MARK: - Validate Email Format
-//    func isValidEmail(_ string: String) -> Bool {
-//        
-//        if string.count > 100 {
-//            return false
-//            
-//        }
-//        
-//        let emailFormat = "(?:[\\p{L}0-9!#$%\\&'*+/=?\\^_`{|}~-]+(?:\\.[\\p{L}0-9!#$%\\&'*+/=?\\^_`{|}" + "~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\" + "x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[\\p{L}0-9](?:[a-" + "z0-9-]*[\\p{L}0-9])?\\.)+[\\p{L}0-9](?:[\\p{L}0-9-]*[\\p{L}0-9])?|\\[(?:(?:25[0-5" + "]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-" + "9][0-9]?|[\\p{L}0-9-]*[\\p{L}0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21" + "-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-//        //        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-//        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
-//        return emailPredicate.evaluate(with: string)
-//        
-//    }
-    
-    
     //MARK: - Handle SIGNIN and SIGNUP option
     func handleSignOption() {
         
         if isSignInMode {
             
-            signIn()
+            vm.signIn()
             
         } else {
             
-            signUp()
-            
+            vm.signUp()
+                
         }
-    }
-    
-    
-    //MARK: - SignIn
-    func signIn() {
-        
-        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
-            
-            if let err = err {
-                
-                isShowAlert = true
-                alertMessage = err.localizedDescription
-                return
-                
-            } else {
-
-                isShowMainMessageView.toggle()
-                
-            }
-        }
-    }
-    
-    
-    //MARK: - SignUp
-    func signUp() {
-        
-        //Check avatar image is set?
-        if self.image == nil {
-            
-            isShowAlert = true
-            alertMessage = "You must set avatar image for your account."
-            return
-            
-        } else {
-            
-            //Check username is set?
-            if self.username == "" {
-                
-                isShowAlert = true
-                alertMessage = "What is your account name?"
-                return
-                
-            } else {
-                
-                FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
-                    
-                    if let err = err {
-                        
-                        isShowAlert = true
-                        alertMessage = err.localizedDescription
-                        return
-                        
-                    }
-                    
-                    //Auto move SIGN IN tab...
-                    isSignInMode = true
-                    
-                    //...and show alert successfully created
-                    isShowAlert = true
-                    alertMessage = "Your account has been successfully cereated!"
-                    
-                    //Upload image to Firebase
-                    uploadImageToStorage()
-                    
-                }
-            }
-        }
-    }
-    
-    
-    //MARK: - This will upload images into Storage and prints out the locations as well
-    func uploadImageToStorage() {
-        
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
-        
-        guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
-        
-        ref.putData(imageData, metadata: nil) { metadata, err in
-            
-            if let err = err {
-                
-                isShowAlert = true
-                alertMessage = err.localizedDescription
-                return
-                
-            }
-            
-            ref.downloadURL { url, err in
-                
-                if let err = err {
-                    
-                    isShowAlert = true
-                    alertMessage = err.localizedDescription
-                    return
-                    
-                }
-                
-                guard let url = url else { return }
-                storeUserInformation(imageProfileUrl: url)
-                
-            }
-        }
-    }
-    
-    
-    //MARK: - This will save newly created users to Firestore database collections
-    func storeUserInformation(imageProfileUrl: URL) {
-        
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        let userData = ["username": username,"email": email, "uid": uid, "profileImageUrl": imageProfileUrl.absoluteString]
-        FirebaseManager.shared.firestore.collection("users")
-            .document(uid).setData(userData) { err in
-                
-                if let err = err {
-                    
-                    isShowAlert = true
-                    alertMessage = err.localizedDescription
-                    return
-                    
-                }
-                
-                print("Success")
-                
-            }
     }
 }
 

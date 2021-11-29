@@ -10,7 +10,20 @@ import Firebase
 
 class HomeViewModel: ObservableObject {
     
+    //SignIn/Out Page
+    @Published var email : String = ""
+    @Published var username : String = ""
+    @Published var password :  String = ""
+        
+    //Show image library to change Avatar
+    @Published var isShowImagePicker = false
+    @Published var image: UIImage?
+    
+    //Show MainMessage Page
+    @Published var isShowMainMessageView : Bool = false
+    
     //Show error or caution
+    @Published var isShowAlert : Bool = false
     @Published var alertMessage : String = ""
     
     //Show owner account
@@ -37,6 +50,7 @@ class HomeViewModel: ObservableObject {
 
     }
     
+    
     //MARK: - Validate Email Format
     func isValidEmail(_ string: String) -> Bool {
         
@@ -53,6 +67,128 @@ class HomeViewModel: ObservableObject {
     }
     
     
+    //MARK: - SignIn
+    func signIn() {
+        
+        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, err in
+            
+            if let err = err {
+                
+                self.isShowAlert = true
+                self.alertMessage = err.localizedDescription
+                return
+                
+            } else {
+
+                self.isShowMainMessageView.toggle()
+                
+            }
+        }
+    }
+    
+    
+    //MARK: - SignUp
+    func signUp() {
+        
+        //Check avatar image is set?
+        if self.username == ""{
+            
+            isShowAlert = true
+            alertMessage = "What is your user name"
+            return
+            
+        } else {
+            
+            //Check username is set?
+            if  self.image == nil{
+                
+                isShowAlert = true
+                alertMessage = "You must set avatar image for your account."
+                return
+                
+            } else {
+                
+                FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, err in
+                    
+                    if let err = err {
+                        
+                        self.isShowAlert = true
+                        self.alertMessage = err.localizedDescription
+                        return
+                        
+                    }
+                    
+                    //Upload image to Firebase
+                    self.uploadImageToStorage()
+                                        
+                }
+            }
+        }
+    }
+    
+    
+    //MARK: - This will upload images into Storage and prints out the locations as well
+    func uploadImageToStorage() {
+        
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        
+        guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
+        
+        ref.putData(imageData, metadata: nil) { metadata, err in
+            
+            if let err = err {
+                
+                self.isShowAlert = true
+                self.alertMessage = err.localizedDescription
+                return
+                
+            }
+            
+            ref.downloadURL { url, err in
+                
+                if let err = err {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    return
+                    
+                }
+                
+                guard let url = url else { return }
+                self.storeUserInformation(imageProfileUrl: url)
+                
+            }
+        }
+    }
+    
+    
+    //MARK: - This will save newly created users to Firestore database collections
+    func storeUserInformation(imageProfileUrl: URL) {
+        
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        let userData = ["username": username,"email": email, "uid": uid, "profileImageUrl": imageProfileUrl.absoluteString]
+        FirebaseManager.shared.firestore.collection("users")
+            .document(uid).setData(userData) { err in
+                
+                if let err = err {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    return
+                    
+                }
+                
+//                //Auto move SIGN IN tab...
+//                self.isSignInMode = true
+                
+                //...and show alert successfully created
+                self.isShowAlert = true
+                self.alertMessage = "Your account has been successfully cereated!"
+//                print("Success")
+                
+            }
+    }
     //MARK: - fetchCurrentUser
     func fetchCurrentUser() {
         
