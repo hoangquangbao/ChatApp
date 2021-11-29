@@ -1,5 +1,5 @@
 # ChatApp
-<img width="713" alt="ChatAppUI" src="https://user-images.githubusercontent.com/66858640/143475386-4eb0f53c-a113-4a17-8916-317ed8367a30.png">
+<img width="992" alt="ChatApp" src="https://user-images.githubusercontent.com/66858640/143815564-3592a52e-836c-457c-b01f-f16de2761334.png">
 
 
 ## Using Swift Package Manager for Firebase
