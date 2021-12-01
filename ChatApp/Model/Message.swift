@@ -13,8 +13,8 @@ struct Message: Identifiable {
     var id: String
     
     let fromId, toId, username, profileImageUrl, text: String
+//    let timestamp: NSNumber
     let timestamp: Timestamp
-//    let timestamp: Date
 
     //    init(data: [String: Any]) {
     //
@@ -28,6 +28,11 @@ struct Message: Identifiable {
     //
     //    }
 }
+
+
+
+
+
 
 //extension Date{
 //    

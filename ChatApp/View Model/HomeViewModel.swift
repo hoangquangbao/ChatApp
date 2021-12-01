@@ -90,7 +90,7 @@ class HomeViewModel: ObservableObject {
     //MARK: - SignUp
     func signUp() {
         
-        //Check avatar image is set?
+        //Check username avatar image is set?
         if self.username == ""{
             
             isShowAlert = true
@@ -99,7 +99,7 @@ class HomeViewModel: ObservableObject {
             
         } else {
             
-            //Check username is set?
+            //Check avatar image is set?
             if  self.image == nil{
                 
                 isShowAlert = true
@@ -131,6 +131,7 @@ class HomeViewModel: ObservableObject {
     func uploadImageToStorage() {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
         
         guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
@@ -156,7 +157,7 @@ class HomeViewModel: ObservableObject {
                 }
                 
                 guard let url = url else { return }
-                self.storeUserInformation(imageProfileUrl: url)
+                self.storeUserInformation(profileImageUrl: url)
                 
             }
         }
@@ -164,12 +165,16 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - This will save newly created users to Firestore database collections
-    func storeUserInformation(imageProfileUrl: URL) {
+    func storeUserInformation(profileImageUrl: URL) {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        let userData = ["username": username,"email": email, "uid": uid, "profileImageUrl": imageProfileUrl.absoluteString]
-        FirebaseManager.shared.firestore.collection("users")
-            .document(uid).setData(userData) { err in
+        
+        let userData = ["username": username,"email": email, "uid": uid, "profileImageUrl": profileImageUrl.absoluteString]
+        
+        FirebaseManager.shared.firestore
+            .collection("users")
+            .document(uid)
+            .setData(userData) { err in
                 
                 if let err = err {
                     
@@ -185,10 +190,15 @@ class HomeViewModel: ObservableObject {
                 //...and show alert successfully created
                 self.isShowAlert = true
                 self.alertMessage = "Your account has been successfully cereated!"
-//                print("Success")
                 
+                self.username = ""
+                self.email = ""
+                self.password = ""
+                self.image = nil
             }
     }
+    
+    
     //MARK: - fetchCurrentUser
     func fetchCurrentUser() {
         
@@ -198,7 +208,10 @@ class HomeViewModel: ObservableObject {
             
         }
         
-        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument { snapshot, error in
+        FirebaseManager.shared.firestore
+            .collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
             if let error = error {
                 
                 self.alertMessage = error.localizedDescription
@@ -209,7 +222,7 @@ class HomeViewModel: ObservableObject {
             
             guard let data = snapshot?.data() else {
                 
-                self.alertMessage = "No data found"
+                print("No data found")
                 return
                 
             }
@@ -225,6 +238,7 @@ class HomeViewModel: ObservableObject {
         FirebaseManager.shared.firestore
             .collection("users")
             .getDocuments { documentSnapshot, error in
+                
                 if let error = error {
                     
                     self.alertMessage = error.localizedDescription
@@ -245,7 +259,7 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    //MARK: - handleSend
+    //MARK: - sendMessage
     func sendMessage(selectedUser: User?, text: String) {
 
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
@@ -256,12 +270,15 @@ class HomeViewModel: ObservableObject {
 
         guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
 
-        let document = FirebaseManager.shared.firestore.collection("messages")
+        let document = FirebaseManager.shared.firestore
+            .collection("messages")
             .document(fromId)
             .collection(toId)
             .document()
-
-        let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Timestamp()] as [String : Any]
+//
+//        let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Timestamp()] as [String : Any]
+        
+        let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Date.now] as [String : Any]
 
         document.setData(messageData) { error in
             if let error = error {
@@ -276,7 +293,8 @@ class HomeViewModel: ObservableObject {
 
         }
 
-        let recipientMessageDocument = FirebaseManager.shared.firestore.collection("messages")
+        let recipientMessageDocument = FirebaseManager.shared.firestore
+            .collection("messages")
             .document(toId)
             .collection(fromId)
             .document()
@@ -290,6 +308,55 @@ class HomeViewModel: ObservableObject {
 
             }
         }
+        
+        recentUserChat(selectedUser: selectedUser, text: text)
+        
+    }
+    
+    
+    //MARK: - recentUserChat
+    
+    func recentUserChat(selectedUser: User?, text: String){
+        
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+
+        guard let toId = selectedUser?.uid else { return }
+        
+        guard let username = selectedUser?.username else { return }
+
+        guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
+        
+    
+        let userData = ["fromID" : fromId, "toID" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "lastMessage" : text, "timestamp" : Date.now] as [String : Any]
+        
+         //Sender
+        FirebaseManager.shared.firestore
+            .collection("recentUserChat")
+            .document(fromId)
+            .setData(userData) { error in
+                
+                if let error = error {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = error.localizedDescription
+                    return
+                }
+            }
+        
+        //Receiver
+        FirebaseManager.shared.firestore
+            .collection("recentUserChat")
+            .document(toId)
+            .setData(userData) { error in
+                
+                if let error = error {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = error.localizedDescription
+                    return
+                }
+            }
+
     }
     
     
@@ -339,19 +406,14 @@ class HomeViewModel: ObservableObject {
 //            .getDocuments { documentSnapshot, error in
             .addSnapshotListener { documentSnapshot, error in
                 
-//                if let error = error {
-//
-//                    self.alertMessage = error.localizedDescription
-//                    return
-//
-//                }
+                if let error = error {
 
-                guard let data = documentSnapshot else {
-                    
-                    self.alertMessage = error!.localizedDescription
+                    self.alertMessage = error.localizedDescription
                     return
-                    
+
                 }
+
+                guard let data = documentSnapshot else { return }
 
                 self.allMessages = data.documents.compactMap({ snap in
 
@@ -385,7 +447,6 @@ class HomeViewModel: ObservableObject {
 //
 //        FirebaseManager.shared.firestore
 //            .collection("messages")
-//            .document(fromId)
 //            .addSnapshotListener { documentSnapshot, error in
 //
 //                if let error = error {
@@ -395,13 +456,11 @@ class HomeViewModel: ObservableObject {
 //
 //                }
 //
-//                documentSnapshot?.documents.forEach { snapshot in
-//                    let data = String(snapshot)
+//                for document in documentSnapshot.collection {
 //
-//                    self.allRecentUsers = self.
 //                }
 //
-////                self.allRecentUsers = data.data()
+//
 //            }
 //    }
     

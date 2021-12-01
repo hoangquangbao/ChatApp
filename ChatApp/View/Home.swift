@@ -12,37 +12,12 @@ struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
     @State var isSignInMode : Bool = true
-
-//    @EnvironmentObject var vm : HomeViewModel
-//    @StateObject var vm = HomeViewModel()
-
     @State var isHidePassword : Bool = true
-    
-    //Show error or caution
-//    @State var isShowAlert : Bool = false
-//    @State var alertMessage : String = ""
-    
-    //Show image library to change Avatar
-//    @State var shouldShowImagePicker = false
-//    @State var image: UIImage?
-    
-//    //Show MainMessage Page
-//    @State var isShowMainMessageView : Bool = false
-    
-    //Show ResetPassword Page
     @State var isShowResetPasswordView : Bool = false
     
     var body: some View {
             
             VStack {
-                
-                Image("ImageSignInUpPage")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 250, height: 250, alignment: .center)
-                    .mask(Circle())
-                    .padding()
-                    .shadow(color: .white, radius: 2)
                 signView
             }
             .navigationBarHidden(true)
@@ -56,6 +31,14 @@ struct Home: View {
     private var signView : some View{
         
         ScrollView{
+            
+            Image("ImageSignInUpPage")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 250, height: 250, alignment: .center)
+                .mask(Circle())
+                .padding()
+                .shadow(color: .white, radius: 2)
             
             Picker("", selection: $isSignInMode) {
                 
@@ -82,7 +65,7 @@ struct Home: View {
                         
                     }
                     .autocapitalization(.none)
-                    .submitLabel(.go)
+                    .submitLabel(.next)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
@@ -92,7 +75,7 @@ struct Home: View {
                         //Add avatar in here
                         Button {
                             
-                            vm.isShowImagePicker.toggle()
+                            vm.isShowImagePicker = true
                             
                         } label: {
                             
@@ -142,7 +125,7 @@ struct Home: View {
                 }
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
-                .submitLabel(.go)
+                .submitLabel(.next)
                 .padding()
                 //.background()
                 //.cornerRadius(45)
@@ -250,6 +233,8 @@ struct Home: View {
         }
     }
 }
+
+
 
 struct Home_Previews: PreviewProvider {
     

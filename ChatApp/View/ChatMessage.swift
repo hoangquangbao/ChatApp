@@ -85,7 +85,6 @@ struct ChatMessage: View {
                                 Circle()
                                     .stroke(.black)
                             )
-                        
                     }
                 }
                 .shadow(color: .black, radius: 2)
@@ -228,6 +227,8 @@ struct ChatMessage: View {
             
             Button {
                 
+                vm.isShowImagePicker = true
+                
             } label: {
                 
                 Image(systemName: "photo.on.rectangle.angled")
@@ -263,6 +264,9 @@ struct ChatMessage: View {
         .background()
         .cornerRadius(45)
         .padding(.horizontal)
+        .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
+            ImagePicker(image: $vm.image)
+        }
     }
 }
 
