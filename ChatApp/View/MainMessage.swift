@@ -176,7 +176,7 @@ struct MainMessage : View {
         
         ScrollView {
             
-            ForEach(vm.allRecentChatUsers) { user in
+            ForEach(vm.filterMainMessage) { user in
                 
                 Button {
                     

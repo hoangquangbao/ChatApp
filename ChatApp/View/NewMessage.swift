@@ -17,6 +17,14 @@ struct NewMessage: View {
     @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
+    
+    init(){
+        
+        //fetchCurrentUser()
+        //fetchRecentChatUser()
+        vm.fetchUsersToSuggest()
+
+    }
 
     var body: some View {
         
@@ -31,6 +39,7 @@ struct NewMessage: View {
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
+                //vm.fetchRecentChatUser()
                 presentationMode.wrappedValue.dismiss()
             }, label: {
                 

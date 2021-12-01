@@ -45,13 +45,13 @@ class HomeViewModel: ObservableObject {
     @Published var filterChat = [Message]()
     
     
-    init(){
-        
-        fetchCurrentUser()
-        //fetchRecentChatUser()
-        fetchUsersToSuggest()
-
-    }
+//    init(){
+//        
+//        //fetchCurrentUser()
+//        //fetchRecentChatUser()
+//        fetchUsersToSuggest()
+//
+//    }
     
     
     //MARK: - Validate Email Format
@@ -315,23 +315,21 @@ class HomeViewModel: ObservableObject {
     //MARK: - recentUserChat
     func recentChatUser(selectedUser: User?, text: String){
         
-        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        //Sender
+        guard let fromIdS = FirebaseManager.shared.auth.currentUser?.uid else { return }
 
-        guard let toId = selectedUser?.uid else { return }
-        
-        guard let username = selectedUser?.username else { return }
+        guard let toIdS = selectedUser?.uid else { return }
+                
+        guard let usernameS = selectedUser?.username else { return }
 
-        guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
+        guard let profileImageUrlS = selectedUser?.profileImageUrl else { return }
         
-    
-        let userData = ["fromID" : fromId, "toID" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Date.now] as [String : Any]
+        let senderData = ["fromID" : fromIdS, "toID" : toIdS, "username" : usernameS, "profileImageUrl" : profileImageUrlS, "text" : text, "timestamp" : Date.now] as [String : Any]
         
-         //Sender
         FirebaseManager.shared.firestore
             .collection("recentUserChat")
-            .document(fromId + toId)
-//            .collection(toId)
-            .setData(userData) { error in
+            .document(fromIdS + toIdS)
+            .setData(senderData) { error in
                 
                 if let error = error {
                     
@@ -342,11 +340,21 @@ class HomeViewModel: ObservableObject {
             }
         
         //Receiver
+        guard let fromIdR = selectedUser?.uid else { return }
+        
+        guard let toIdR = FirebaseManager.shared.auth.currentUser?.uid else { return }
+                
+        guard let usernameR = anUser?.username else { return }
+
+        guard let profileImageUrlR = anUser?.profileImageUrl else { return }
+        
+        
+        let receiverData = ["fromID" : fromIdR, "toID" : toIdR, "username" : usernameR, "profileImageUrl" : profileImageUrlR, "text" : text, "timestamp" : Date.now] as [String : Any]
+        
         FirebaseManager.shared.firestore
             .collection("recentUserChat")
-            .document(toId + fromId)
-//            .collection(fromId)
-            .setData(userData) { error in
+            .document(fromIdR + toIdR)
+            .setData(receiverData) { error in
                 
                 if let error = error {
                     
@@ -387,11 +395,11 @@ class HomeViewModel: ObservableObject {
                      let text = snapshot.get("text") as? String ?? ""
                      let timestamp = snapshot.get("timestamp") as? Timestamp
                      
-                     //if currentUserId == fromId || currentUserId == toId {
+                     if currentUserId == fromId {
                          
                          return RecentChatUser(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
                          
-                     //}
+                     } else { return nil }
                  })
                  self.filterMainMessage = self.allRecentChatUsers
              }
@@ -439,7 +447,7 @@ class HomeViewModel: ObservableObject {
             .collection("messages")
             .document(fromId)
             .collection(toId)
-            .order(by: "timestamp", descending: false)
+            .order(by: "timestamp", descending: true)
 //            .getDocuments { documentSnapshot, error in
             .addSnapshotListener { documentSnapshot, error in
 
@@ -473,31 +481,6 @@ class HomeViewModel: ObservableObject {
                 self.filterChat = self.allMessages
             }
     }
-    
-    
-    //MARK: - fetchAllUsersToRecent
-//    func fetchAllUsersToRecent() {
-//
-//        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-//
-//        FirebaseManager.shared.firestore
-//            .collection("messages")
-//            .addSnapshotListener { documentSnapshot, error in
-//
-//                if let error = error {
-//
-//                    self.alertMessage = error.localizedDescription
-//                    return
-//
-//                }
-//
-//                for document in documentSnapshot.collection {
-//
-//                }
-//
-//
-//            }
-//    }
     
     
     //MARK: - filterApplyOnUsers
