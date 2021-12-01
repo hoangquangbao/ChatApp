@@ -332,7 +332,8 @@ class HomeViewModel: ObservableObject {
          //Sender
         FirebaseManager.shared.firestore
             .collection("recentUserChat")
-            .document(fromId)
+            .document(fromId + toId)
+//            .collection(toId)
             .setData(userData) { error in
                 
                 if let error = error {
@@ -346,7 +347,8 @@ class HomeViewModel: ObservableObject {
         //Receiver
         FirebaseManager.shared.firestore
             .collection("recentUserChat")
-            .document(toId)
+            .document(toId + fromId)
+//            .collection(fromId)
             .setData(userData) { error in
                 
                 if let error = error {
