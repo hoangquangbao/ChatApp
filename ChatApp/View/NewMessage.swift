@@ -39,21 +39,21 @@ struct NewMessage: View {
                     .foregroundColor(.purple)
             })
             )
-            .onChange(of: vm.searchUser) { newValue in
+            .onChange(of: vm.searchNewMessage) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
-                    if newValue == vm.searchUser && vm.searchUser != "" {
+                    if newValue == vm.searchNewMessage && vm.searchNewMessage != "" {
                         
                         vm.filterApplyOnUsers()
                         
                     }
                 }
                 
-                if vm.searchUser == ""{
+                if vm.searchNewMessage == ""{
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterUser = vm.allSuggestUsers
+                        vm.filterNewMessage = vm.allSuggestUsers
                         
                     }
                 }
@@ -72,7 +72,7 @@ struct NewMessage: View {
                 Text("To: ")
                     .foregroundColor(.gray)
                 
-                TextField("Type a name", text: $vm.searchUser)
+                TextField("Type a name", text: $vm.searchNewMessage)
                     .autocapitalization(.none)
                     .submitLabel(.search)
                 
@@ -98,7 +98,7 @@ struct NewMessage: View {
         
             ScrollView{
                 
-                ForEach(vm.filterUser) { user in
+                ForEach(vm.filterNewMessage) { user in
                     
                     Button {
                         
@@ -127,7 +127,7 @@ struct NewMessage: View {
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 15)
-                    NavigationLink(destination: ChatMessage(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
+                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
                         EmptyView()
                     }
                 }

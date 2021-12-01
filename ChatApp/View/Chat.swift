@@ -9,7 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 import Firebase
 
-struct ChatMessage: View {
+struct Chat: View {
 
     @ObservedObject var vm : HomeViewModel
     
@@ -35,19 +35,19 @@ struct ChatMessage: View {
                 
             }
             .navigationBarHidden(true)
-            .onChange(of: vm.searchMessage) { newValue in
+            .onChange(of: vm.searchChat) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if newValue == vm.searchMessage && vm.searchMessage != "" {
+                    if newValue == vm.searchChat && vm.searchChat != "" {
                         //Check func in here
                         vm.filterApplyOnMessages()
                     }
                 }
                 
-                if vm.searchMessage == ""{
+                if vm.searchChat == ""{
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterMessage = vm.allMessages
+                        vm.filterChat = vm.allMessages
                     }
                 }
             }
@@ -65,29 +65,13 @@ struct ChatMessage: View {
             
             HStack(spacing: 15) {
                 
-                Group{
-                    
-                    if selectedUser?.profileImageUrl != nil{
-                        
+                                            
                         WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
                             .resizable()
                             .scaledToFill()
                             .frame(width: 50, height: 50)
                             .mask(Circle())
-                        
-                    } else {
-                        
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 25))
-                            .padding(10)
-                            .foregroundColor(.black)
-                            .background(
-                                Circle()
-                                    .stroke(.black)
-                            )
-                    }
-                }
-                .shadow(color: .black, radius: 2)
+                            .shadow(color: .black, radius: 2)
                 
                 VStack(alignment: .leading ,spacing: 5){
                     
@@ -126,7 +110,7 @@ struct ChatMessage: View {
             
             VStack{
                 
-                TextField("Search in chat", text: $vm.searchMessage)
+                TextField("Search in chat", text: $vm.searchChat)
                     .autocapitalization(.none)
                 
                 Divider()
@@ -158,7 +142,7 @@ struct ChatMessage: View {
                 ScrollView {
                     
                     VStack{
-                        ForEach(vm.filterMessage){ content in
+                        ForEach(vm.filterChat){ content in
                             
                             HStack{
                                 

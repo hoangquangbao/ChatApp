@@ -28,6 +28,7 @@ struct MainMessage : View {
 
     init(){
         vm.fetchCurrentUser()
+        vm.fetchRecentChatUser()
     }
     
     var body: some View {
@@ -41,21 +42,21 @@ struct MainMessage : View {
                 
             }
             .navigationBarHidden(true)
-            .onChange(of: vm.searchUser) { newValue in
+            .onChange(of: vm.searchMainMessage) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
-                    if newValue == vm.searchUser && vm.searchUser != "" {
+                    if newValue == vm.searchMainMessage && vm.searchMainMessage != "" {
                         
                         vm.filterApplyOnUsers()
                         
                     }
                 }
                 
-                if vm.searchUser == ""{
+                if vm.searchMainMessage == ""{
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterUser = vm.allSuggestUsers
+                        vm.filterMainMessage = vm.allRecentChatUsers
                         
                     }
                 }
@@ -147,7 +148,7 @@ struct MainMessage : View {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     
-                    TextField("Search", text: $vm.searchUser)
+                    TextField("Search", text: $vm.searchMainMessage)
                         .autocapitalization(.none)
                         .submitLabel(.search)
                     
@@ -175,13 +176,13 @@ struct MainMessage : View {
         
         ScrollView {
             
-            ForEach(vm.filterUser) { user in
+            ForEach(vm.allRecentChatUsers) { user in
                 
                 Button {
                     
-                    selectedUser = user
-                    vm.fetchMessage(selectedUser: selectedUser)
-                    isShowChatMessage = true
+//                    selectedUser = user
+//                    vm.fetchMessage(selectedUser: selectedUser)
+//                    isShowChatMessage = true
                     
                 } label: {
                     
@@ -200,7 +201,7 @@ struct MainMessage : View {
                                 .font(.system(size: 17, weight: .bold))
                                 .foregroundColor(.black)
                             
-                            Text("Messenge send to user")
+                            Text(user.text)
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                             
@@ -216,7 +217,7 @@ struct MainMessage : View {
                     .padding(.horizontal)
                 }
                 .padding(.vertical, 15)
-                NavigationLink(destination: ChatMessage(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
+                NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
                     EmptyView()
                 }
             }

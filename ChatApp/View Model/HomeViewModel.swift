@@ -31,22 +31,25 @@ class HomeViewModel: ObservableObject {
     
     //Show User list
     @Published var allSuggestUsers = [User]()
-    @Published var allRecentUsers = [String]()
+    @Published var allRecentChatUsers = [RecentChatUser]()
     
     //Show Chat content
     @Published var allMessages = [Message]()
     
     //Search function
-    @Published var searchUser = ""
-    @Published var filterUser = [User]()
-    @Published var searchMessage = ""
-    @Published var filterMessage = [Message]()
+    @Published var searchMainMessage = ""
+    @Published var filterMainMessage = [RecentChatUser]()
+    @Published var searchNewMessage = ""
+    @Published var filterNewMessage = [User]()
+    @Published var searchChat = ""
+    @Published var filterChat = [Message]()
     
     
     init(){
         
         fetchCurrentUser()
-        fetchAllUsersToSuggest()
+        //fetchRecentChatUser()
+        fetchUsersToSuggest()
 
     }
     
@@ -233,16 +236,15 @@ class HomeViewModel: ObservableObject {
     
     
    //MARK: - fetchAllUsersToSuggest
-    func fetchAllUsersToSuggest() {
+    func fetchUsersToSuggest() {
         
         FirebaseManager.shared.firestore
             .collection("users")
-            .getDocuments { documentSnapshot, error in
+            .addSnapshotListener { documentSnapshot, error in
                 
                 if let error = error {
                     
                     self.alertMessage = error.localizedDescription
-                    print(error.localizedDescription)
                     return
                     
                 }
@@ -254,7 +256,7 @@ class HomeViewModel: ObservableObject {
                         self.allSuggestUsers.append(.init(data: data))
                     }
                 })
-                self.filterUser = self.allSuggestUsers
+                self.filterNewMessage = self.allSuggestUsers
             }
     }
     
@@ -266,10 +268,6 @@ class HomeViewModel: ObservableObject {
 
         guard let toId = selectedUser?.uid else { return }
 
-        guard let username = selectedUser?.username else { return }
-
-        guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
-
         let document = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
@@ -278,7 +276,7 @@ class HomeViewModel: ObservableObject {
 //
 //        let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Timestamp()] as [String : Any]
         
-        let messageData = ["fromId" : fromId, "toId" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Date.now] as [String : Any]
+        let messageData = ["fromId" : fromId, "toId" : toId, "text" : text, "timestamp" : Date.now] as [String : Any]
 
         document.setData(messageData) { error in
             if let error = error {
@@ -309,14 +307,13 @@ class HomeViewModel: ObservableObject {
             }
         }
         
-        recentUserChat(selectedUser: selectedUser, text: text)
+        recentChatUser(selectedUser: selectedUser, text: text)
         
     }
     
     
     //MARK: - recentUserChat
-    
-    func recentUserChat(selectedUser: User?, text: String){
+    func recentChatUser(selectedUser: User?, text: String){
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
 
@@ -327,7 +324,7 @@ class HomeViewModel: ObservableObject {
         guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
         
     
-        let userData = ["fromID" : fromId, "toID" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "lastMessage" : text, "timestamp" : Date.now] as [String : Any]
+        let userData = ["fromID" : fromId, "toID" : toId, "username" : username, "profileImageUrl" : profileImageUrl, "text" : text, "timestamp" : Date.now] as [String : Any]
         
          //Sender
         FirebaseManager.shared.firestore
@@ -358,12 +355,50 @@ class HomeViewModel: ObservableObject {
                     return
                 }
             }
-
     }
     
     
-    //MARK: - fetchMessage
+    //MARK: - fetchRecentChatUser
+     func fetchRecentChatUser() {
+         
+         guard let currentUserId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+         
+         FirebaseManager.shared.firestore
+             .collection("recentUserChat")
+             .addSnapshotListener { documentSnapshot, error in
+                 
+                 if let error = error {
+                     
+                     self.alertMessage = error.localizedDescription
+                     print(error.localizedDescription)
+                     return
+                     
+                 }
+                 
+                 guard let data = documentSnapshot else { return }
+                 
+                 self.allRecentChatUsers = data.documents.compactMap({ snapshot in
+                     
+                     let id = snapshot.documentID
+                     let fromId = snapshot.get("fromID") as? String ?? ""
+                     let toId = snapshot.get("toId") as? String ?? ""
+                     let username = snapshot.get("username") as? String ?? ""
+                     let profileImageUrl = snapshot.get("profileImageUrl") as? String ?? ""
+                     let text = snapshot.get("text") as? String ?? ""
+                     let timestamp = snapshot.get("timestamp") as? Timestamp
+                     
+                     //if currentUserId == fromId || currentUserId == toId {
+                         
+                         return RecentChatUser(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
+                         
+                     //}
+                 })
+                 self.filterMainMessage = self.allRecentChatUsers
+             }
+     }
     
+    
+    //MARK: - fetchMessage
 //        func fetchMessage(selectedUser: User?) {
 //
 //            guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
@@ -387,7 +422,7 @@ class HomeViewModel: ObservableObject {
 //
 //                        data.documents.forEach({ snapshot in
 //                        let data = snapshot.data()
-//                        self.allMessage.append(.init(data: data))
+//                        self.allMessages.append(.init(data: data))
 //                    })
 //                    self.filterMessage = self.allMessages
 //                }
@@ -407,7 +442,7 @@ class HomeViewModel: ObservableObject {
             .order(by: "timestamp", descending: false)
 //            .getDocuments { documentSnapshot, error in
             .addSnapshotListener { documentSnapshot, error in
-                
+
                 if let error = error {
 
                     self.alertMessage = error.localizedDescription
@@ -422,8 +457,6 @@ class HomeViewModel: ObservableObject {
                     let id = snap.documentID
                     let fromId = snap.get("fromId") as? String ?? ""
                     let toId = snap.get("toId") as? String ?? ""
-                    let profileImageUrl = snap.get("profileImageUrl") as? String ?? ""
-                    let username = snap.get("username") as? String ?? ""
                     let text = snap.get("text") as? String ?? ""
                     let timestamp = snap.get("timestamp") as? Timestamp
 
@@ -434,10 +467,10 @@ class HomeViewModel: ObservableObject {
 //                    let time = formatter.string(from: timestamp.dateValue())
 
 //                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
-                    return Message(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
+                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp!)
 
                 })
-                self.filterMessage = self.allMessages
+                self.filterChat = self.allMessages
             }
     }
     
@@ -472,8 +505,8 @@ class HomeViewModel: ObservableObject {
         
         withAnimation(.linear){
             
-            self.filterUser = self.allSuggestUsers.filter({
-                return $0.username.lowercased().contains(self.searchUser.lowercased())
+            self.filterNewMessage = self.allSuggestUsers.filter({
+                return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
             })
 //            self.filterUser = self.allSuggestUsers.filter({ User in
 //                if User.uid == allSuggestUsers1
@@ -487,9 +520,9 @@ class HomeViewModel: ObservableObject {
         
         withAnimation(.linear){
             
-            self.filterMessage = self.allMessages.filter({
+            self.filterChat = self.allMessages.filter({
                 
-                return $0.text.lowercased().contains(self.searchMessage.lowercased())
+                return $0.text.lowercased().contains(self.searchChat.lowercased())
                 
             })
         }
