@@ -39,7 +39,7 @@ struct Chat: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if newValue == vm.searchChat && vm.searchChat != "" {
                         //Check func in here
-                        vm.filterApplyOnMessages()
+                        vm.filterForChat()
                     }
                 }
                 
@@ -234,7 +234,7 @@ struct Chat: View {
                     
                     vm.sendMessage(selectedUser: selectedUser, text: text)
                     text = ""
-                    vm.fetchMessage(selectedUser: selectedUser)
+                    //vm.fetchMessage(selectedUser: selectedUser)
                 }
             } label: {
                 

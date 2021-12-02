@@ -24,17 +24,20 @@ struct MainMessage : View {
     
     //Show ChatMessage Page
     @State var isShowChatMessage : Bool = false
+    
     @State var selectedUser : User?
+    
+    @Environment(\.presentationMode) var presentationMode
 
     init(){
-        vm.fetchCurrentUser()
-        vm.fetchRecentChatUser()
+        
+        //vm.fetchCurrentUser()
+        //vm.fetchRecentChatUser()
+        
     }
     
     var body: some View {
-        
         NavigationView{
-            
             VStack {
                 
                 topNav
@@ -47,7 +50,7 @@ struct MainMessage : View {
                     
                     if newValue == vm.searchMainMessage && vm.searchMainMessage != "" {
                         
-                        vm.filterApplyOnUsers()
+                        vm.filterForNewMessage()
                         
                     }
                 }
@@ -74,7 +77,7 @@ struct MainMessage : View {
                 
                 Button {
                     
-                    isShowSignOutButton.toggle()
+                    isShowSignOutButton = true
                     
                 } label: {
                     
@@ -83,7 +86,7 @@ struct MainMessage : View {
                         .scaledToFill()
                         .frame(width: 50, height: 50)
                         .mask(Circle())
-                        .shadow(color: .black, radius: 2)
+                        .shadow(color: .purple, radius: 2)
                     
                 }
                 .actionSheet(isPresented: $isShowSignOutButton) {
@@ -96,16 +99,18 @@ struct MainMessage : View {
                                 Text("Sign Out"),
                                 action: {
                                     try? FirebaseManager.shared.auth.signOut()
-                                    isShowHomePage.toggle()
+                                    
+//                                    isShowHomePage = true
+                                    presentationMode.wrappedValue.dismiss()
+        
                                 })
                         ])
                 }
-                    .fullScreenCover(isPresented: $isShowHomePage, onDismiss: nil) {
-
-                    
-                    Home()
-                    
-                }
+//                    .fullScreenCover(isPresented: $isShowHomePage, onDismiss: nil) {
+//
+//                    Home()
+//
+//                }
                 
                 let usn = vm.anUser?.username
                 
@@ -193,7 +198,7 @@ struct MainMessage : View {
                             .scaledToFill()
                             .frame(width: 50, height: 50)
                             .mask(Circle())
-                            .shadow(color: .gray, radius: 2)
+                            .shadow(color: .purple, radius: 2)
                         
                         VStack(alignment: .leading, spacing: 4){
                             

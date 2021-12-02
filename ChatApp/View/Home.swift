@@ -11,14 +11,16 @@ import Firebase
 struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
-    @State var isSignInMode : Bool = true
+//    @State var isSignInMode : Bool = true
     @State var isHidePassword : Bool = true
     @State var isShowResetPasswordView : Bool = false
     
     var body: some View {
             
             VStack {
+                
                 signView
+                
             }
             .navigationBarHidden(true)
             .alert(isPresented: $vm.isShowAlert) {
@@ -40,7 +42,7 @@ struct Home: View {
                 .padding()
                 .shadow(color: .white, radius: 2)
             
-            Picker("", selection: $isSignInMode) {
+            Picker("", selection: $vm.isSignInMode) {
                 
                 Text("SIGN IN")
                     .tag(true)
@@ -55,7 +57,7 @@ struct Home: View {
             
             VStack(spacing: 30) {
                 
-                if !self.isSignInMode {
+                if !self.vm.isSignInMode {
                     
                     HStack {
                         
@@ -65,6 +67,7 @@ struct Home: View {
                         
                     }
                     .autocapitalization(.none)
+                    .disableAutocorrection(true)
                     .submitLabel(.next)
                     .padding()
                     .overlay(
@@ -109,7 +112,7 @@ struct Home: View {
                     
                     Image(systemName: "envelope.fill")
                         .foregroundColor(.purple)
-                    
+
                     TextField("Email", text: $vm.email, onEditingChanged: { isChanged in
                         if !isChanged {
                             
@@ -125,6 +128,7 @@ struct Home: View {
                 }
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
+                .disableAutocorrection(true)
                 .submitLabel(.next)
                 .padding()
                 //.background()
@@ -167,6 +171,7 @@ struct Home: View {
                         }
                     }
                     .autocapitalization(.none)
+                    .disableAutocorrection(true)
                     .submitLabel(.go)
                     .padding()
                     .overlay(
@@ -174,11 +179,11 @@ struct Home: View {
                     )
                     .padding(.horizontal)
                     
-                    if isSignInMode {
+                    if vm.isSignInMode {
                         
                         Button {
                             
-                            isShowResetPasswordView.toggle()
+                            isShowResetPasswordView = true
                             
                         } label: {
                             
@@ -199,7 +204,7 @@ struct Home: View {
                     
                 } label: {
                     
-                    Text(isSignInMode ? "SIGN IN" : "SIGN UP")
+                    Text(vm.isSignInMode ? "SIGN IN" : "SIGN UP")
                         .underline()
                         .font(.system(size: 25, weight: .semibold))
                         .foregroundColor(.purple)
@@ -222,7 +227,7 @@ struct Home: View {
     //MARK: - Handle SIGNIN and SIGNUP option
     func handleSignOption() {
         
-        if isSignInMode {
+        if vm.isSignInMode {
             
             vm.signIn()
             

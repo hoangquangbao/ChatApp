@@ -22,7 +22,7 @@ struct NewMessage: View {
         
         //fetchCurrentUser()
         //fetchRecentChatUser()
-        vm.fetchUsersToSuggest()
+        //vm.fetchUsersToSuggest()
 
     }
 
@@ -53,7 +53,7 @@ struct NewMessage: View {
                     
                     if newValue == vm.searchNewMessage && vm.searchNewMessage != "" {
                         
-                        vm.filterApplyOnUsers()
+                        vm.filterForNewMessage()
                         
                     }
                 }
@@ -124,7 +124,7 @@ struct NewMessage: View {
                                 .scaledToFill()
                                 .frame(width: 50, height: 50)
                                 .mask(Circle())
-                                .shadow(color: .gray, radius: 2)
+                                .shadow(color: .purple, radius: 2)
                             
                             Text(user.username)
                                 .font(.system(size: 17, weight: .bold))

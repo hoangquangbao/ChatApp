@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 
 class HomeViewModel: ObservableObject {
     
@@ -14,6 +15,8 @@ class HomeViewModel: ObservableObject {
     @Published var email : String = ""
     @Published var username : String = ""
     @Published var password :  String = ""
+    
+    @Published var isSignInMode : Bool = true
         
     //Show image library to change Avatar
     @Published var isShowImagePicker = false
@@ -45,13 +48,13 @@ class HomeViewModel: ObservableObject {
     @Published var filterChat = [Message]()
     
     
-//    init(){
-//        
-//        //fetchCurrentUser()
-//        //fetchRecentChatUser()
-//        fetchUsersToSuggest()
-//
-//    }
+    init(){
+        
+        fetchCurrentUser()
+        fetchRecentChatUser()
+        fetchUsersToSuggest()
+
+    }
     
     
     //MARK: - Validate Email Format
@@ -83,7 +86,8 @@ class HomeViewModel: ObservableObject {
                 
             } else {
 
-                self.isShowMainMessageView.toggle()
+                self.fetchRecentChatUser()
+                self.isShowMainMessageView = true
                 
             }
         }
@@ -93,11 +97,11 @@ class HomeViewModel: ObservableObject {
     //MARK: - SignUp
     func signUp() {
         
-        //Check username avatar image is set?
+        //Check username is set?
         if self.username == ""{
             
             isShowAlert = true
-            alertMessage = "What is your user name"
+            alertMessage = "What is your user name?"
             return
             
         } else {
@@ -187,17 +191,17 @@ class HomeViewModel: ObservableObject {
                     
                 }
                 
-//                //Auto move SIGN IN tab...
-//                self.isSignInMode = true
+                self.username = ""
+                self.email = ""
+                self.password = ""
+                self.image = nil
                 
                 //...and show alert successfully created
                 self.isShowAlert = true
                 self.alertMessage = "Your account has been successfully cereated!"
                 
-                self.username = ""
-                self.email = ""
-                self.password = ""
-                self.image = nil
+                //Auto move SIGN IN tab...
+                self.isSignInMode = true
             }
     }
     
@@ -307,28 +311,28 @@ class HomeViewModel: ObservableObject {
             }
         }
         
-        recentChatUser(selectedUser: selectedUser, text: text)
-        
+        self.recentChatUser(selectedUser: selectedUser, text: text)
+        self.fetchMessage(selectedUser: selectedUser)
     }
     
     
     //MARK: - recentUserChat
     func recentChatUser(selectedUser: User?, text: String){
         
-        //Sender
-        guard let fromIdS = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
 
-        guard let toIdS = selectedUser?.uid else { return }
-                
+        guard let toId = selectedUser?.uid else { return }
+         
+        //Sender
         guard let usernameS = selectedUser?.username else { return }
 
         guard let profileImageUrlS = selectedUser?.profileImageUrl else { return }
         
-        let senderData = ["fromID" : fromIdS, "toID" : toIdS, "username" : usernameS, "profileImageUrl" : profileImageUrlS, "text" : text, "timestamp" : Date.now] as [String : Any]
+        let senderData = ["fromID" : fromId, "toID" : toId, "username" : usernameS, "profileImageUrl" : profileImageUrlS, "text" : text, "timestamp" : Date.now] as [String : Any]
         
         FirebaseManager.shared.firestore
             .collection("recentUserChat")
-            .document(fromIdS + toIdS)
+            .document(fromId + toId)
             .setData(senderData) { error in
                 
                 if let error = error {
@@ -340,20 +344,16 @@ class HomeViewModel: ObservableObject {
             }
         
         //Receiver
-        guard let fromIdR = selectedUser?.uid else { return }
-        
-        guard let toIdR = FirebaseManager.shared.auth.currentUser?.uid else { return }
-                
         guard let usernameR = anUser?.username else { return }
 
         guard let profileImageUrlR = anUser?.profileImageUrl else { return }
         
         
-        let receiverData = ["fromID" : fromIdR, "toID" : toIdR, "username" : usernameR, "profileImageUrl" : profileImageUrlR, "text" : text, "timestamp" : Date.now] as [String : Any]
+        let receiverData = ["fromID" : toId, "toID" : fromId, "username" : usernameR, "profileImageUrl" : profileImageUrlR, "text" : text, "timestamp" : Date.now] as [String : Any]
         
         FirebaseManager.shared.firestore
             .collection("recentUserChat")
-            .document(fromIdR + toIdR)
+            .document(toId + fromId)
             .setData(receiverData) { error in
                 
                 if let error = error {
@@ -363,6 +363,8 @@ class HomeViewModel: ObservableObject {
                     return
                 }
             }
+        
+        //fetchRecentChatUser()
     }
     
     
@@ -373,6 +375,7 @@ class HomeViewModel: ObservableObject {
          
          FirebaseManager.shared.firestore
              .collection("recentUserChat")
+             .order(by: "timestamp", descending: true)
              .addSnapshotListener { documentSnapshot, error in
                  
                  if let error = error {
@@ -447,7 +450,7 @@ class HomeViewModel: ObservableObject {
             .collection("messages")
             .document(fromId)
             .collection(toId)
-            .order(by: "timestamp", descending: true)
+            .order(by: "timestamp", descending: false)
 //            .getDocuments { documentSnapshot, error in
             .addSnapshotListener { documentSnapshot, error in
 
@@ -484,7 +487,7 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - filterApplyOnUsers
-    func filterApplyOnUsers() {
+    func filterForNewMessage() {
         
         withAnimation(.linear){
             
@@ -499,7 +502,7 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - filterApplyOnMessages
-    func filterApplyOnMessages() {
+    func filterForChat() {
         
         withAnimation(.linear){
             
