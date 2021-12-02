@@ -27,7 +27,7 @@ struct MainMessage : View {
     
     @State var selectedUser : User?
     
-    @Environment(\.presentationMode) var presentationMode
+    //@Environment(\.presentationMode) var presentationMode
 
     init(){
         
@@ -90,7 +90,9 @@ struct MainMessage : View {
                     
                 }
                 .actionSheet(isPresented: $isShowSignOutButton) {
+                    
                     ActionSheet(
+                        
                         title: Text("Setting"),
                         message: Text("Do you want to SignOut?"),
                         buttons: [
@@ -100,17 +102,20 @@ struct MainMessage : View {
                                 action: {
                                     try? FirebaseManager.shared.auth.signOut()
                                     
-//                                    isShowHomePage = true
-                                    presentationMode.wrappedValue.dismiss()
-        
+                                    //presentationMode.wrappedValue.dismiss()
+                                    
+                                    UserDefaults.standard.setIsLoggedIn(value: false)
+                                    
+                                    isShowHomePage = true
+                                    
                                 })
                         ])
                 }
-//                    .fullScreenCover(isPresented: $isShowHomePage, onDismiss: nil) {
-//
-//                    Home()
-//
-//                }
+                .fullScreenCover(isPresented: $isShowHomePage, onDismiss: nil) {
+                    
+                    Home()
+                    
+                }
                 
                 let usn = vm.anUser?.username
                 
@@ -118,13 +123,13 @@ struct MainMessage : View {
                     
                     Text(vm.anUser?.username ?? "")
                         .font(.system(size: 20, weight: .bold))
-//                        .foregroundColor(.purple)
+                    //                        .foregroundColor(.purple)
                     
                 } else {
                     
                     Text("Me")
                         .font(.system(size: 20, weight: .bold))
-//                        .foregroundColor(.purple)
+                    //                        .foregroundColor(.purple)
                     
                 }
                 
@@ -158,11 +163,11 @@ struct MainMessage : View {
                         .submitLabel(.search)
                     
                 }
-
+                
                 Divider()
-                 .frame(height: 1)
-                 .padding(.horizontal, 30)
-                 .background(Color.gray)
+                    .frame(height: 1)
+                    .padding(.horizontal, 30)
+                    .background(Color.gray)
                 
             }
             .padding(.vertical)
@@ -214,7 +219,9 @@ struct MainMessage : View {
                         
                         Spacer()
                         
-                        Text("11:20 AM")
+                        Text("")
+                        //Text(timeAgoDisplay(timestamp: user.timestamp))
+
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                         
@@ -227,6 +234,35 @@ struct MainMessage : View {
                 }
             }
         }
+    }
+    
+    func timeAgoDisplay(timestamp : Date) -> String {
+        
+//        let secondsAgo = Date.distance(timestamp)
+        //let secondsAgo = Calendar.current.component(.second, from: timestamp)
+        
+        
+        
+        //let secondsAgo =  Int(timestamp.timeIntervalSinceReferenceDate)
+        //- Calendar.current.component(.second, from: Date())
+//        let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp.dateValue(), to: Date.now).second!
+        let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp, to: Date.now).second!
+
+        let minute = 60
+        let hour = 60 * minute
+        let day = 24 * hour
+        let week = 7 * day
+        
+        if secondsAgo < minute {
+            return "\(secondsAgo) seconds ago"
+        } else if secondsAgo < hour {
+            return "\(secondsAgo) minutes ago"
+        } else if secondsAgo < day {
+            return "\(secondsAgo) hours ago"
+        } else if secondsAgo < week {
+            return "\(secondsAgo) days ago"
+        }
+        return "\(secondsAgo) weeks ago"
     }
 }
 

@@ -10,8 +10,15 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         
+        if isLoggedIn(){
+            MainMessage()
+        } else {
             Home()
-
+        }
+    }
+    
+    fileprivate func isLoggedIn() -> Bool {
+        return UserDefaults.standard.isLoggedIn()
     }
 }
 

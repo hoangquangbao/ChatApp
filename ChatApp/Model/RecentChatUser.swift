@@ -13,7 +13,9 @@ struct RecentChatUser: Identifiable {
     var id: String
     
     let fromId, toId, username, profileImageUrl, text: String
-    let timestamp: Timestamp
+//    let timestamp: Timestamp
+    let timestamp: Date
+
     
 //    init(data: [String: Any]) {
 //

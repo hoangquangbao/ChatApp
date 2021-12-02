@@ -14,7 +14,9 @@ struct Message: Identifiable {
     
     let fromId, toId, text: String
 //    let timestamp: NSNumber
-    let timestamp: Timestamp
+//    let timestamp: Timestamp
+    let timestamp: Date
+
 
 //        init(data: [String: Any]) {
 //    

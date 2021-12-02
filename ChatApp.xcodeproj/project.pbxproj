@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0635FCD3275460AE00EA30B1 /* ResetPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0635FCD2275460AE00EA30B1 /* ResetPassword.swift */; };
 		063967732746497500A99EEA /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063967722746497500A99EEA /* Chat.swift */; };
+		0649EF942758A6DB0050D18E /* UserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649EF932758A6DB0050D18E /* UserDefault.swift */; };
 		064DB0F427567B3200532C4A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F327567B3200532C4A /* CFNetwork.framework */; };
 		064DB0F627567B6800532C4A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F527567B6800532C4A /* SystemConfiguration.framework */; };
 		064DB0F827567B7600532C4A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F727567B7600532C4A /* MobileCoreServices.framework */; };
@@ -60,6 +61,7 @@
 /* Begin PBXFileReference section */
 		0635FCD2275460AE00EA30B1 /* ResetPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPassword.swift; sourceTree = "<group>"; };
 		063967722746497500A99EEA /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		0649EF932758A6DB0050D18E /* UserDefault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefault.swift; sourceTree = "<group>"; };
 		064DB0F327567B3200532C4A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		064DB0F527567B6800532C4A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		064DB0F727567B7600532C4A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -202,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				065C040F273A6173009016C3 /* Home.swift */,
+				0649EF932758A6DB0050D18E /* UserDefault.swift */,
 				065134BF273E109800A5A530 /* ImagePicker.swift */,
 				0635FCD2275460AE00EA30B1 /* ResetPassword.swift */,
 				06A4065A27415768004C0D23 /* MainMessage.swift */,
@@ -515,6 +518,7 @@
 				06A4065B27415768004C0D23 /* MainMessage.swift in Sources */,
 				066542AF2744E260008B79C1 /* FirebaseManager.swift in Sources */,
 				063967732746497500A99EEA /* Chat.swift in Sources */,
+				0649EF942758A6DB0050D18E /* UserDefault.swift in Sources */,
 				0661C4E5274B4EFD00B3C9AF /* Message.swift in Sources */,
 				065C0410273A6173009016C3 /* Home.swift in Sources */,
 				065134C0273E109800A5A530 /* ImagePicker.swift in Sources */,

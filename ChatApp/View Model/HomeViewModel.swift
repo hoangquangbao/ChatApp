@@ -87,7 +87,11 @@ class HomeViewModel: ObservableObject {
             } else {
 
                 self.fetchRecentChatUser()
+                //self.isShowMainMessageView = true
+                
                 self.isShowMainMessageView = true
+
+                UserDefaults.standard.setIsLoggedIn(value: true)
                 
             }
         }
@@ -396,11 +400,12 @@ class HomeViewModel: ObservableObject {
                      let username = snapshot.get("username") as? String ?? ""
                      let profileImageUrl = snapshot.get("profileImageUrl") as? String ?? ""
                      let text = snapshot.get("text") as? String ?? ""
-                     let timestamp = snapshot.get("timestamp") as? Timestamp
+//                     let timestamp = snapshot.get("timestamp") as? Timestamp
+                     let timestamp = snapshot.get("timestamp") as? Date ?? Date.now
                      
                      if currentUserId == fromId {
                          
-                         return RecentChatUser(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
+                         return RecentChatUser(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp)
                          
                      } else { return nil }
                  })
@@ -469,7 +474,8 @@ class HomeViewModel: ObservableObject {
                     let fromId = snap.get("fromId") as? String ?? ""
                     let toId = snap.get("toId") as? String ?? ""
                     let text = snap.get("text") as? String ?? ""
-                    let timestamp = snap.get("timestamp") as? Timestamp
+//                    let timestamp = snap.get("timestamp") as? Timestamp
+                    let timestamp = snap.get("timestamp") as? Date ?? Date.now
 
 //                    let formatter = DateFormatter()
 //                    formatter.dateFormat = "MMM d yyyy"
@@ -478,7 +484,7 @@ class HomeViewModel: ObservableObject {
 //                    let time = formatter.string(from: timestamp.dateValue())
 
 //                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
-                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp!)
+                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp)
 
                 })
                 self.filterChat = self.allMessages
