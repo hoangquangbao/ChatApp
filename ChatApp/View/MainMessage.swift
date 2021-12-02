@@ -123,13 +123,11 @@ struct MainMessage : View {
                     
                     Text(vm.anUser?.username ?? "")
                         .font(.system(size: 20, weight: .bold))
-                    //                        .foregroundColor(.purple)
                     
                 } else {
                     
                     Text("Me")
                         .font(.system(size: 20, weight: .bold))
-                    //                        .foregroundColor(.purple)
                     
                 }
                 
@@ -219,7 +217,7 @@ struct MainMessage : View {
                         
                         Spacer()
                         
-                        Text("")
+                        Text(timeFormat(times: user.timestamp))
                         //Text(timeAgoDisplay(timestamp: user.timestamp))
 
                             .font(.system(size: 12))
@@ -235,6 +233,21 @@ struct MainMessage : View {
             }
         }
     }
+    
+    func timeFormat(times : Date) -> String {
+        
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        //formatter.dateStyle = .long
+        
+        let timeString = formatter.string(from: times)
+
+//        let formate = times.formatted(date: .complete, time: .shortened)
+        //formatted(date: MMM d, time: h:mm a)
+            //.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss")
+        return timeString
+    }
+    
     
     func timeAgoDisplay(timestamp : Date) -> String {
         
