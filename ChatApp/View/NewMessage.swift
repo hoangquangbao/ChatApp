@@ -18,13 +18,6 @@ struct NewMessage: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    init(){
-        
-        //fetchCurrentUser()
-        //fetchRecentChatUser()
-        //vm.fetchUsersToSuggest()
-
-    }
 
     var body: some View {
         
@@ -107,38 +100,42 @@ struct NewMessage: View {
         
             ScrollView{
                 
-                ForEach(vm.filterNewMessage) { user in
+                LazyVStack{
                     
-                    Button {
+                    ForEach(vm.filterNewMessage) { user in
                         
-                        selectedUser = user
-                        vm.fetchMessage(selectedUser: selectedUser)
-                        isShowChatMessage = true
-                        
-                    } label: {
-                        
-                        HStack(spacing: 10){
+                        Button {
                             
-                            WebImage(url: URL(string: user.profileImageUrl))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .mask(Circle())
-                                .shadow(color: .purple, radius: 2)
+                            selectedUser = user
+                            vm.fetchMessage(selectedUser: selectedUser)
+                            isShowChatMessage = true
                             
-                            Text(user.username)
-                                .font(.system(size: 17, weight: .bold))
-                                .foregroundColor(.black)
+                        } label: {
                             
-                            Spacer()
-                            
+                            HStack(spacing: 10){
+                                
+                                WebImage(url: URL(string: user.profileImageUrl))
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 50, height: 50)
+                                    .mask(Circle())
+                                    .shadow(color: .purple, radius: 2)
+                                
+                                Text(user.username)
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.black)
+                                
+                                Spacer()
+                                
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        .padding(.vertical, 15)
+                        NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
+                            EmptyView()
+                        }
                     }
-                    .padding(.vertical, 15)
-                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
-                        EmptyView()
-                    }
+                    
                 }
             }
     }

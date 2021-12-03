@@ -29,12 +29,6 @@ struct MainMessage : View {
     
     //@Environment(\.presentationMode) var presentationMode
 
-    init(){
-        
-        //vm.fetchCurrentUser()
-        //vm.fetchRecentChatUser()
-        
-    }
     
     var body: some View {
         NavigationView{
@@ -50,7 +44,7 @@ struct MainMessage : View {
                     
                     if newValue == vm.searchMainMessage && vm.searchMainMessage != "" {
                         
-                        vm.filterForNewMessage()
+                        vm.filterForMainMessage()
                         
                     }
                 }
@@ -184,69 +178,79 @@ struct MainMessage : View {
         
         ScrollView {
             
-            ForEach(vm.filterMainMessage) { user in
+            LazyVStack{
                 
-                Button {
+                ForEach(vm.filterMainMessage) { user in
                     
-//                    selectedUser = user
-//                    vm.fetchMessage(selectedUser: selectedUser)
-//                    isShowChatMessage = true
-                    
-                } label: {
-                    
-                    HStack(spacing: 10){
+                    Button {
                         
-                        WebImage(url: URL(string: user.profileImageUrl))
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 50, height: 50)
-                            .mask(Circle())
-                            .shadow(color: .purple, radius: 2)
+    //                    selectedUser = user
+    //                    vm.fetchMessage(selectedUser: selectedUser)
+    //                    isShowChatMessage = true
                         
-                        VStack(alignment: .leading, spacing: 4){
+                    } label: {
+                        
+                        HStack(spacing: 10){
                             
-                            Text(user.username)
-                                .font(.system(size: 17, weight: .bold))
-                                .foregroundColor(.black)
+                            WebImage(url: URL(string: user.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50, height: 50)
+                                .mask(Circle())
+                                .shadow(color: .purple, radius: 2)
                             
-                            Text(user.text)
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
+                            VStack(alignment: .leading, spacing: 4){
+                                
+                                Text(user.username)
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.black)
+                                
+                                Text(user.text)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                                
+                            }
+                            
+                            Spacer()
+                            
+                            //Text(timeFormat(times: user.timestamp))
+                            //Text(timeAgoDisplay(timestamp: user.timestamp))
+
+    //                            .font(.system(size: 12))
+    //                            .foregroundColor(.gray)
                             
                         }
-                        
-                        Spacer()
-                        
-                        Text(timeFormat(times: user.timestamp))
-                        //Text(timeAgoDisplay(timestamp: user.timestamp))
-
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                        
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
-                }
-                .padding(.vertical, 15)
-                NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
-                    EmptyView()
+                    .padding(.vertical, 15)
+                    NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
+                        EmptyView()
+                    }
                 }
             }
         }
     }
     
-    func timeFormat(times : Date) -> String {
-        
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        //formatter.dateStyle = .long
-        
-        let timeString = formatter.string(from: times)
-
-//        let formate = times.formatted(date: .complete, time: .shortened)
-        //formatted(date: MMM d, time: h:mm a)
-            //.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss")
-        return timeString
-    }
+    
+    
+//    func timeFormat(times : Date) -> String {
+//    func timeFormat(times : Timestamp) -> String {
+//
+//        let a = new SimpleDateFormat
+//
+//
+//
+//        let formatter = DateFormatter()
+//        formatter.timeStyle = .short
+//        //formatter.dateStyle = .long
+//
+//        //let timeString = formatter.string(from: times)
+//
+////        let formate = times.formatted(date: .complete, time: .shortened)
+//        //formatted(date: MMM d, time: h:mm a)
+//            //.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss")
+//        return formatter
+//    }
     
     
     func timeAgoDisplay(timestamp : Date) -> String {

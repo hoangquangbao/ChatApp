@@ -18,8 +18,6 @@ struct Chat: View {
     
     //Get selected user from other Page
     @State var selectedUser : User?
-    @State var search : String = ""
-    
     
     @Environment(\.presentationMode) var presentationMode
         
@@ -54,7 +52,6 @@ struct Chat: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        //.onAppear{ vm.getMessage(selectedUser: selectedUser)}
     }
     
     
@@ -127,9 +124,7 @@ struct Chat: View {
     
     //MARK: - mainChat
     var mainChat : some View {
-        
         VStack{
-            
             if vm.allMessages.count == 0{
                 
                 Spacer()
@@ -140,10 +135,8 @@ struct Chat: View {
             } else {
                 
                 ScrollView {
-                    
-                    VStack{
+                    LazyVStack{
                         ForEach(vm.filterChat){ content in
-                            
                             HStack{
                                 
                                 //For conttent chat
