@@ -10,7 +10,7 @@ import Firebase
 import SDWebImageSwiftUI
 
 struct MainMessage : View {
-
+    
     @ObservedObject var vm = HomeViewModel()
     
     //Show SignOut Button
@@ -28,12 +28,6 @@ struct MainMessage : View {
     @State var selectedUser : User?
     
     //@Environment(\.presentationMode) var presentationMode
-
-    init(){
-        
-        vm.fetchRecentChatUser()
-        
-    }
     
     var body: some View {
         NavigationView{
@@ -99,6 +93,7 @@ struct MainMessage : View {
                             .destructive(
                                 Text("Sign Out"),
                                 action: {
+                                    
                                     try? FirebaseManager.shared.auth.signOut()
                                     
                                     //presentationMode.wrappedValue.dismiss()
@@ -144,7 +139,7 @@ struct MainMessage : View {
                     
                 }
                 .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
-                    NewMessage()
+                    NewMessage(vm: vm)
                 }
             }
             
@@ -221,9 +216,9 @@ struct MainMessage : View {
                             
                             //Text(timeFormat(times: user.timestamp))
                             //Text(timeAgoDisplay(timestamp: user.timestamp))
-
-    //                            .font(.system(size: 12))
-    //                            .foregroundColor(.gray)
+                            
+                            //                            .font(.system(size: 12))
+                            //                            .foregroundColor(.gray)
                             
                         }
                         .padding(.horizontal)
@@ -239,38 +234,38 @@ struct MainMessage : View {
     
     
     
-//    func timeFormat(times : Date) -> String {
-//    func timeFormat(times : Timestamp) -> String {
-//
-//        let a = new SimpleDateFormat
-//
-//
-//
-//        let formatter = DateFormatter()
-//        formatter.timeStyle = .short
-//        //formatter.dateStyle = .long
-//
-//        //let timeString = formatter.string(from: times)
-//
-////        let formate = times.formatted(date: .complete, time: .shortened)
-//        //formatted(date: MMM d, time: h:mm a)
-//            //.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss")
-//        return formatter
-//    }
+    //    func timeFormat(times : Date) -> String {
+    //    func timeFormat(times : Timestamp) -> String {
+    //
+    //        let a = new SimpleDateFormat
+    //
+    //
+    //
+    //        let formatter = DateFormatter()
+    //        formatter.timeStyle = .short
+    //        //formatter.dateStyle = .long
+    //
+    //        //let timeString = formatter.string(from: times)
+    //
+    ////        let formate = times.formatted(date: .complete, time: .shortened)
+    //        //formatted(date: MMM d, time: h:mm a)
+    //            //.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss")
+    //        return formatter
+    //    }
     
     
     func timeAgoDisplay(timestamp : Date) -> String {
         
-//        let secondsAgo = Date.distance(timestamp)
+        //        let secondsAgo = Date.distance(timestamp)
         //let secondsAgo = Calendar.current.component(.second, from: timestamp)
         
         
         
         //let secondsAgo =  Int(timestamp.timeIntervalSinceReferenceDate)
         //- Calendar.current.component(.second, from: Date())
-//        let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp.dateValue(), to: Date.now).second!
+        //        let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp.dateValue(), to: Date.now).second!
         let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp, to: Date.now).second!
-
+        
         let minute = 60
         let hour = 60 * minute
         let day = 24 * hour

@@ -10,8 +10,8 @@ import SwiftUI
 struct ResetPassword: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @EnvironmentObject var vm : HomeViewModel
     @State var email : String = ""
+    
     //Show error or caution
     @State var isShowAlert : Bool = false
     @State var alertMessage : String = ""
@@ -88,14 +88,19 @@ struct ResetPassword: View {
             })
             )
             .alert(isPresented: $isShowAlert) {
+                
                 Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("Got it!")))
+                
             }
         }
     }
 }
 
 struct ResetPassword_Previews: PreviewProvider {
+    
     static var previews: some View {
+        
         ResetPassword()
+        
     }
 }

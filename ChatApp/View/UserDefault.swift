@@ -10,13 +10,14 @@ import SwiftUI
 extension UserDefaults {
     
     enum UserDefaultsKeys : String {
+        
         case isLoggedIn
     }
     
     func setIsLoggedIn(value : Bool) {
         
-//        UserDefaults.standard.set(false, forKey: "isLoggedIn")
-//        UserDefaults.standard.synchronize()
+        //        UserDefaults.standard.set(false, forKey: "isLoggedIn")
+        //        UserDefaults.standard.synchronize()
         set(value, forKey: UserDefaultsKeys.isLoggedIn.rawValue)
         synchronize()
         
@@ -25,6 +26,7 @@ extension UserDefaults {
     func isLoggedIn() -> Bool {
         
         return bool(forKey: UserDefaultsKeys.isLoggedIn.rawValue)
+        
     }
     
 }

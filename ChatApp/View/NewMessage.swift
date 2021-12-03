@@ -10,14 +10,13 @@ import SDWebImageSwiftUI
 
 struct NewMessage: View {
     
-    @ObservedObject var vm = HomeViewModel()
+    @ObservedObject var vm : HomeViewModel
     
     //Show ChatMessage Page
     @State var isShowChatMessage : Bool = false
     @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
-    
     
     var body: some View {
         
@@ -27,21 +26,24 @@ struct NewMessage: View {
                 
                 topbarNewMassage
                 mainNewMessage
-
+                
             }
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
-                //vm.fetchRecentChatUser()
+                
                 presentationMode.wrappedValue.dismiss()
+                
             }, label: {
                 
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.purple)
+                
             })
             )
             .onChange(of: vm.searchNewMessage) { newValue in
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
                     if newValue == vm.searchNewMessage && vm.searchNewMessage != "" {
@@ -60,9 +62,7 @@ struct NewMessage: View {
                     }
                 }
             }
-            
         }
-
     }
     
     
@@ -83,14 +83,14 @@ struct NewMessage: View {
             }
             
             Divider()
-             .frame(height: 1)
-             .padding(.horizontal, 30)
-             .background(Color.gray)
+                .frame(height: 1)
+                .padding(.horizontal, 30)
+                .background(Color.gray)
             
             Text("Suggested")
                 .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.gray)
-                //.padding(.horizontal)
+            //.padding(.horizontal)
             
         }
         .padding()
@@ -100,51 +100,51 @@ struct NewMessage: View {
     //MARK: - mainNewMessage
     private var mainNewMessage : some View {
         
-            ScrollView{
+        ScrollView{
+            
+            LazyVStack{
                 
-                LazyVStack{
+                ForEach(vm.filterNewMessage) { user in
                     
-                    ForEach(vm.filterNewMessage) { user in
+                    Button {
                         
-                        Button {
+                        selectedUser = user
+                        vm.fetchMessage(selectedUser: selectedUser)
+                        isShowChatMessage = true
+                        
+                    } label: {
+                        
+                        HStack(spacing: 10){
                             
-                            selectedUser = user
-                            vm.fetchMessage(selectedUser: selectedUser)
-                            isShowChatMessage = true
+                            WebImage(url: URL(string: user.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50, height: 50)
+                                .mask(Circle())
+                                .shadow(color: .purple, radius: 2)
                             
-                        } label: {
+                            Text(user.username)
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundColor(.black)
                             
-                            HStack(spacing: 10){
-                                
-                                WebImage(url: URL(string: user.profileImageUrl))
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 50, height: 50)
-                                    .mask(Circle())
-                                    .shadow(color: .purple, radius: 2)
-                                
-                                Text(user.username)
-                                    .font(.system(size: 17, weight: .bold))
-                                    .foregroundColor(.black)
-                                
-                                Spacer()
-                                
-                            }
-                            .padding(.horizontal)
+                            Spacer()
+                            
                         }
-                        .padding(.vertical, 15)
-                        NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
-                            EmptyView()
-                        }
-//                        .fullScreenCover(isPresented: $isShowChatMessage, onDismiss: nil) {
-//                            Chat(vm: vm, selectedUser: selectedUser)
-//                        }
+                        .padding(.horizontal)
                     }
-
+                    .padding(.vertical, 15)
+                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
+                        EmptyView()
+                    }
+                    //                        .fullScreenCover(isPresented: $isShowChatMessage, onDismiss: nil) {
+                    //                            Chat(vm: vm, selectedUser: selectedUser)
+                    //                        }
                 }
-
-
+                
             }
+            
+            
+        }
         
     }
 }

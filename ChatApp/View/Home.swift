@@ -11,21 +11,21 @@ import Firebase
 struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @State var isSignInMode : Bool = true
+    //    @State var isSignInMode : Bool = true
     @State var isHidePassword : Bool = true
     @State var isShowResetPasswordView : Bool = false
     
     var body: some View {
+        
+        VStack {
             
-            VStack {
-                
-                signView
-                
-            }
-            .navigationBarHidden(true)
-            .alert(isPresented: $vm.isShowAlert) {
-                Alert(title: Text("Messenger"), message: Text(vm.alertMessage), dismissButton: .default(Text("Got it!")))
-            }
+            signView
+            
+        }
+        .navigationBarHidden(true)
+        .alert(isPresented: $vm.isShowAlert) {
+            Alert(title: Text("Messenger"), message: Text(vm.alertMessage), dismissButton: .default(Text("Got it!")))
+        }
     }
     
     
@@ -85,6 +85,7 @@ struct Home: View {
                             VStack {
                                 
                                 if let image = vm.image {
+                                    
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
@@ -112,7 +113,7 @@ struct Home: View {
                     
                     Image(systemName: "envelope.fill")
                         .foregroundColor(.purple)
-
+                    
                     TextField("Email", text: $vm.email, onEditingChanged: { isChanged in
                         if !isChanged {
                             
@@ -234,7 +235,7 @@ struct Home: View {
         } else {
             
             vm.signUp()
-                
+            
         }
     }
 }

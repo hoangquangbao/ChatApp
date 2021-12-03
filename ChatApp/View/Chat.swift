@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 import Firebase
 
 struct Chat: View {
-
+    
     @ObservedObject var vm : HomeViewModel
     
     //Get chat content
@@ -20,7 +20,7 @@ struct Chat: View {
     @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
-        
+    
     var body: some View {
         
         NavigationView{
@@ -46,6 +46,7 @@ struct Chat: View {
                     //do nothing
                     withAnimation(.linear){
                         vm.filterChat = vm.allMessages
+                        
                     }
                 }
             }
@@ -62,13 +63,12 @@ struct Chat: View {
             
             HStack(spacing: 15) {
                 
-                                            
-                        WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 50, height: 50)
-                            .mask(Circle())
-                            .shadow(color: .black, radius: 2)
+                WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .mask(Circle())
+                    .shadow(color: .black, radius: 2)
                 
                 VStack(alignment: .leading ,spacing: 5){
                     
@@ -124,7 +124,9 @@ struct Chat: View {
     
     //MARK: - mainChat
     var mainChat : some View {
+        
         VStack{
+            
             if vm.allMessages.count == 0{
                 
                 Spacer()
@@ -174,7 +176,6 @@ struct Chat: View {
                                                     Circle()
                                                         .stroke(.black)
                                                 )
-                                            
                                         }
                                     }
                                     
@@ -217,9 +218,9 @@ struct Chat: View {
             TextField("Aa", text: $text)
                 .autocapitalization(.none)
                 .submitLabel(.send)
-//                .padding()
+            //                .padding()
                 .background()
-//                .cornerRadius(45)
+            //                .cornerRadius(45)
             
             Button {
                 
@@ -227,7 +228,7 @@ struct Chat: View {
                     
                     vm.sendMessage(selectedUser: selectedUser, text: text)
                     text = ""
-                    //vm.fetchMessage(selectedUser: selectedUser)
+                    
                 }
             } label: {
                 
@@ -257,6 +258,7 @@ struct ChatBubble : Shape {
         let path = UIBezierPath(roundedRect: rect, byRoundingCorners: [.topLeft,.topRight,mymsg ? .bottomLeft : .bottomRight], cornerRadii: CGSize(width: 20, height: 20))
         
         return Path(path.cgPath)
+        
     }
 }
 
