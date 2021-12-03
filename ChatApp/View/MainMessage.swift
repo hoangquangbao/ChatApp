@@ -29,6 +29,11 @@ struct MainMessage : View {
     
     //@Environment(\.presentationMode) var presentationMode
 
+    init(){
+        
+        vm.fetchRecentChatUser()
+        
+    }
     
     var body: some View {
         NavigationView{
@@ -184,9 +189,10 @@ struct MainMessage : View {
                     
                     Button {
                         
-    //                    selectedUser = user
-    //                    vm.fetchMessage(selectedUser: selectedUser)
-    //                    isShowChatMessage = true
+                        //Get the user follow User data type to provide to fetchMessage
+                        selectedUser = getSelectedUser(uid: user.toId )
+                        vm.fetchMessage(selectedUser: selectedUser)
+                        isShowChatMessage = true
                         
                     } label: {
                         
@@ -280,6 +286,16 @@ struct MainMessage : View {
             return "\(secondsAgo) days ago"
         }
         return "\(secondsAgo) weeks ago"
+    }
+    
+    
+    //MARK: - Transfer data type of selected user from "RecentChatUser" to "User"
+    //Refer link for find an object in array: https://stackoverflow.com/questions/28727845/find-an-object-in-array
+    //"func fetchUserToSuggest()" have to init at begin run app, it help "vm.allSuggestUsers" variable have data before calling "func getSelectedUser(uid: String) -> User". If not our get an error "Unexpectedly found nil while unwrapping an Optional value"
+    func getSelectedUser(uid: String) -> User {
+        
+        return vm.allSuggestUsers.first{$0.uid == uid }!
+        
     }
 }
 

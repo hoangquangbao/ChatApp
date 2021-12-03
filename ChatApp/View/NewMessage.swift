@@ -18,7 +18,7 @@ struct NewMessage: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-
+    
     var body: some View {
         
         NavigationView{
@@ -60,7 +60,9 @@ struct NewMessage: View {
                     }
                 }
             }
+            
         }
+
     }
     
     
@@ -134,10 +136,16 @@ struct NewMessage: View {
                         NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
                             EmptyView()
                         }
+//                        .fullScreenCover(isPresented: $isShowChatMessage, onDismiss: nil) {
+//                            Chat(vm: vm, selectedUser: selectedUser)
+//                        }
                     }
-                    
+
                 }
+
+
             }
+        
     }
 }
 

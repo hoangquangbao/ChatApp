@@ -52,7 +52,9 @@ class HomeViewModel: ObservableObject {
         
         fetchCurrentUser()
         fetchRecentChatUser()
-        fetchUsersToSuggest()
+        
+        //This initialization main purpose is using for "func getSelectedUser(uid: String) -> User" in MainMessage
+        fetchUserToSuggest()
 
     }
     
@@ -86,8 +88,7 @@ class HomeViewModel: ObservableObject {
                 
             } else {
 
-                self.fetchRecentChatUser()
-                //self.isShowMainMessageView = true
+                //self.fetchRecentChatUser()
                 
                 self.isShowMainMessageView = true
 
@@ -244,7 +245,7 @@ class HomeViewModel: ObservableObject {
     
     
    //MARK: - fetchAllUsersToSuggest
-    func fetchUsersToSuggest() {
+    func fetchUserToSuggest() {
         
         FirebaseManager.shared.firestore
             .collection("users")
@@ -276,17 +277,17 @@ class HomeViewModel: ObservableObject {
 
         guard let toId = selectedUser?.uid else { return }
 
-        let document = FirebaseManager.shared.firestore
+        let messageData = ["fromId" : fromId, "toId" : toId, "text" : text, "timestamp" : Timestamp()] as [String : Any]
+        
+        let senderMessageDocument = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
             .collection(toId)
             .document()
-//
-        let messageData = ["fromId" : fromId, "toId" : toId, "text" : text, "timestamp" : Timestamp()] as [String : Any]
         
 //        let messageData = ["fromId" : fromId, "toId" : toId, "text" : text, "timestamp" : Date.now] as [String : Any]
 
-        document.setData(messageData) { error in
+        senderMessageDocument.setData(messageData) { error in
             if let error = error {
 
                 self.alertMessage = error.localizedDescription
@@ -294,9 +295,6 @@ class HomeViewModel: ObservableObject {
                 return
 
             }
-
-            print("Successfully saved current user sending message")
-
         }
 
         let recipientMessageDocument = FirebaseManager.shared.firestore
@@ -316,7 +314,7 @@ class HomeViewModel: ObservableObject {
         }
         
         self.recentChatUser(selectedUser: selectedUser, text: text)
-        self.fetchMessage(selectedUser: selectedUser)
+        self.fetchRecentChatUser()
     }
     
     
@@ -326,21 +324,25 @@ class HomeViewModel: ObservableObject {
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
 
         guard let toId = selectedUser?.uid else { return }
-         
+        
+        let uidS = fromId + toId
+        
+        let uidR = toId + fromId
+
         //Sender
         guard let usernameS = selectedUser?.username else { return }
 
         guard let profileImageUrlS = selectedUser?.profileImageUrl else { return }
         
-        let senderData = ["fromID" : fromId, "toID" : toId, "username" : usernameS, "profileImageUrl" : profileImageUrlS, "text" : text, "timestamp" : Timestamp()] as [String : Any]
-        
-        FirebaseManager.shared.firestore
-            .collection("recentUserChat")
-            .document(fromId + toId)
-            .setData(senderData) { error in
+        let senderData = ["fromId" : fromId, "toId" : toId, "username" : usernameS, "profileImageUrl" : profileImageUrlS, "text" : text, "timestamp" : Timestamp()] as [String : Any]
                 
+        FirebaseManager.shared.firestore
+            .collection("recentChatUser") //.collection("recentUserChat")
+            .document(uidS)
+            .setData(senderData) { error in
+
                 if let error = error {
-                    
+
                     self.isShowAlert = true
                     self.alertMessage = error.localizedDescription
                     return
@@ -353,22 +355,20 @@ class HomeViewModel: ObservableObject {
         guard let profileImageUrlR = anUser?.profileImageUrl else { return }
         
         
-        let receiverData = ["fromID" : toId, "toID" : fromId, "username" : usernameR, "profileImageUrl" : profileImageUrlR, "text" : text, "timestamp" : Date.now] as [String : Any]
+        let receiverData = ["fromId" : toId, "toId" : fromId, "username" : usernameR, "profileImageUrl" : profileImageUrlR, "text" : text, "timestamp" : Date.now] as [String : Any]
         
         FirebaseManager.shared.firestore
-            .collection("recentUserChat")
-            .document(toId + fromId)
+            .collection("recentChatUser")
+            .document(uidR)
             .setData(receiverData) { error in
-                
+
                 if let error = error {
-                    
+
                     self.isShowAlert = true
                     self.alertMessage = error.localizedDescription
                     return
                 }
             }
-        
-        //fetchRecentChatUser()
     }
     
     
@@ -378,14 +378,15 @@ class HomeViewModel: ObservableObject {
          guard let currentUserId = FirebaseManager.shared.auth.currentUser?.uid else { return }
          
          FirebaseManager.shared.firestore
-             .collection("recentUserChat")
+             .collection("recentChatUser")
              .order(by: "timestamp", descending: true)
              .addSnapshotListener { documentSnapshot, error in
-                 
+//             .getDocuments { documentSnapshot, error in
+
+         
                  if let error = error {
                      
                      self.alertMessage = error.localizedDescription
-                     print(error.localizedDescription)
                      return
                      
                  }
@@ -395,7 +396,7 @@ class HomeViewModel: ObservableObject {
                  self.allRecentChatUsers = data.documents.compactMap({ snapshot in
                      
                      let id = snapshot.documentID
-                     let fromId = snapshot.get("fromID") as? String ?? ""
+                     let fromId = snapshot.get("fromId") as? String ?? ""
                      let toId = snapshot.get("toId") as? String ?? ""
                      let username = snapshot.get("username") as? String ?? ""
                      let profileImageUrl = snapshot.get("profileImageUrl") as? String ?? ""
@@ -403,8 +404,8 @@ class HomeViewModel: ObservableObject {
                      let timestamp = snapshot.get("timestamp") as? Timestamp
 //                     let timestamp = snapshot.get("timestamp") as? Date ?? Date.now
                      
-                     let str = snapshot.get("timestamp")
-                     print(str ?? 1)
+//                     let str = snapshot.get("timestamp")
+//                     print(str ?? 1)
                      
                      if currentUserId == fromId {
                          
