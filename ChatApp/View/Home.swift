@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 
+
 struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
@@ -19,8 +20,20 @@ struct Home: View {
         
         VStack {
             
-            signView
-            
+            if vm.isShowActivityIndicator {
+                
+                signView.overlay(
+                    
+                    ActivityIndicator()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.orange)
+                    
+                )
+            } else {
+                
+                signView
+                
+            }
         }
         .navigationBarHidden(true)
         .alert(isPresented: $vm.isShowAlert) {
@@ -68,7 +81,7 @@ struct Home: View {
                     }
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
-                    .submitLabel(.next)
+                    .submitLabel(.done)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
@@ -130,7 +143,7 @@ struct Home: View {
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
-                .submitLabel(.next)
+                .submitLabel(.done)
                 .padding()
                 //.background()
                 //.cornerRadius(45)
@@ -173,7 +186,7 @@ struct Home: View {
                     }
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
-                    .submitLabel(.go)
+                    .submitLabel(.done)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 30).stroke(Color.purple, lineWidth: 1)
@@ -221,6 +234,7 @@ struct Home: View {
             .fullScreenCover(isPresented: $isShowResetPasswordView) {
                 ResetPassword()
             }
+            
         }
     }
     
@@ -239,7 +253,6 @@ struct Home: View {
         }
     }
 }
-
 
 
 struct Home_Previews: PreviewProvider {

@@ -217,10 +217,19 @@ struct Chat: View {
             
             TextField("Aa", text: $text)
                 .autocapitalization(.none)
-                .submitLabel(.send)
+                .submitLabel(.done)
             //                .padding()
                 .background()
             //                .cornerRadius(45)
+                .onSubmit {
+                    
+                    if !text.isEmpty{
+                        
+                        vm.sendMessage(selectedUser: selectedUser, text: text)
+                        text = ""
+                        
+                    }
+                }
             
             Button {
                 

@@ -17,6 +17,8 @@ class HomeViewModel: ObservableObject {
     @Published var password :  String = ""
     
     @Published var isSignInMode : Bool = true
+    @Published var isShowActivityIndicator : Bool = false
+    
     
     //Show image library to change Avatar
     @Published var isShowImagePicker = false
@@ -127,6 +129,8 @@ class HomeViewModel: ObservableObject {
                         
                     }
                     
+                    self.isShowActivityIndicator = true
+
                     //Upload image to Firebase
                     self.uploadImageToStorage()
                     
@@ -195,6 +199,8 @@ class HomeViewModel: ObservableObject {
                     return
                     
                 }
+                
+                self.isShowActivityIndicator = false
                 
                 self.username = ""
                 self.email = ""
