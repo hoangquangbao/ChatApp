@@ -88,7 +88,7 @@ struct NewMessage: View {
                 .background(Color.gray)
             
             Text("Suggested")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 20))
                 .foregroundColor(.gray)
             //.padding(.horizontal)
             

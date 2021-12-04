@@ -209,16 +209,15 @@ struct MainMessage : View {
                                 Text(user.text)
                                     .font(.system(size: 12))
                                     .foregroundColor(.gray)
+                                    .lineLimit(1)
                                 
                             }
                             
                             Spacer()
                             
-                            //Text(timeFormat(times: user.timestamp))
-                            //Text(timeAgoDisplay(timestamp: user.timestamp))
-                            
-                            //                            .font(.system(size: 12))
-                            //                            .foregroundColor(.gray)
+                            Text(timeAgoDisplay(timestamp: user.timestamp))
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
                             
                         }
                         .padding(.horizontal)
@@ -231,41 +230,17 @@ struct MainMessage : View {
             }
         }
     }
+
     
+    //MARK: - timeAgoDisplay
+    //Convert data type of "timestam" from Timestamp to Date. After that set timeAgo format
+    func timeAgoDisplay(timestamp : Timestamp) -> String {
+        
+        let today = Date()
+        let startOfNow = today
+        let startOfTimeStamp = timestamp.dateValue()
+        let secondsAgo = Calendar.current.dateComponents([.second], from: startOfTimeStamp, to: startOfNow).second!
     
-    
-    //    func timeFormat(times : Date) -> String {
-    //    func timeFormat(times : Timestamp) -> String {
-    //
-    //        let a = new SimpleDateFormat
-    //
-    //
-    //
-    //        let formatter = DateFormatter()
-    //        formatter.timeStyle = .short
-    //        //formatter.dateStyle = .long
-    //
-    //        //let timeString = formatter.string(from: times)
-    //
-    ////        let formate = times.formatted(date: .complete, time: .shortened)
-    //        //formatted(date: MMM d, time: h:mm a)
-    //            //.getFormattedDate(format: "yyyy-MM-dd HH:mm:ss")
-    //        return formatter
-    //    }
-    
-    
-    func timeAgoDisplay(timestamp : Date) -> String {
-        
-        //        let secondsAgo = Date.distance(timestamp)
-        //let secondsAgo = Calendar.current.component(.second, from: timestamp)
-        
-        
-        
-        //let secondsAgo =  Int(timestamp.timeIntervalSinceReferenceDate)
-        //- Calendar.current.component(.second, from: Date())
-        //        let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp.dateValue(), to: Date.now).second!
-        let secondsAgo = Calendar.current.dateComponents([.second], from: timestamp, to: Date.now).second!
-        
         let minute = 60
         let hour = 60 * minute
         let day = 24 * hour
@@ -274,13 +249,14 @@ struct MainMessage : View {
         if secondsAgo < minute {
             return "\(secondsAgo) seconds ago"
         } else if secondsAgo < hour {
-            return "\(secondsAgo) minutes ago"
+            return "\(secondsAgo / minute) minutes ago"
         } else if secondsAgo < day {
-            return "\(secondsAgo) hours ago"
+            return "\(secondsAgo / hour) hours ago"
         } else if secondsAgo < week {
-            return "\(secondsAgo) days ago"
+            return "\(secondsAgo / day) days ago"
         }
-        return "\(secondsAgo) weeks ago"
+        return "\(secondsAgo / week) weeks ago"
+        
     }
     
     
