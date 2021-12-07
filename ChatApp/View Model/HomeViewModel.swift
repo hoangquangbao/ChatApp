@@ -90,8 +90,8 @@ class HomeViewModel: ObservableObject {
                 
             } else {
                 
-                self.isShowMainMessageView = true
                 UserDefaults.standard.setIsLoggedIn(value: true)
+                self.isShowMainMessageView = true
                 
             }
         }
@@ -290,16 +290,19 @@ class HomeViewModel: ObservableObject {
         
         guard let toId = selectedUser?.uid else { return }
         
-        let messageData = ["fromId" : fromId,
-                           "toId" : toId,
-                           "text" : text,
-                           "timestamp" : Timestamp()] as [String : Any]
+
         
         let senderMessageDocument = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
             .collection(toId)
             .document()
+        
+        let messageData = ["id" : senderMessageDocument.documentID,
+                           "fromId" : fromId,
+                           "toId" : toId,
+                           "text" : text,
+                           "timestamp" : Timestamp()] as [String : Any]
         
         senderMessageDocument.setData(messageData) { error in
             
@@ -375,7 +378,6 @@ class HomeViewModel: ObservableObject {
         guard let usernameR = anUser?.username else { return }
         
         guard let profileImageUrlR = anUser?.profileImageUrl else { return }
-        
         
         let receiverData = ["fromId" : toId,
                             "toId" : fromId,
@@ -516,6 +518,70 @@ class HomeViewModel: ObservableObject {
                     
                 })
                 self.filterChat = self.allMessages
+            }
+    }
+    
+    
+    //MARK: - deleteMessage
+    func deleteMessage(selectedUser: User, selectedMessage: Message) {
+        
+        //        FirebaseManager.shared.firestore
+        //            .collection("messages")
+        //            .document(selectedMessage.fromId)
+        //            .collection(selectedMessage.toId)
+        //            .document(selectedMessage.id)
+        //            .delete { error in
+        //
+        //                if let err = error {
+        //
+        //                    self.isShowAlert = true
+        //                    self.alertMessage = err.localizedDescription
+        //
+        //                }
+        //            }
+        
+        
+        let constant = FirebaseManager.shared.firestore
+            .collection("messages")
+            .document(selectedMessage.fromId)
+            .collection(selectedMessage.toId)
+        
+        //Check if the selected message to delete is last message then assigned lastmessage = "..."
+        constant
+            .order(by: "timestamp", descending: true)
+            .limit(to: 1)
+            .addSnapshotListener { querySnapshot, error in
+                
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    return
+                    
+                }
+                
+                if let data = querySnapshot?.documents.first {
+                    
+                    let messageWillBeDelete = data.get("text") as? String ?? ""
+                    
+                    if messageWillBeDelete  == selectedMessage.text {
+                        
+                        self.recentChatUser(selectedUser: selectedUser, text: "...")
+                        
+                    }
+                }
+            }
+        
+        //Delete selected message
+        constant
+            .document(selectedMessage.id)
+            .delete { error in
+                
+                if let err = error {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    
+                }
             }
     }
     

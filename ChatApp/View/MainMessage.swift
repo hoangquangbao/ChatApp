@@ -13,18 +13,10 @@ struct MainMessage : View {
     
     @ObservedObject var vm = HomeViewModel()
     
-    //Show SignOut Button
     @State var isShowSignOutButton : Bool = false
-    
-    //Show SignIn/Out Page
     @State var isShowHomePage : Bool = false
-    
-    //Show NewMessage Page
     @State var isShowNewMessage : Bool = false
-    
-    //Show ChatMessage Page
     @State var isShowChatMessage : Bool = false
-    
     @State var selectedUser : User?
     
     //@Environment(\.presentationMode) var presentationMode
@@ -94,11 +86,11 @@ struct MainMessage : View {
                                 Text("Sign Out"),
                                 action: {
                                     
+                                    UserDefaults.standard.setIsLoggedIn(value: false)
+                                    
                                     try? FirebaseManager.shared.auth.signOut()
                                     
                                     //presentationMode.wrappedValue.dismiss()
-                                    
-                                    UserDefaults.standard.setIsLoggedIn(value: false)
                                     
                                     isShowHomePage = true
                                     
@@ -152,6 +144,7 @@ struct MainMessage : View {
                     
                     TextField("Search", text: $vm.searchMainMessage)
                         .autocapitalization(.none)
+                        .disableAutocorrection(true)
                         .submitLabel(.search)
                     
                 }
@@ -247,15 +240,15 @@ struct MainMessage : View {
         let week = 7 * day
         
         if secondsAgo < minute {
-            return "\(secondsAgo) seconds ago"
+            return "\(secondsAgo)s ago"
         } else if secondsAgo < hour {
-            return "\(secondsAgo / minute) minutes ago"
+            return "\(secondsAgo / minute)m ago"
         } else if secondsAgo < day {
-            return "\(secondsAgo / hour) hours ago"
+            return "\(secondsAgo / hour)h ago"
         } else if secondsAgo < week {
-            return "\(secondsAgo / day) days ago"
+            return "\(secondsAgo / day)d ago"
         }
-        return "\(secondsAgo / week) weeks ago"
+        return "\(secondsAgo / week)w ago"
         
     }
     

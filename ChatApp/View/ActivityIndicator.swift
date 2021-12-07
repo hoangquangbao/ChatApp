@@ -23,6 +23,7 @@ struct ActivityIndicator: View {
                         .frame(width: geometry.size.width / 5, height: geometry.size.height / 5)
                         .scaleEffect(calcScale(index: index))
                         .offset(y: calcYOffset(geometry))
+                    
                 }.frame(width: geometry.size.width, height: geometry.size.height)
                     .rotationEffect(!self.isAnimating ? .degrees(0) : .degrees(360))
 

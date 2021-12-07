@@ -13,10 +13,7 @@ struct Chat: View {
     
     @ObservedObject var vm : HomeViewModel
     
-    //Get chat content
     @State var text : String = ""
-    
-    //Get selected user from other Page
     @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
@@ -93,6 +90,7 @@ struct Chat: View {
                 
                 Button {
                     
+                    vm.searchChat = ""
                     presentationMode.wrappedValue.dismiss()
                     
                 } label: {
@@ -109,6 +107,7 @@ struct Chat: View {
                 
                 TextField("Search in chat", text: $vm.searchChat)
                     .autocapitalization(.none)
+                    .disableAutocorrection(true)
                 
                 Divider()
                     .frame(height: 1)
@@ -189,6 +188,18 @@ struct Chat: View {
                                 }
                             }
                             .padding(.horizontal)
+                            .contextMenu{
+                                
+                                Button {
+                                    
+                                    vm.deleteMessage(selectedUser: self.selectedUser!, selectedMessage: content)
+                                    
+                                } label: {
+                                    
+                                    Text("Remove")
+                                    
+                                }
+                            }
                         }
                     }
                     .rotationEffect(.degrees(180))
@@ -217,6 +228,7 @@ struct Chat: View {
             
             TextField("Aa", text: $text)
                 .autocapitalization(.none)
+                .disableAutocorrection(true)
                 .submitLabel(.done)
             //                .padding()
                 .background()

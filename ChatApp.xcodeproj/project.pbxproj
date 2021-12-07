@@ -10,10 +10,8 @@
 		0635FCD3275460AE00EA30B1 /* ResetPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0635FCD2275460AE00EA30B1 /* ResetPassword.swift */; };
 		063967732746497500A99EEA /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063967722746497500A99EEA /* Chat.swift */; };
 		0649EF942758A6DB0050D18E /* UserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649EF932758A6DB0050D18E /* UserDefault.swift */; };
-		064DB0F427567B3200532C4A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F327567B3200532C4A /* CFNetwork.framework */; };
 		064DB0F627567B6800532C4A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F527567B6800532C4A /* SystemConfiguration.framework */; };
 		064DB0F827567B7600532C4A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F727567B7600532C4A /* MobileCoreServices.framework */; };
-		064DB0FA27567B8300532C4A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 064DB0F927567B8300532C4A /* CoreGraphics.framework */; };
 		065134C0273E109800A5A530 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065134BF273E109800A5A530 /* ImagePicker.swift */; };
 		065C03E5273A59E9009016C3 /* ChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065C03E4273A59E9009016C3 /* ChatAppApp.swift */; };
 		065C03E7273A59E9009016C3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065C03E6273A59E9009016C3 /* ContentView.swift */; };
@@ -28,7 +26,6 @@
 		066DE1DF275BADA100F720B4 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066DE1DE275BADA100F720B4 /* ActivityIndicator.swift */; };
 		067BD31027572255002ED73F /* RecentChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067BD30F27572255002ED73F /* RecentChatUser.swift */; };
 		067BD3122757DC19002ED73F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 067BD3112757DC18002ED73F /* libz.tbd */; };
-		067BD3142757DD46002ED73F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067BD3132757DD46002ED73F /* CoreServices.framework */; };
 		069DFBD4273BC3B2003E1419 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 069DFBD3273BC3B2003E1419 /* FirebaseAuth */; };
 		069DFBD6273BC3B2003E1419 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 069DFBD5273BC3B2003E1419 /* FirebaseStorage */; };
 		06A4065B27415768004C0D23 /* MainMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A4065A27415768004C0D23 /* MainMessage.swift */; };
@@ -108,11 +105,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				064DB0F827567B7600532C4A /* MobileCoreServices.framework in Frameworks */,
-				067BD3142757DD46002ED73F /* CoreServices.framework in Frameworks */,
 				067BD3122757DC19002ED73F /* libz.tbd in Frameworks */,
-				064DB0FA27567B8300532C4A /* CoreGraphics.framework in Frameworks */,
 				064DB0F627567B6800532C4A /* SystemConfiguration.framework in Frameworks */,
-				064DB0F427567B3200532C4A /* CFNetwork.framework in Frameworks */,
 				06B9238E2743630000D9C974 /* SDWebImageSwiftUI in Frameworks */,
 				069DFBD4273BC3B2003E1419 /* FirebaseAuth in Frameworks */,
 				069DFBD6273BC3B2003E1419 /* FirebaseStorage in Frameworks */,

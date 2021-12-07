@@ -10,9 +10,7 @@ import SDWebImageSwiftUI
 
 struct NewMessage: View {
     
-    @ObservedObject var vm : HomeViewModel
-    
-    //Show ChatMessage Page
+    @ObservedObject var vm : HomeViewModel    
     @State var isShowChatMessage : Bool = false
     @State var selectedUser : User?
     
@@ -78,6 +76,7 @@ struct NewMessage: View {
                 
                 TextField("Type a name", text: $vm.searchNewMessage)
                     .autocapitalization(.none)
+                    .disableAutocorrection(true)
                     .submitLabel(.search)
                 
             }
