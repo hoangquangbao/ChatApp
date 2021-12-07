@@ -175,51 +175,68 @@ struct MainMessage : View {
                 
                 ForEach(vm.filterMainMessage) { user in
                     
-                    Button {
+                    VStack{
                         
-                        //Get the user follow User data type to provide to fetchMessage
-                        selectedUser = getSelectedUser(uid: user.toId )
-                        vm.fetchMessage(selectedUser: selectedUser)
-                        isShowChatMessage = true
-                        
-                    } label: {
-                        
-                        HStack(spacing: 10){
+                        Button {
                             
-                            WebImage(url: URL(string: user.profileImageUrl))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .mask(Circle())
-                                .shadow(color: .purple, radius: 2)
+                            //Get the user follow User data type to provide to fetchMessage
+                            selectedUser = getSelectedUser(uid: user.toId )
+                            vm.fetchMessage(selectedUser: selectedUser)
+                            isShowChatMessage = true
                             
-                            VStack(alignment: .leading, spacing: 4){
+                        } label: {
+                            
+                            HStack(spacing: 10){
                                 
-                                Text(user.username)
-                                    .font(.system(size: 17, weight: .bold))
-                                    .foregroundColor(.black)
+                                WebImage(url: URL(string: user.profileImageUrl))
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 50, height: 50)
+                                    .mask(Circle())
+                                    .shadow(color: .purple, radius: 2)
                                 
-                                Text(user.text)
+                                VStack(alignment: .leading, spacing: 4){
+                                    
+                                    Text(user.username)
+                                        .font(.system(size: 17, weight: .bold))
+                                        .foregroundColor(.black)
+                                    
+                                    Text(user.text)
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.gray)
+                                        .lineLimit(1)
+                                    
+                                }
+                                
+                                Spacer()
+                                
+                                Text(timeAgoDisplay(timestamp: user.timestamp))
                                     .font(.system(size: 12))
                                     .foregroundColor(.gray)
-                                    .lineLimit(1)
                                 
                             }
+                            .padding(.horizontal)
+                        }
+                        .padding(.vertical, 15)
+                        NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
+                            EmptyView()
+                        }
+                        
+                    }
+                    .contextMenu{
+                        
+                        Button {
                             
-                            Spacer()
+                            vm.deleteRecentChatUser(selectedUser: user)
                             
-                            Text(timeAgoDisplay(timestamp: user.timestamp))
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
+                        } label: {
+                            
+                            Text("Remove")
                             
                         }
-                        .padding(.horizontal)
-                    }
-                    .padding(.vertical, 15)
-                    NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
-                        EmptyView()
                     }
                 }
+
             }
         }
     }

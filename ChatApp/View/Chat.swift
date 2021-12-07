@@ -192,7 +192,7 @@ struct Chat: View {
                                 
                                 Button {
                                     
-                                    vm.deleteMessage(selectedUser: self.selectedUser!, selectedMessage: content)
+                                    vm.deleteSenderMessage(selectedUser: self.selectedUser!, selectedMessage: content)
                                     
                                 } label: {
                                     

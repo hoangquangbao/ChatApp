@@ -283,6 +283,37 @@ class HomeViewModel: ObservableObject {
     }
     
     
+    //MARK: - fetchMessage
+    //        func fetchMessage(selectedUser: User?) {
+    //
+    //            guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+    //
+    //            guard let toId = selectedUser?.uid else { return }
+    //
+    //            FirebaseManager.shared.firestore
+    //                .collection("messages")
+    //                .document(fromId)
+    //                .collection(toId)
+    //                .order(by: "timestamp", descending: false)
+    //                .getDocuments { documentSnapshot, error in
+    //                    if let error = error {
+    //
+    //                        self.alertMessage = error.localizedDescription
+    //                        print(self.alertMessage)
+    //                        return
+    //
+    //                    }
+    //                    guard let data = documentSnapshot else {return}
+    //
+    //                        data.documents.forEach({ snapshot in
+    //                        let data = snapshot.data()
+    //                        self.allMessages.append(.init(data: data))
+    //                    })
+    //                    self.filterMessage = self.allMessages
+    //                }
+    //        }
+    
+    
     //MARK: - sendMessage
     func sendMessage(selectedUser: User?, text: String) {
         
@@ -298,13 +329,14 @@ class HomeViewModel: ObservableObject {
             .collection(toId)
             .document()
         
-        let messageData = ["id" : senderMessageDocument.documentID,
+        // "id" field is key to delete message in deletedMessage function
+        let senderMessageData = ["id" : senderMessageDocument.documentID,
                            "fromId" : fromId,
                            "toId" : toId,
                            "text" : text,
                            "timestamp" : Timestamp()] as [String : Any]
         
-        senderMessageDocument.setData(messageData) { error in
+        senderMessageDocument.setData(senderMessageData) { error in
             
             if let error = error {
                 
@@ -321,7 +353,13 @@ class HomeViewModel: ObservableObject {
             .collection(fromId)
             .document()
         
-        recipientMessageDocument.setData(messageData) { error in
+        let recipientMessageData = ["id" : recipientMessageDocument.documentID,
+                           "fromId" : fromId,
+                           "toId" : toId,
+                           "text" : text,
+                           "timestamp" : Timestamp()] as [String : Any]
+        
+        recipientMessageDocument.setData(recipientMessageData) { error in
             
             if let error = error {
                 
@@ -333,6 +371,125 @@ class HomeViewModel: ObservableObject {
         }
         
         self.recentChatUser(selectedUser: selectedUser, text: text)
+        
+    }
+    
+    
+    //MARK: - fetchMessage
+    func fetchMessage(selectedUser: User?) {
+        
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        guard let toId = selectedUser?.uid else { return }
+        
+        FirebaseManager.shared.firestore
+            .collection("messages")
+            .document(fromId)
+            .collection(toId)
+            .order(by: "timestamp", descending: false)
+            .addSnapshotListener { documentSnapshot, error in
+                
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    return
+                    
+                }
+                
+                guard let data = documentSnapshot else { return }
+                
+                self.allMessages = data.documents.compactMap({ snap in
+                    
+                    let id = snap.documentID
+                    let fromId = snap.get("fromId") as? String ?? ""
+                    let toId = snap.get("toId") as? String ?? ""
+                    let text = snap.get("text") as? String ?? ""
+                    let timestamp = snap.get("timestamp") as? Timestamp
+                    //                    let timestamp = snap.get("timestamp") as? Date ?? Date.now
+                    
+                    //                    let formatter = DateFormatter()
+                    //                    formatter.dateFormat = "MMM d yyyy"
+                    //                    let date = formatter.string(from: timestamp.dateValue())
+                    //                    formatter.dateFormat = "HH:mm"
+                    //                    let time = formatter.string(from: timestamp.dateValue())
+                    
+                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp!)
+                    
+                })
+                self.filterChat = self.allMessages
+            }
+    }
+    
+    
+    //MARK: - deleteSenderMessage
+    func deleteSenderMessage(selectedUser: User, selectedMessage: Message) {
+        
+        //        FirebaseManager.shared.firestore
+        //            .collection("messages")
+        //            .document(selectedMessage.fromId)
+        //            .collection(selectedMessage.toId)
+        //            .document(selectedMessage.id)
+        //            .delete { error in
+        //
+        //                if let err = error {
+        //
+        //                    self.isShowAlert = true
+        //                    self.alertMessage = err.localizedDescription
+        //
+        //                }
+        //            }
+        
+        //Check selected message to delete belongs to sender or receiver. After that set correct path to delete.
+        let constant = FirebaseManager.shared.firestore
+                .collection("messages")
+                .document(isDeleteSenderMessage(selectedUser: selectedUser, selectedMessage: selectedMessage) ? selectedMessage.fromId : selectedMessage.toId)
+                .collection(isDeleteSenderMessage(selectedUser: selectedUser, selectedMessage: selectedMessage) ? selectedMessage.toId : selectedMessage.fromId)
+            
+        
+        //Check if the selected message to delete is last message then assigned lastmessage = "..." (lastmessage using in MainMessage UI)
+        constant
+            .order(by: "timestamp", descending: true)
+            .limit(to: 1)
+            .addSnapshotListener { querySnapshot, error in
+                
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    return
+                    
+                }
+                
+                if let data = querySnapshot?.documents.first {
+                    
+                    let messageWillBeDelete = data.get("text") as? String ?? ""
+                    
+                    if messageWillBeDelete  == selectedMessage.text {
+                        
+                        self.recentChatUser(selectedUser: selectedUser, text: "...")
+                        
+                    }
+                }
+            }
+        
+        //Delete selected message
+        constant
+            .document(selectedMessage.id)
+            .delete { error in
+                
+                if let err = error {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    
+                }
+            }
+    }
+    
+    
+    //MARK: - checkIsLastMessage
+    func isDeleteSenderMessage(selectedUser: User, selectedMessage: Message) -> Bool {
+        
+        return FirebaseManager.shared.auth.currentUser?.uid == selectedMessage.fromId
         
     }
     
@@ -446,136 +603,14 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    //MARK: - fetchMessage
-    //        func fetchMessage(selectedUser: User?) {
-    //
-    //            guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-    //
-    //            guard let toId = selectedUser?.uid else { return }
-    //
-    //            FirebaseManager.shared.firestore
-    //                .collection("messages")
-    //                .document(fromId)
-    //                .collection(toId)
-    //                .order(by: "timestamp", descending: false)
-    //                .getDocuments { documentSnapshot, error in
-    //                    if let error = error {
-    //
-    //                        self.alertMessage = error.localizedDescription
-    //                        print(self.alertMessage)
-    //                        return
-    //
-    //                    }
-    //                    guard let data = documentSnapshot else {return}
-    //
-    //                        data.documents.forEach({ snapshot in
-    //                        let data = snapshot.data()
-    //                        self.allMessages.append(.init(data: data))
-    //                    })
-    //                    self.filterMessage = self.allMessages
-    //                }
-    //        }
-    
-    //MARK: - fetchMessage
-    func fetchMessage(selectedUser: User?) {
-        
-        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
-        guard let toId = selectedUser?.uid else { return }
+    //MARK: - deleteRecentChatUser
+    func deleteRecentChatUser(selectedUser: RecentChatUser) {
         
         FirebaseManager.shared.firestore
-            .collection("messages")
-            .document(fromId)
-            .collection(toId)
-            .order(by: "timestamp", descending: false)
-            .addSnapshotListener { documentSnapshot, error in
-                
-                if let error = error {
-                    
-                    self.alertMessage = error.localizedDescription
-                    return
-                    
-                }
-                
-                guard let data = documentSnapshot else { return }
-                
-                self.allMessages = data.documents.compactMap({ snap in
-                    
-                    let id = snap.documentID
-                    let fromId = snap.get("fromId") as? String ?? ""
-                    let toId = snap.get("toId") as? String ?? ""
-                    let text = snap.get("text") as? String ?? ""
-                    let timestamp = snap.get("timestamp") as? Timestamp
-                    //                    let timestamp = snap.get("timestamp") as? Date ?? Date.now
-                    
-                    //                    let formatter = DateFormatter()
-                    //                    formatter.dateFormat = "MMM d yyyy"
-                    //                    let date = formatter.string(from: timestamp.dateValue())
-                    //                    formatter.dateFormat = "HH:mm"
-                    //                    let time = formatter.string(from: timestamp.dateValue())
-                    
-                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp!)
-                    
-                })
-                self.filterChat = self.allMessages
-            }
-    }
-    
-    
-    //MARK: - deleteMessage
-    func deleteMessage(selectedUser: User, selectedMessage: Message) {
-        
-        //        FirebaseManager.shared.firestore
-        //            .collection("messages")
-        //            .document(selectedMessage.fromId)
-        //            .collection(selectedMessage.toId)
-        //            .document(selectedMessage.id)
-        //            .delete { error in
-        //
-        //                if let err = error {
-        //
-        //                    self.isShowAlert = true
-        //                    self.alertMessage = err.localizedDescription
-        //
-        //                }
-        //            }
-        
-        
-        let constant = FirebaseManager.shared.firestore
-            .collection("messages")
-            .document(selectedMessage.fromId)
-            .collection(selectedMessage.toId)
-        
-        //Check if the selected message to delete is last message then assigned lastmessage = "..."
-        constant
-            .order(by: "timestamp", descending: true)
-            .limit(to: 1)
-            .addSnapshotListener { querySnapshot, error in
-                
-                if let error = error {
-                    
-                    self.alertMessage = error.localizedDescription
-                    return
-                    
-                }
-                
-                if let data = querySnapshot?.documents.first {
-                    
-                    let messageWillBeDelete = data.get("text") as? String ?? ""
-                    
-                    if messageWillBeDelete  == selectedMessage.text {
-                        
-                        self.recentChatUser(selectedUser: selectedUser, text: "...")
-                        
-                    }
-                }
-            }
-        
-        //Delete selected message
-        constant
-            .document(selectedMessage.id)
+            .collection("recentChatUser")
+            .document(selectedUser.fromId + selectedUser.toId)
             .delete { error in
-                
+               
                 if let err = error {
                     
                     self.isShowAlert = true
@@ -584,8 +619,6 @@ class HomeViewModel: ObservableObject {
                 }
             }
     }
-    
-    
     //MARK: - filterApplyOnUsers
     func filterForMainMessage() {
         
