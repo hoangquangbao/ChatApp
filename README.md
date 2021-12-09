@@ -1,5 +1,8 @@
 # ChatApp
-<img width="1163" alt="Screen Shot 2021-12-05 at 01 07 13" src="https://user-images.githubusercontent.com/66858640/144719964-71324b9e-0b46-47fe-af07-c9f01878c172.png">
+<img width="807" alt="Screen Shot 2021-12-07 at 22 24 33" src="https://user-images.githubusercontent.com/66858640/145057223-32bf3f2c-001e-49d5-9ad9-660423e9050b.png">
+
+<img width="803" alt="Screen Shot 2021-12-07 at 22 21 39" src="https://user-images.githubusercontent.com/66858640/145056929-cb7bf613-e27d-4216-9202-c1cf1ecb6334.png">
+
 
 
 
