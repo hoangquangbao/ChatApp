@@ -10,9 +10,11 @@ import SDWebImageSwiftUI
 
 struct NewMessage: View {
     
-    @ObservedObject var vm : HomeViewModel    
-    @State var isShowChatMessage : Bool = false
-    @State var selectedUser : User?
+    @ObservedObject var vm = HomeViewModel()
+//    @ObservedObject var vm : HomeViewModel
+//    @State var isShowChatMessage : Bool = false
+
+//    @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -30,7 +32,8 @@ struct NewMessage: View {
             .navigationBarItems(leading:
                                     Button(action: {
                 
-                presentationMode.wrappedValue.dismiss()
+                vm.isShowNewMessage = false
+                //presentationMode.wrappedValue.dismiss()
                 
             }, label: {
                 
@@ -61,6 +64,7 @@ struct NewMessage: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     
@@ -107,9 +111,9 @@ struct NewMessage: View {
                     
                     Button {
                         
-                        selectedUser = user
-                        vm.fetchMessage(selectedUser: selectedUser)
-                        isShowChatMessage = true
+                        vm.selectedUser = user
+                        vm.fetchMessage(selectedUser: vm.selectedUser)
+                        vm.isShowChat = true
                         
                     } label: {
                         
@@ -132,19 +136,16 @@ struct NewMessage: View {
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 15)
-                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.selectedUser), isActive: $isShowChatMessage) {
+//                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.vm.selectedUser), isActive: $vm.isShowChatMessage) {
+                    NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
                         EmptyView()
                     }
                     //                        .fullScreenCover(isPresented: $isShowChatMessage, onDismiss: nil) {
                     //                            Chat(vm: vm, selectedUser: selectedUser)
                     //                        }
                 }
-                
             }
-            
-            
         }
-        
     }
 }
 

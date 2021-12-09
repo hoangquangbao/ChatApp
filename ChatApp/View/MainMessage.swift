@@ -12,12 +12,14 @@ import SDWebImageSwiftUI
 struct MainMessage : View {
     
     @ObservedObject var vm = HomeViewModel()
+//    @State var isShowChatMessage : Bool = false
+
     
-    @State var isShowSignOutButton : Bool = false
-    @State var isShowHomePage : Bool = false
-    @State var isShowNewMessage : Bool = false
-    @State var isShowChatMessage : Bool = false
-    @State var selectedUser : User?
+//    @State var isShowSignOutButton : Bool = false
+//    @State var isShowHomePage : Bool = false
+//    @State var isShowNewMessage : Bool = false
+//    @State var isShowChatMessage : Bool = false
+//    @State var selectedUser : User?
     
     //@Environment(\.presentationMode) var presentationMode
     
@@ -29,6 +31,7 @@ struct MainMessage : View {
                 mainMessageView
                 
             }
+            //.onAppear(perform: vm.fetchRecentChatUser)
             .navigationBarHidden(true)
             .onChange(of: vm.searchMainMessage) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -50,6 +53,7 @@ struct MainMessage : View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     
@@ -62,7 +66,7 @@ struct MainMessage : View {
                 
                 Button {
                     
-                    isShowSignOutButton = true
+                    vm.isShowSignOutButton = true
                     
                 } label: {
                     
@@ -74,7 +78,7 @@ struct MainMessage : View {
                         .shadow(color: .purple, radius: 2)
                     
                 }
-                .actionSheet(isPresented: $isShowSignOutButton) {
+                .actionSheet(isPresented: $vm.isShowSignOutButton) {
                     
                     ActionSheet(
                         
@@ -86,20 +90,25 @@ struct MainMessage : View {
                                 Text("Sign Out"),
                                 action: {
                                     
-                                    UserDefaults.standard.setIsLoggedIn(value: false)
+
                                     
-                                    try? FirebaseManager.shared.auth.signOut()
-                                    
+                                    //try? FirebaseManager.shared.auth.signOut()
+//
+//
+//                                    vm.fetchCurrentUser()
                                     //presentationMode.wrappedValue.dismiss()
+//                                    vm.isShowMainMessageView = false
+//                                    vm.isShowHomePage = true
                                     
-                                    isShowHomePage = true
+                                    vm.handleSighOut()
                                     
                                 })
                         ])
                 }
-                .fullScreenCover(isPresented: $isShowHomePage, onDismiss: nil) {
+                .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
                     
-                    Home()
+                    //Home()
+                    ContentView()
                     
                 }
                 
@@ -121,7 +130,7 @@ struct MainMessage : View {
                 
                 Button {
                     
-                    isShowNewMessage = true
+                    vm.isShowNewMessage = true
                     
                 } label: {
                     
@@ -130,7 +139,8 @@ struct MainMessage : View {
                         .foregroundColor(.purple)
                     
                 }
-                .fullScreenCover(isPresented: $isShowNewMessage, onDismiss: nil) {
+                .fullScreenCover(isPresented: $vm.isShowNewMessage, onDismiss: nil) {
+                    //NewMessage()
                     NewMessage(vm: vm)
                 }
             }
@@ -169,76 +179,88 @@ struct MainMessage : View {
     //MARK: - messengesView
     private var mainMessageView : some View {
         
-        ScrollView {
+        VStack {
             
-            LazyVStack{
+            if vm.allRecentChatUsers.count == 0{
                 
-                ForEach(vm.filterMainMessage) { user in
-                    
-                    VStack{
-                        
-                        Button {
-                            
-                            //Get the user follow User data type to provide to fetchMessage
-                            selectedUser = getSelectedUser(uid: user.toId )
-                            vm.fetchMessage(selectedUser: selectedUser)
-                            isShowChatMessage = true
-                            
-                        } label: {
-                            
-                            HStack(spacing: 10){
+                Spacer()
+                Text("Haven't any chat. Start now!")
+                    .foregroundColor(.gray)
+                Spacer()
+                
+            } else {
+                ScrollView {
+                    LazyVStack{
+                        ForEach(vm.filterMainMessage) { user in
+                            VStack{
                                 
-                                WebImage(url: URL(string: user.profileImageUrl))
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 50, height: 50)
-                                    .mask(Circle())
-                                    .shadow(color: .purple, radius: 2)
+                                Button {
+                                    
+                                    //Get the user follow User data type to provide to fetchMessage
+                                    vm.selectedUser = getSelectedUser(uid: user.toId )
+                                    vm.fetchMessage(selectedUser: vm.selectedUser)
+                                    vm.isShowChat = true
+                                    
+                                } label: {
+                                    
+                                    HStack(spacing: 10){
+                                        
+                                        WebImage(url: URL(string: user.profileImageUrl))
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 50, height: 50)
+                                            .mask(Circle())
+                                            .shadow(color: .purple, radius: 2)
+                                        
+                                        VStack(alignment: .leading, spacing: 4){
+                                            
+                                            Text(user.username)
+                                                .font(.system(size: 17, weight: .bold))
+                                                .foregroundColor(.black)
+                                            
+                                            Text(user.text)
+                                                .font(.system(size: 12))
+                                                .foregroundColor(.gray)
+                                                .lineLimit(1)
+                                            
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Text(timeAgoDisplay(timestamp: user.timestamp))
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.gray)
+                                        
+                                    }
+                                    .padding(.horizontal)
+                                }
+                                .padding(.vertical, 15)
+        //                        NavigationLink(destination: Chat(vm: vm, selectedUser: vm.selectedUser), isActive: $vm.isShowChatMessage) {
+                                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
+
+                                    EmptyView()
+                                }
+                            }
+                            .contextMenu{
                                 
-                                VStack(alignment: .leading, spacing: 4){
+                                Button {
                                     
-                                    Text(user.username)
-                                        .font(.system(size: 17, weight: .bold))
-                                        .foregroundColor(.black)
+                                    vm.deleteRecentChatUser(selectedUser: user)
                                     
-                                    Text(user.text)
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.gray)
-                                        .lineLimit(1)
+                                } label: {
+                                    
+                                    Text("Remove")
                                     
                                 }
-                                
-                                Spacer()
-                                
-                                Text(timeAgoDisplay(timestamp: user.timestamp))
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.gray)
-                                
                             }
-                            .padding(.horizontal)
                         }
-                        .padding(.vertical, 15)
-                        NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $isShowChatMessage) {
-                            EmptyView()
-                        }
-                        
-                    }
-                    .contextMenu{
-                        
-                        Button {
-                            
-                            vm.deleteRecentChatUser(selectedUser: user)
-                            
-                        } label: {
-                            
-                            Text("Remove")
-                            
-                        }
+
                     }
                 }
-
             }
         }
+
+        
     }
 
     

@@ -17,8 +17,8 @@ class HomeViewModel: ObservableObject {
     @Published var password :  String = ""
     
     @Published var isSignInMode : Bool = true
+    @Published var isShowResetPasswordView : Bool = false
     @Published var isShowActivityIndicator : Bool = false
-    
     
     //Show image library to change Avatar
     @Published var isShowImagePicker = false
@@ -26,6 +26,12 @@ class HomeViewModel: ObservableObject {
     
     //Show MainMessage Page
     @Published var isShowMainMessageView : Bool = false
+    @Published var isShowSignOutButton : Bool = false
+    @Published var isShowHomePage : Bool = false
+    @Published var isShowNewMessage : Bool = false
+    //@Published var isShowChat : Bool = false
+    @Published var isShowChat : Bool = false
+    @Published var selectedUser : User?
     
     //Show error or caution
     @Published var isShowAlert : Bool = false
@@ -54,7 +60,7 @@ class HomeViewModel: ObservableObject {
         
         fetchCurrentUser()
         fetchRecentChatUser()
-        //This initialization main purpose is using for "func getSelectedUser(uid: String) -> User" in MainMessage
+        //This initialization main purpose is using for "func getSelectedUser(uid: String) -> User" in MainMessage. It conver data type from RecentChatUser to User.
         fetchUserToSuggest()
         
     }
@@ -97,6 +103,17 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    
+    
+    //MARK: - hadleSignOut
+    func handleSighOut() {
+        
+        try? FirebaseManager.shared.auth.signOut()
+        UserDefaults.standard.setIsLoggedIn(value: false)
+        self.isShowHomePage = true
+        self.isShowMainMessageView = false
+
+    }
     
     //MARK: - SignUp
     func signUp() {
@@ -372,6 +389,8 @@ class HomeViewModel: ObservableObject {
         
         self.recentChatUser(selectedUser: selectedUser, text: text)
         
+        print("Current ID: \(FirebaseManager.shared.auth.currentUser?.uid)")
+        
     }
     
     
@@ -380,7 +399,7 @@ class HomeViewModel: ObservableObject {
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        guard let toId = selectedUser?.uid else { return }
+        guard let toId = selectedUser?.uid else { return    }
         
         FirebaseManager.shared.firestore
             .collection("messages")
@@ -567,7 +586,8 @@ class HomeViewModel: ObservableObject {
         FirebaseManager.shared.firestore
             .collection("recentChatUser")
             .order(by: "timestamp", descending: true)
-            .addSnapshotListener { documentSnapshot, error in
+//            .addSnapshotListener { documentSnapshot, error in
+            .getDocuments { documentSnapshot, error in
                 
                 if let error = error {
                     
@@ -598,6 +618,7 @@ class HomeViewModel: ObservableObject {
                 })
                 
                 self.filterMainMessage = self.allRecentChatUsers
+                print(self.allRecentChatUsers.count == 0 ? "allRecentChatUsers: Empty" : "allRecentChatUsers: Have data")
                 
             }
     }

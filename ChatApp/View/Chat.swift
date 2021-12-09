@@ -11,10 +11,12 @@ import Firebase
 
 struct Chat: View {
     
-    @ObservedObject var vm : HomeViewModel
+    @ObservedObject var vm = HomeViewModel()
+//    @Binding var isShowChatMessage : Bool
+
     
     @State var text : String = ""
-    @State var selectedUser : User?
+    //@State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -50,6 +52,7 @@ struct Chat: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        //.navigationViewStyle(StackNavigationViewStyle())
     }
     
     
@@ -60,7 +63,7 @@ struct Chat: View {
             
             HStack(spacing: 15) {
                 
-                WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
+                WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 50, height: 50)
@@ -69,7 +72,7 @@ struct Chat: View {
                 
                 VStack(alignment: .leading ,spacing: 5){
                     
-                    Text("\(selectedUser?.username ?? "")")
+                    Text("\(vm.selectedUser?.username ?? "")")
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                     
                     HStack(spacing: 5){
@@ -90,8 +93,12 @@ struct Chat: View {
                 
                 Button {
                     
+                    vm.searchMainMessage = ""
+                    vm.searchNewMessage = ""
                     vm.searchChat = ""
-                    presentationMode.wrappedValue.dismiss()
+                    //presentationMode.wrappedValue.dismiss()
+                    //vm.fetchRecentChatUser()
+                    vm.isShowChat = false
                     
                 } label: {
                     
@@ -141,7 +148,7 @@ struct Chat: View {
                             HStack{
                                 
                                 //For conttent chat
-                                if content.fromId != selectedUser?.uid{
+                                if content.fromId != vm.selectedUser?.uid{
                                     
                                     Spacer()
                                     
@@ -157,9 +164,9 @@ struct Chat: View {
                                     //For avatar
                                     Group{
                                         
-                                        if selectedUser?.profileImageUrl != nil{
+                                        if vm.selectedUser?.profileImageUrl != nil{
                                             
-                                            WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
+                                            WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(width: 25, height: 25)
@@ -192,7 +199,7 @@ struct Chat: View {
                                 
                                 Button {
                                     
-                                    vm.deleteSenderMessage(selectedUser: self.selectedUser!, selectedMessage: content)
+                                    vm.deleteSenderMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
                                     
                                 } label: {
                                     
@@ -225,6 +232,9 @@ struct Chat: View {
                     .foregroundColor(.purple)
                 
             }
+            .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
+                ImagePicker(image: $vm.image)
+            }
             
             TextField("Aa", text: $text)
                 .autocapitalization(.none)
@@ -237,7 +247,7 @@ struct Chat: View {
                     
                     if !text.isEmpty{
                         
-                        vm.sendMessage(selectedUser: selectedUser, text: text)
+                        vm.sendMessage(selectedUser: vm.selectedUser, text: text)
                         text = ""
                         
                     }
@@ -247,7 +257,7 @@ struct Chat: View {
                 
                 if !text.isEmpty{
                     
-                    vm.sendMessage(selectedUser: selectedUser, text: text)
+                    vm.sendMessage(selectedUser: vm.selectedUser, text: text)
                     text = ""
                     
                 }
@@ -263,9 +273,6 @@ struct Chat: View {
         .background()
         .cornerRadius(45)
         .padding(.horizontal)
-        .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
-            ImagePicker(image: $vm.image)
-        }
     }
 }
 

@@ -78,7 +78,8 @@ struct ResetPassword: View {
             .padding(.horizontal)
             .navigationBarItems(leading:
                                     Button(action: {
-                presentationMode.wrappedValue.dismiss()
+                //presentationMode.wrappedValue.dismiss()
+                vm.isShowResetPasswordView = false
             }, label: {
                 
                 Image(systemName: "arrow.backward")
