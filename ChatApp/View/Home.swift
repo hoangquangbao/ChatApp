@@ -233,8 +233,7 @@ struct Home: View {
             }
             .fullScreenCover(isPresented: $vm.isShowResetPasswordView) {
                 ResetPassword()
-            }
-            
+            }            
         }
     }
     

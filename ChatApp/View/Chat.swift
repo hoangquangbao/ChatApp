@@ -14,8 +14,9 @@ struct Chat: View {
     @ObservedObject var vm = HomeViewModel()
 //    @Binding var isShowChatMessage : Bool
 
-    
     @State var text : String = ""
+    @State var isShowImagePickerMessage : Bool = false
+    @State var imgMessage : Data = Data(count: 0)
     //@State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
@@ -147,21 +148,31 @@ struct Chat: View {
                         ForEach(vm.filterChat){ content in
                             HStack{
                                 
-                                //For conttent chat
+                                //My message
                                 if content.fromId != vm.selectedUser?.uid{
                                     
                                     Spacer()
                                     
-                                    Text(content.text)
-                                        .padding()
-                                        .background(Color("BG_Chat"))
-                                        .clipShape(ChatBubble(mymsg: true))
-                                        .foregroundColor(.white)
-                                    
+                                    //If this is photo then 20:01
+                                    if content.imgMessage == "" {
+                                        
+                                        Text(content.text)
+                                            .padding()
+                                            .background(Color("BG_Chat"))
+                                            .clipShape(ChatBubble(mymsg: true))
+                                            .foregroundColor(.white)
+                                        
+                                    } else {
+                                        
+                                        WebImage(url: URL(string: content.imgMessage ?? ""))
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 100, height: 100)
+                
+                                    }
                                 }
                                 else{
                                     
-                                    //For avatar
                                     Group{
                                         
                                         if vm.selectedUser?.profileImageUrl != nil{
@@ -223,6 +234,7 @@ struct Chat: View {
             
             Button {
                 
+//                isShowImagePickerMessage = true
                 vm.isShowImagePicker = true
                 
             } label: {
@@ -232,8 +244,18 @@ struct Chat: View {
                     .foregroundColor(.purple)
                 
             }
-            .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
+            .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: {
+                
+                if vm.image != nil
+                {
+                    vm.sendMessage(selectedUser: vm.selectedUser, text: "")
+                }
+                
+            }) {
+                
+//                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
                 ImagePicker(image: $vm.image)
+                
             }
             
             TextField("Aa", text: $text)
@@ -253,26 +275,28 @@ struct Chat: View {
                     }
                 }
             
-            Button {
+            //Hidding Send button
+            if !text.isEmpty{
                 
-                if !text.isEmpty{
-                    
+                Button {
+                        
                     vm.sendMessage(selectedUser: vm.selectedUser, text: text)
-                    text = ""
+                        text = ""
+
+                } label: {
+                    
+                    Image(systemName: "paperplane.fill")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.purple)
                     
                 }
-            } label: {
-                
-                Image(systemName: "paperplane.fill")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.purple)
-                
             }
         }
         .padding()
         .background()
         .cornerRadius(45)
         .padding(.horizontal)
+        .animation(.easeOut)
     }
 }
 

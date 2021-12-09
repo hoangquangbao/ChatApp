@@ -11,7 +11,9 @@ import SDWebImageSwiftUI
 
 struct MainMessage : View {
     
-    @ObservedObject var vm = HomeViewModel()
+//    @ObservedObject var vm = HomeViewModel()
+    @StateObject var vm = HomeViewModel()
+
 //    @State var isShowChatMessage : Bool = false
 
     

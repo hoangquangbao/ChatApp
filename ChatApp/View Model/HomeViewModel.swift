@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseFirestore
+import CoreMedia
 
 class HomeViewModel: ObservableObject {
     
@@ -23,6 +24,8 @@ class HomeViewModel: ObservableObject {
     //Show image library to change Avatar
     @Published var isShowImagePicker = false
     @Published var image: UIImage?
+    @Published var imgMessageLink: String = ""
+
     
     //Show MainMessage Page
     @Published var isShowMainMessageView : Bool = false
@@ -161,7 +164,7 @@ class HomeViewModel: ObservableObject {
     func uploadImageToStorage() {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-        
+                
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
         
         guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
@@ -187,13 +190,48 @@ class HomeViewModel: ObservableObject {
                 }
                 
                 guard let url = url else { return }
-                self.storeUserInformation(profileImageUrl: url)
                 
+                    self.storeUserInformation(profileImageUrl: url)
             }
         }
     }
     
     
+    //MARK: - uploadImgMessageToStorage
+    func uploadImgMessageToStorage() {
+        
+        let imgMessageID = Date.now.formatted()
+        
+        let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
+        
+        guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
+        
+        ref.putData(imageData, metadata: nil) { metadata, err in
+            
+            if let err = err {
+                
+                self.isShowAlert = true
+                self.alertMessage = err.localizedDescription
+                return
+                
+            }
+            
+            ref.downloadURL { url, err in
+                
+                if let err = err {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    return
+                    
+                }
+                
+                guard let url = url else { return }
+                
+                self.imgMessageLink = url.absoluteString
+            }
+        }
+    }
     //MARK: - This will save newly created users to Firestore database collections
     func storeUserInformation(profileImageUrl: URL) {
         
@@ -334,11 +372,19 @@ class HomeViewModel: ObservableObject {
     //MARK: - sendMessage
     func sendMessage(selectedUser: User?, text: String) {
         
+        //If send image message, text will be empty
+        if text == "" {
+            
+            uploadImgMessageToStorage()
+            
+        }
+        
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         guard let toId = selectedUser?.uid else { return }
         
-
+        let imgMessage = self.imgMessageLink
+        self.imgMessageLink = ""
         
         let senderMessageDocument = FirebaseManager.shared.firestore
             .collection("messages")
@@ -351,6 +397,7 @@ class HomeViewModel: ObservableObject {
                            "fromId" : fromId,
                            "toId" : toId,
                            "text" : text,
+                           "imgMessage" : imgMessage,
                            "timestamp" : Timestamp()] as [String : Any]
         
         senderMessageDocument.setData(senderMessageData) { error in
@@ -374,6 +421,7 @@ class HomeViewModel: ObservableObject {
                            "fromId" : fromId,
                            "toId" : toId,
                            "text" : text,
+                           "imgMessage" : imgMessage,
                            "timestamp" : Timestamp()] as [String : Any]
         
         recipientMessageDocument.setData(recipientMessageData) { error in
@@ -423,6 +471,7 @@ class HomeViewModel: ObservableObject {
                     let fromId = snap.get("fromId") as? String ?? ""
                     let toId = snap.get("toId") as? String ?? ""
                     let text = snap.get("text") as? String ?? ""
+                    let imgMessage = snap.get("imgMessage") as? String ?? ""
                     let timestamp = snap.get("timestamp") as? Timestamp
                     //                    let timestamp = snap.get("timestamp") as? Date ?? Date.now
                     
@@ -432,7 +481,7 @@ class HomeViewModel: ObservableObject {
                     //                    formatter.dateFormat = "HH:mm"
                     //                    let time = formatter.string(from: timestamp.dateValue())
                     
-                    return Message(id: id, fromId: fromId, toId: toId, text: text, timestamp: timestamp!)
+                    return Message(id: id, fromId: fromId, toId: toId, text: text, imgMessage: imgMessage, timestamp: timestamp!)
                     
                 })
                 self.filterChat = self.allMessages
@@ -586,8 +635,8 @@ class HomeViewModel: ObservableObject {
         FirebaseManager.shared.firestore
             .collection("recentChatUser")
             .order(by: "timestamp", descending: true)
-//            .addSnapshotListener { documentSnapshot, error in
-            .getDocuments { documentSnapshot, error in
+            .addSnapshotListener { documentSnapshot, error in
+//            .getDocuments { documentSnapshot, error in
                 
                 if let error = error {
                     

@@ -12,7 +12,8 @@ struct Message: Identifiable {
     
     var id: String
     
-    let fromId, toId, text: String
+    let fromId, toId, text, imgMessage: String
+//    let imgMessage : Data
 //    let timestamp: NSNumber
     let timestamp: Timestamp
 //    let timestamp: Date
