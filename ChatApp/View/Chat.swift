@@ -15,6 +15,7 @@ struct Chat: View {
 //    @Binding var isShowChatMessage : Bool
 
     @State var text : String = ""
+    @State var imageMessage: UIImage?
     @State var isShowImagePickerMessage : Bool = false
     @State var imgMessage : Data = Data(count: 0)
     //@State var selectedUser : User?
@@ -155,21 +156,21 @@ struct Chat: View {
                                     
                                     //If this is photo then 20:01
 //                                    if content.text == "" {
-//                                        
-//                                        WebImage(url: URL(string: content.imgMessage ?? ""))
-//                                            .resizable()
-//                                            .scaledToFill()
-//                                            .frame(width: 100, height: 100)
-//                                        
-                                    //} else {
-
-                                        Text(content.text)
-                                            .padding()
-                                            .background(Color("BG_Chat"))
-                                            .clipShape(ChatBubble(mymsg: true))
-                                            .foregroundColor(.white)
-                
-                                    //}
+                                        
+                                        WebImage(url: URL(string: content.imgMessage ?? ""))
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 100, height: 100)
+                                        
+//                                    } else {
+//
+//                                        Text(content.text)
+//                                            .padding()
+//                                            .background(Color("BG_Chat"))
+//                                            .clipShape(ChatBubble(mymsg: true))
+//                                            .foregroundColor(.white)
+//                
+//                                    }
                                 }
                                 else{
                                     
@@ -246,15 +247,16 @@ struct Chat: View {
             }
             .fullScreenCover(isPresented: $vm.isShowImagePickerMessage, onDismiss: {
                 
-                if vm.imageMessage != nil
+                if imageMessage != nil
                 {
-                    vm.sendMessage(selectedUser: vm.selectedUser, text: "")
+                    vm.uploadImgMessageToStorage(selectedUser: vm.selectedUser, text: "", imgMessage: imageMessage!)
+                    //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
                 }
                 
             }) {
                 
 //                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
-                ImagePickerMessage(imageMessage: $vm.imageMessage)
+                ImagePickerMessage(imageMessage: $imageMessage)
                 
             }
             
@@ -269,7 +271,7 @@ struct Chat: View {
                     
                     if !text.isEmpty{
                         
-                        vm.sendMessage(selectedUser: vm.selectedUser, text: text)
+                        vm.sendMessage(selectedUser: vm.selectedUser, text: text, imgMessage: "")
                         text = ""
                         
                     }
@@ -280,7 +282,7 @@ struct Chat: View {
                 
                 Button {
                         
-                    vm.sendMessage(selectedUser: vm.selectedUser, text: text)
+                    vm.sendMessage(selectedUser: vm.selectedUser, text: text, imgMessage: "")
                         text = ""
 
                 } label: {

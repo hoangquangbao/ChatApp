@@ -26,9 +26,6 @@ class HomeViewModel: ObservableObject {
     @Published var isShowImagePicker = false
     @Published var image: UIImage?
     @Published var isShowImagePickerMessage = false
-    @Published var imageMessage: UIImage?
-    @Published var imgMessageLink : String = ""
-
     
     //Show MainMessage Page
     @Published var isShowMainMessageView : Bool = false
@@ -201,13 +198,13 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - uploadImgMessageToStorage
-    func uploadImgMessageToStorage() {
+    func uploadImgMessageToStorage(selectedUser: User?, text: String, imgMessage: UIImage?) {
         
         let imgMessageID =  NSUUID().uuidString
 
         let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
 
-        guard let imageData = self.imageMessage?.jpegData(compressionQuality: 0.5) else { return }
+        guard let imageData = imgMessage?.jpegData(compressionQuality: 0.5) else { return }
 
         ref.putData(imageData, metadata: nil) { metadata, err in
 
@@ -231,8 +228,10 @@ class HomeViewModel: ObservableObject {
 
                 guard let url = url else { return }
 
-                self.imgMessageLink = url.absoluteString
-                print("imgMessageLink= " + self.imgMessageLink)
+                let imgMessageUrl = url.absoluteString
+                
+                self.sendMessage(selectedUser: selectedUser, text: text, imgMessage: imgMessageUrl)
+                //print("imgMessageLink= " + self.imageMessageLink)
             }
         }
         
@@ -394,22 +393,13 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - sendMessage
-    func sendMessage(selectedUser: User?, text: String) {
-        
-        //If send image message, text will be empty
-        if text == "" {
-            
-            uploadImgMessageToStorage()
-            
-        }
+    func sendMessage(selectedUser: User?, text: String, imgMessage: String) {
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         guard let toId = selectedUser?.uid else { return }
         
-        let imgMessage = self.imgMessageLink
-        self.imgMessageLink = ""
-        
+        print("imgMessage: " + imgMessage)
         let senderMessageDocument = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
