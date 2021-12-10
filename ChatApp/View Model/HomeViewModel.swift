@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseStorage
 import FirebaseFirestore
 import CoreMedia
 
@@ -24,7 +25,9 @@ class HomeViewModel: ObservableObject {
     //Show image library to change Avatar
     @Published var isShowImagePicker = false
     @Published var image: UIImage?
-    @Published var imgMessageLink: String = ""
+    @Published var isShowImagePickerMessage = false
+    @Published var imageMessage: UIImage?
+    @Published var imgMessageLink : String = ""
 
     
     //Show MainMessage Page
@@ -200,38 +203,59 @@ class HomeViewModel: ObservableObject {
     //MARK: - uploadImgMessageToStorage
     func uploadImgMessageToStorage() {
         
-        let imgMessageID = Date.now.formatted()
-        
+        let imgMessageID =  NSUUID().uuidString
+
         let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
-        
-        guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
-        
+
+        guard let imageData = self.imageMessage?.jpegData(compressionQuality: 0.5) else { return }
+
         ref.putData(imageData, metadata: nil) { metadata, err in
-            
+
             if let err = err {
-                
+
                 self.isShowAlert = true
                 self.alertMessage = err.localizedDescription
                 return
-                
+
             }
-            
+
             ref.downloadURL { url, err in
-                
+
                 if let err = err {
-                    
+
                     self.isShowAlert = true
                     self.alertMessage = err.localizedDescription
                     return
-                    
+
                 }
-                
+
                 guard let url = url else { return }
-                
+
                 self.imgMessageLink = url.absoluteString
+                print("imgMessageLink= " + self.imgMessageLink)
             }
         }
+        
+//        let metadata = StorageMetadata()
+//        metadata.contentType = "image/jpeg"
+//
+//        let storage = Storage.storage().reference()
+//        storage.child("imageMessage").putData(imageV.jpegData(compressionQuality: 0.4), metadata: metadata) { meta, error in
+//            if let error = error {
+//                print(error)
+//                return
+//            }
+//
+//            storage.child(folder).downloadURL { url, error in
+//                if let error = error {
+//                    // Handle any errors
+//                    print(error)
+//                }
+//            }
+//        }
     }
+    
+    
     //MARK: - This will save newly created users to Firestore database collections
     func storeUserInformation(profileImageUrl: URL) {
         

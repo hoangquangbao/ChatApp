@@ -134,14 +134,14 @@ struct Chat: View {
         
         VStack{
             
-            if vm.allMessages.count == 0{
-                
-                Spacer()
-                Text("Haven't any message. Start now!")
-                    .foregroundColor(.gray)
-                Spacer()
-                
-            } else {
+//            if vm.allMessages.count == 0{
+//
+//                Spacer()
+//                Text("Haven't any message. Start now!")
+//                    .foregroundColor(.gray)
+//                Spacer()
+//
+            //} else {
                 
                 ScrollView {
                     LazyVStack{
@@ -154,22 +154,22 @@ struct Chat: View {
                                     Spacer()
                                     
                                     //If this is photo then 20:01
-                                    if content.imgMessage == "" {
-                                        
+//                                    if content.text == "" {
+//                                        
+//                                        WebImage(url: URL(string: content.imgMessage ?? ""))
+//                                            .resizable()
+//                                            .scaledToFill()
+//                                            .frame(width: 100, height: 100)
+//                                        
+                                    //} else {
+
                                         Text(content.text)
                                             .padding()
                                             .background(Color("BG_Chat"))
                                             .clipShape(ChatBubble(mymsg: true))
                                             .foregroundColor(.white)
-                                        
-                                    } else {
-                                        
-                                        WebImage(url: URL(string: content.imgMessage ?? ""))
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
                 
-                                    }
+                                    //}
                                 }
                                 else{
                                     
@@ -223,7 +223,7 @@ struct Chat: View {
                     .rotationEffect(.degrees(180))
                 }
                 .rotationEffect(.degrees(180))
-            }
+            //}
         }
     }
     
@@ -235,7 +235,7 @@ struct Chat: View {
             Button {
                 
 //                isShowImagePickerMessage = true
-                vm.isShowImagePicker = true
+                vm.isShowImagePickerMessage = true
                 
             } label: {
                 
@@ -244,9 +244,9 @@ struct Chat: View {
                     .foregroundColor(.purple)
                 
             }
-            .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: {
+            .fullScreenCover(isPresented: $vm.isShowImagePickerMessage, onDismiss: {
                 
-                if vm.image != nil
+                if vm.imageMessage != nil
                 {
                     vm.sendMessage(selectedUser: vm.selectedUser, text: "")
                 }
@@ -254,7 +254,7 @@ struct Chat: View {
             }) {
                 
 //                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
-                ImagePicker(image: $vm.image)
+                ImagePickerMessage(imageMessage: $vm.imageMessage)
                 
             }
             
