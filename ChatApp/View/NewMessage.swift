@@ -113,6 +113,7 @@ struct NewMessage: View {
                         
                         vm.selectedUser = user
                         vm.fetchMessage(selectedUser: vm.selectedUser)
+                        vm.searchNewMessage = ""
                         vm.isShowChat = true
                         
                     } label: {
