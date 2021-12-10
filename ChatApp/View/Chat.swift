@@ -147,78 +147,82 @@ struct Chat: View {
                 ScrollView {
                     LazyVStack{
                         ForEach(vm.filterChat){ content in
-                            HStack{
-                                
-                                //My message
-                                if content.fromId != vm.selectedUser?.uid{
+                            
+                                HStack{
                                     
-                                    Spacer()
-                                    
-                                    //If this is photo then 20:01
-//                                    if content.text == "" {
+                                    //My message
+                                    if content.fromId != vm.selectedUser?.uid{
                                         
-                                        WebImage(url: URL(string: content.imgMessage ?? ""))
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
+                                        Spacer()
                                         
-//                                    } else {
-//
-//                                        Text(content.text)
-//                                            .padding()
-//                                            .background(Color("BG_Chat"))
-//                                            .clipShape(ChatBubble(mymsg: true))
-//                                            .foregroundColor(.white)
-//                
-//                                    }
-                                }
-                                else{
-                                    
-                                    Group{
-                                        
-                                        if vm.selectedUser?.profileImageUrl != nil{
+                                        //If this is photo then 20:01
+                                        let text = content.text
+                                        if text == "" {
                                             
-                                            WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                                            WebImage(url: URL(string: content.imgMessage ?? ""))
                                                 .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 25, height: 25)
-                                                .mask(Circle())
+                                                .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
+                                                //.scaledToFit()
+                                                .cornerRadius(15)
+                                                .padding(.top)
                                             
                                         } else {
-                                            
-                                            Image(systemName: "person.fill")
-                                                .font(.system(size: 25))
-                                                .padding(10)
-                                                .foregroundColor(.black)
-                                                .background(
-                                                    Circle()
-                                                        .stroke(.black)
-                                                )
+
+                                            Text(text)
+                                                .padding()
+                                                .background(Color("BG_Chat"))
+                                                .clipShape(ChatBubble(mymsg: true))
+                                                .foregroundColor(.white)
+
                                         }
                                     }
-                                    
-                                    Text(content.text)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.2))
-                                        .clipShape(ChatBubble(mymsg: false))
-                                    
-                                    Spacer()
-                                    
+                                    else{
+                                        
+                                        Group{
+                                            
+                                            if vm.selectedUser?.profileImageUrl != nil{
+                                                
+                                                WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 25, height: 25)
+                                                    .mask(Circle())
+                                                
+                                            } else {
+                                                
+                                                Image(systemName: "person.fill")
+                                                    .font(.system(size: 25))
+                                                    .padding(10)
+                                                    .foregroundColor(.black)
+                                                    .background(
+                                                        Circle()
+                                                            .stroke(.black)
+                                                    )
+                                            }
+                                        }
+                                        
+                                        Text(content.text)
+                                            .padding()
+                                            .background(Color.gray.opacity(0.2))
+                                            .clipShape(ChatBubble(mymsg: false))
+                                        
+                                        Spacer()
+                                        
+                                    }
                                 }
-                            }
-                            .padding(.horizontal)
-                            .contextMenu{
-                                
-                                Button {
+                                .padding(.horizontal)
+                                .contextMenu{
                                     
-                                    vm.deleteSenderMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
-                                    
-                                } label: {
-                                    
-                                    Text("Remove")
-                                    
+                                    Button {
+                                        
+                                        vm.deleteSenderMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
+                                        
+                                    } label: {
+                                        
+                                        Text("Remove")
+                                        
+                                    }
                                 }
-                            }
                         }
                     }
                     .rotationEffect(.degrees(180))

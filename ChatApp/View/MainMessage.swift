@@ -220,7 +220,9 @@ struct MainMessage : View {
                                                 .font(.system(size: 17, weight: .bold))
                                                 .foregroundColor(.black)
                                             
-                                            Text(user.text)
+                                            let text = user.text
+                                            
+                                            Text(text == "" ? "You send a photo" : text)
                                                 .font(.system(size: 12))
                                                 .foregroundColor(.gray)
                                                 .lineLimit(1)
