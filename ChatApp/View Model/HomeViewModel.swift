@@ -149,6 +149,9 @@ class HomeViewModel: ObservableObject {
                         
                     }
                     
+                    //Activate activity indicator..
+                    //..true: when start signUp (signUp)
+                    //..false: when store user information success (storeUserInformation)
                     self.isShowActivityIndicator = true
 
                     //Upload image to Firebase
@@ -278,6 +281,9 @@ class HomeViewModel: ObservableObject {
                     
                 }
                 
+                //Activate activity indicator..
+                //..true: when start signUp (signUp)
+                //..false: when store user information success (storeUserInformation)
                 self.isShowActivityIndicator = false
                 
                 self.username = ""
@@ -501,6 +507,11 @@ class HomeViewModel: ObservableObject {
                     
                 })
                 self.filterChat = self.allMessages
+                
+                //Activate activity indicator..
+                //..true: when start send Image Message (bottomChat)
+                //..false: when fetchMessage success (fetchMessage)
+                self.isShowActivityIndicator = false
             }
     }
     

@@ -30,8 +30,21 @@ struct Chat: View {
                 
                 topbarChat
                 mainChat
-                bottomChat
                 
+                if vm.isShowActivityIndicator {
+                    
+                    bottomChat.overlay(
+                        
+                        ActivityIndicator()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.gray)
+                        
+                    )
+                } else {
+                    
+                    bottomChat
+                    
+                }
             }
             .navigationBarHidden(true)
             .onChange(of: vm.searchChat) { newValue in
@@ -135,119 +148,125 @@ struct Chat: View {
         
         VStack{
             
-//            if vm.allMessages.count == 0{
-//
-//                Spacer()
-//                Text("Haven't any message. Start now!")
-//                    .foregroundColor(.gray)
-//                Spacer()
-//
+            //            if vm.allMessages.count == 0{
+            //
+            //                Spacer()
+            //                Text("Haven't any message. Start now!")
+            //                    .foregroundColor(.gray)
+            //                Spacer()
+            //
             //} else {
-                
-                ScrollView {
-                    LazyVStack{
-                        ForEach(vm.filterChat){ content in
+            
+            ScrollView {
+                LazyVStack{
+                    ForEach(vm.filterChat){ content in
+                        
+                        VStack(){
                             
-                            HStack(alignment: .top){
+                            //My message
+                            if content.fromId != vm.selectedUser?.uid{
+                                
+                                HStack() {
                                     
-                                    //My message
-                                    if content.fromId != vm.selectedUser?.uid{
+                                    Spacer()
+                                    
+                                    //If text == "", it's a photo
+                                    let text = content.text
+                                    if text == "" {
                                         
-                                        Spacer()
+                                        WebImage(url: URL(string: content.imgMessage ))
+                                            .resizable()
+                                            .scaledToFit()
+                                            .cornerRadius(15)
+                                            .frame(maxWidth: UIScreen.main.bounds.width - 150)
+                                        //.scaledToFit()
+                                        //                                                .padding(.top)
                                         
-                                        //If text == "", it's a photo
-                                        let text = content.text
-                                        if text == "" {
-                                            
-                                            WebImage(url: URL(string: content.imgMessage ))
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
-                                                //.scaledToFit()
-                                                .cornerRadius(15)
-//                                                .padding(.top)
-                                            
-                                        } else {
-
-                                            Text(text)
-                                                .padding()
-                                                .background(Color("BG_Chat"))
-                                                .clipShape(ChatBubble(mymsg: true))
-                                                .foregroundColor(.white)
-
-                                        }
                                     }
-                                    else{
+                                    //My firiend's message
+                                    else {
                                         
-                                        Group{
-                                            
-                                            if vm.selectedUser?.profileImageUrl != nil{
-                                                
-                                                WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 25, height: 25)
-                                                    .mask(Circle())
-                                                
-                                            } else {
-                                                
-                                                Image(systemName: "person.fill")
-                                                    .font(.system(size: 25))
-                                                    .padding(10)
-                                                    .foregroundColor(.black)
-                                                    .background(
-                                                        Circle()
-                                                            .stroke(.black)
-                                                    )
-                                            }
-                                        }
-                                        
-                                        //If text == "", it's a photo
-                                        let text = content.text
-                                        if text == "" {
-                                            
-                                            WebImage(url: URL(string: content.imgMessage ))
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
-                                                //.scaledToFit()
-                                                .cornerRadius(15)
-//                                                .padding(.top)
-                                            
-                                        } else {
-
-                                            Text(text)
-                                                .padding()
-                                                .background(Color.gray.opacity(0.2))
-                                                .clipShape(ChatBubble(mymsg: false))
-
-                                        }
-                                        
-                                        Spacer()
+                                        Text(text)
+                                            .padding()
+                                            .background(Color("BG_Chat"))
+                                            .clipShape(ChatBubble(mymsg: true))
+                                            .foregroundColor(.white)
                                         
                                     }
                                 }
-                                .padding(.horizontal)
-                                .contextMenu{
+                            } else {
+                                
+                                HStack(alignment: .top){
                                     
-                                    Button {
+//                                    if vm.selectedUser?.profileImageUrl != nil{
                                         
-                                        vm.deleteMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
+                                        WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 25, height: 25)
+                                            .mask(Circle())
                                         
-                                    } label: {
+//                                    } else {
+//
+//                                        Image(systemName: "person.fill")
+//                                            .font(.system(size: 25))
+//                                            .padding(10)
+//                                            .foregroundColor(.black)
+//                                            .background(
+//                                                Circle()
+//                                                    .stroke(.black)
+//                                            )
+//                                    }
+                                    
+                                    //If text == "", it's a photo
+                                    let text = content.text
+                                    if text == "" {
                                         
-                                        Text("Remove")
+                                        WebImage(url: URL(string: content.imgMessage ))
+                                            .resizable()
+                                            .scaledToFit()
+                                            .cornerRadius(15)
+                                            .frame(maxWidth: UIScreen.main.bounds.width - 150)
+                                            .padding(.leading, 0)
+                                        //.scaledToFit()
+                                        //                                                .padding(.top)
+                                        
+                                    } else {
+                                        
+                                        Text(text)
+                                            .padding()
+                                            .background(Color.gray.opacity(0.2))
+                                            .clipShape(ChatBubble(mymsg: false))
                                         
                                     }
+                                    
+                                    Spacer()
+                                    
                                 }
+                            }
+                        }
+                        .padding(.horizontal)
+                        .contextMenu{
+                            
+                            Button {
+                                
+                                vm.deleteMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
+                                
+                            } label: {
+                                
+                                Text("Remove")
+                                
+                            }
                         }
                     }
-                    .rotationEffect(.degrees(180))
                 }
                 .rotationEffect(.degrees(180))
+            }
+            .rotationEffect(.degrees(180))
             //}
         }
     }
+    
     
     //MARK: - bottomChat
     var bottomChat : some View {
@@ -269,6 +288,12 @@ struct Chat: View {
                 
                 if imageMessage != nil
                 {
+                    
+                    //Activate activity indicator..
+                    //..true: when start send Image Message (bottomChat)
+                    //..false: when fetchMessage success (fetchMessage)
+                    vm.isShowActivityIndicator = true
+
                     vm.uploadImgMessageToStorage(selectedUser: vm.selectedUser, text: "", imgMessage: imageMessage!)
                     //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
                 }
