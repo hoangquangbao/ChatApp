@@ -219,10 +219,8 @@ struct MainMessage : View {
                                             Text(user.username)
                                                 .font(.system(size: 17, weight: .bold))
                                                 .foregroundColor(.black)
-                                            
-                                            let text = user.text
-                                            
-                                            Text(text == "" ? "A photo" : text)
+                                                                                        
+                                            Text(user.text)
                                                 .font(.system(size: 12))
                                                 .foregroundColor(.gray)
                                                 .lineLimit(1)
@@ -258,13 +256,10 @@ struct MainMessage : View {
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
-
-        
     }
 
     

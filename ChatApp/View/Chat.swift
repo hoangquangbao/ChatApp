@@ -148,23 +148,23 @@ struct Chat: View {
                     LazyVStack{
                         ForEach(vm.filterChat){ content in
                             
-                                HStack{
+                            HStack(alignment: .top){
                                     
                                     //My message
                                     if content.fromId != vm.selectedUser?.uid{
                                         
                                         Spacer()
                                         
-                                        //If this is photo then 20:01
+                                        //If text == "", it's a photo
                                         let text = content.text
                                         if text == "" {
                                             
-                                            WebImage(url: URL(string: content.imgMessage ?? ""))
+                                            WebImage(url: URL(string: content.imgMessage ))
                                                 .resizable()
                                                 .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
                                                 //.scaledToFit()
                                                 .cornerRadius(15)
-                                                .padding(.top)
+//                                                .padding(.top)
                                             
                                         } else {
 
@@ -201,10 +201,24 @@ struct Chat: View {
                                             }
                                         }
                                         
-                                        Text(content.text)
-                                            .padding()
-                                            .background(Color.gray.opacity(0.2))
-                                            .clipShape(ChatBubble(mymsg: false))
+                                        let text = content.text
+                                        if text == "" {
+                                            
+                                            WebImage(url: URL(string: content.imgMessage ))
+                                                .resizable()
+                                                .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
+                                                //.scaledToFit()
+                                                .cornerRadius(15)
+//                                                .padding(.top)
+                                            
+                                        } else {
+
+                                            Text(text)
+                                                .padding()
+                                                .background(Color.gray.opacity(0.2))
+                                                .clipShape(ChatBubble(mymsg: false))
+
+                                        }
                                         
                                         Spacer()
                                         
@@ -215,7 +229,7 @@ struct Chat: View {
                                     
                                     Button {
                                         
-                                        vm.deleteSenderMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
+                                        vm.deleteMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
                                         
                                     } label: {
                                         
