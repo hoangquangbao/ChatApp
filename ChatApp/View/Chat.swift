@@ -161,6 +161,7 @@ struct Chat: View {
                                             
                                             WebImage(url: URL(string: content.imgMessage ))
                                                 .resizable()
+                                                .scaledToFit()
                                                 .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
                                                 //.scaledToFit()
                                                 .cornerRadius(15)
@@ -201,11 +202,13 @@ struct Chat: View {
                                             }
                                         }
                                         
+                                        //If text == "", it's a photo
                                         let text = content.text
                                         if text == "" {
                                             
                                             WebImage(url: URL(string: content.imgMessage ))
                                                 .resizable()
+                                                .scaledToFit()
                                                 .frame(maxWidth: UIScreen.main.bounds.width - 150, maxHeight: 300)
                                                 //.scaledToFit()
                                                 .cornerRadius(15)
@@ -253,7 +256,6 @@ struct Chat: View {
             
             Button {
                 
-//                isShowImagePickerMessage = true
                 vm.isShowImagePickerMessage = true
                 
             } label: {
