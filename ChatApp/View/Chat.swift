@@ -12,8 +12,8 @@ import Firebase
 struct Chat: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @Binding var isShowChatMessage : Bool
-
+    //    @Binding var isShowChatMessage : Bool
+    
     @State var text : String = ""
     @State var imageMessage: UIImage?
     @State var isShowImagePickerMessage : Bool = false
@@ -47,7 +47,7 @@ struct Chat: View {
                 }
             }
             .navigationBarHidden(true)
-
+            
             .onChange(of: vm.searchChat) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if newValue == vm.searchChat && vm.searchChat != "" {
@@ -199,25 +199,25 @@ struct Chat: View {
                                 
                                 HStack(alignment: .top){
                                     
-//                                    if vm.selectedUser?.profileImageUrl != nil{
-                                        
-                                        WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 25, height: 25)
-                                            .mask(Circle())
-                                        
-//                                    } else {
-//
-//                                        Image(systemName: "person.fill")
-//                                            .font(.system(size: 25))
-//                                            .padding(10)
-//                                            .foregroundColor(.black)
-//                                            .background(
-//                                                Circle()
-//                                                    .stroke(.black)
-//                                            )
-//                                    }
+                                    //                                    if vm.selectedUser?.profileImageUrl != nil{
+                                    
+                                    WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 25, height: 25)
+                                        .mask(Circle())
+                                    
+                                    //                                    } else {
+                                    //
+                                    //                                        Image(systemName: "person.fill")
+                                    //                                            .font(.system(size: 25))
+                                    //                                            .padding(10)
+                                    //                                            .foregroundColor(.black)
+                                    //                                            .background(
+                                    //                                                Circle()
+                                    //                                                    .stroke(.black)
+                                    //                                            )
+                                    //                                    }
                                     
                                     //If text == "", it's a photo
                                     let text = content.text
@@ -294,14 +294,14 @@ struct Chat: View {
                     //..true: when start send Image Message (bottomChat)
                     //..false: when fetchMessage success (fetchMessage)
                     vm.isShowActivityIndicator = true
-
+                    
                     vm.uploadImgMessageToStorage(selectedUser: vm.selectedUser, text: "", imgMessage: imageMessage!)
                     //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
                 }
                 
             }) {
                 
-//                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
+                //                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
                 ImagePickerMessage(imageMessage: $imageMessage)
                 
             }
@@ -327,10 +327,10 @@ struct Chat: View {
             if !text.isEmpty{
                 
                 Button {
-                        
+                    
                     vm.sendMessage(selectedUser: vm.selectedUser, text: text, imgMessage: "")
-                        text = ""
-
+                    text = ""
+                    
                 } label: {
                     
                     Image(systemName: "paperplane.fill")
