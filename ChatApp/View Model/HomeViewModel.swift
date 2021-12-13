@@ -13,51 +13,46 @@ import CoreMedia
 
 class HomeViewModel: ObservableObject {
     
-    //SignIn/Out Page
-    @Published var email : String = ""
-    @Published var username : String = ""
-    @Published var password :  String = ""
-    
-    @Published var isSignInMode : Bool = true
-    @Published var isShowResetPasswordView : Bool = false
-    @Published var isShowActivityIndicator : Bool = false
-    
-    //Show image library to change Avatar
-    @Published var isShowImagePicker = false
-    @Published var image: UIImage?
-    @Published var isShowImagePickerMessage = false
-    
-    //Show MainMessage Page
-    @Published var isShowMainMessageView : Bool = false
-    @Published var isShowSignOutButton : Bool = false
-    @Published var isShowHomePage : Bool = false
-    @Published var isShowNewMessage : Bool = false
-    //@Published var isShowChat : Bool = false
-    @Published var isShowChat : Bool = false
+    //User
+    @Published var currentUser : User?
     @Published var selectedUser : User?
+    @Published var isShowActivityIndicator : Bool = false
     
     //Show error or caution
     @Published var isShowAlert : Bool = false
     @Published var alertMessage : String = ""
     
-    //Show owner account
-    @Published var anUser : User?
+    //Home
+    @Published var email : String = ""
+    @Published var username : String = ""
+    @Published var password :  String = ""
+    @Published var isShowImagePicker = false
+    @Published var imgAvatar: UIImage?
+    @Published var isSignInMode : Bool = true
+    @Published var isShowResetPasswordView : Bool = false
     
-    //Show User list
-    @Published var allSuggestUsers = [User]()
+    //Main Message
+    @Published var isShowMainMessageView : Bool = false
+    @Published var isShowSignOutButton : Bool = false
+    @Published var isShowHomePage : Bool = false
     @Published var allRecentChatUsers = [RecentChatUser]()
-    
-    //Show Chat content
-    @Published var allMessages = [Message]()
-    
-    //Search function
     @Published var searchMainMessage = ""
     @Published var filterMainMessage = [RecentChatUser]()
+    var firestoreListenerRecentChatUser: ListenerRegistration?
+    
+    //New Message
+    @Published var isShowNewMessage : Bool = false
+    @Published var allSuggestUsers = [User]()
     @Published var searchNewMessage = ""
     @Published var filterNewMessage = [User]()
+    
+    //Chat
+    @Published var isShowChat : Bool = false
+    @Published var allMessages = [Message]()
     @Published var searchChat = ""
     @Published var filterChat = [Message]()
-    
+    @Published var isShowImagePickerMessage = false
+    var firestoreListenerMessage: ListenerRegistration?
     
     init(){
         
@@ -131,7 +126,7 @@ class HomeViewModel: ObservableObject {
         } else {
             
             //Check avatar image is set?
-            if  self.image == nil{
+            if  self.imgAvatar == nil{
                 
                 isShowAlert = true
                 alertMessage = "You must set avatar image for your account."
@@ -170,7 +165,7 @@ class HomeViewModel: ObservableObject {
                 
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
         
-        guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
+        guard let imageData = self.imgAvatar?.jpegData(compressionQuality: 0.5) else { return }
         
         ref.putData(imageData, metadata: nil) { metadata, err in
             
@@ -289,7 +284,7 @@ class HomeViewModel: ObservableObject {
                 self.username = ""
                 self.email = ""
                 self.password = ""
-                self.image = nil
+                self.imgAvatar = nil
                 
                 //...and show alert successfully created
                 self.isShowAlert = true
@@ -331,7 +326,7 @@ class HomeViewModel: ObservableObject {
                     
                 }
                 
-                self.anUser = .init(data: data)
+                self.currentUser = .init(data: data)
                 
             }
     }
@@ -340,6 +335,7 @@ class HomeViewModel: ObservableObject {
     //MARK: - fetchAllUsersToSuggest
     func fetchUserToSuggest() {
         
+        self.allSuggestUsers.removeAll()
         FirebaseManager.shared.firestore
             .collection("users")
             .addSnapshotListener { documentSnapshot, error in
@@ -459,7 +455,7 @@ class HomeViewModel: ObservableObject {
         self.lastMessageOfSender(selectedUser: selectedUser, text: text)
         self.lastMessageOfReceiver(selectedUser: selectedUser, text: text)
         
-        print("Current ID: \(FirebaseManager.shared.auth.currentUser?.uid)")
+        print("Current ID: \(String(describing: FirebaseManager.shared.auth.currentUser?.uid))")
         
     }
     
@@ -467,11 +463,13 @@ class HomeViewModel: ObservableObject {
     //MARK: - fetchMessage
     func fetchMessage(selectedUser: User?) {
         
+        firestoreListenerMessage?.remove()
+        self.allMessages.removeAll()
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         guard let toId = selectedUser?.uid else { return    }
         
-        FirebaseManager.shared.firestore
+        firestoreListenerMessage = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
             .collection(toId)
@@ -704,9 +702,9 @@ class HomeViewModel: ObservableObject {
         
         let uid = fromId + toId
         
-        guard let username = anUser?.username else { return }
+        guard let username = currentUser?.username else { return }
         
-        guard let profileImageUrl = anUser?.profileImageUrl else { return }
+        guard let profileImageUrl = currentUser?.profileImageUrl else { return }
         
         //If text == "", it's a photo
         let checkText = (text == "") ? "A photo" : text
@@ -737,9 +735,11 @@ class HomeViewModel: ObservableObject {
     //MARK: - fetchRecentChatUser
     func fetchRecentChatUser() {
         
+        firestoreListenerRecentChatUser?.remove()
+        self.allRecentChatUsers.removeAll()
         guard let currentUserId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        FirebaseManager.shared.firestore
+        firestoreListenerRecentChatUser = FirebaseManager.shared.firestore
             .collection("recentChatUser")
             .order(by: "timestamp", descending: true)
             .addSnapshotListener { documentSnapshot, error in

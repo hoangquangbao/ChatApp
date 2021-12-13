@@ -26,7 +26,7 @@ struct Home: View {
                     
                     ActivityIndicator()
                         .frame(width: 100, height: 100)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.gray)
                     
                 )
             } else {
@@ -97,7 +97,7 @@ struct Home: View {
                             
                             VStack {
                                 
-                                if let image = vm.image {
+                                if let image = vm.imgAvatar {
                                     
                                     Image(uiImage: image)
                                         .resizable()
@@ -226,7 +226,7 @@ struct Home: View {
                 }
             }
             .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
-                ImagePicker(image: $vm.image)
+                ImagePicker(image: $vm.imgAvatar)
             }
             .fullScreenCover(isPresented: $vm.isShowMainMessageView) {
                 MainMessage()

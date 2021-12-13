@@ -23,12 +23,16 @@ struct ContentView: View {
     }
     
     fileprivate func isLoggedIn() -> Bool {
+        
         return UserDefaults.standard.isLoggedIn()
+        
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        
         ContentView()
+        
     }
 }

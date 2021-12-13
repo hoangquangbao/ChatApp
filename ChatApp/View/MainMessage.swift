@@ -31,10 +31,17 @@ struct MainMessage : View {
                 
                 topNav
                 mainMessageView
+                NavigationLink("", destination: Chat(vm:vm), isActive: $vm.isShowChat)
                 
             }
             //.onAppear(perform: vm.fetchRecentChatUser)
             .navigationBarHidden(true)
+            .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
+                
+                //Home()
+                ContentView()
+                
+            }
             .onChange(of: vm.searchMainMessage) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
@@ -72,7 +79,7 @@ struct MainMessage : View {
                     
                 } label: {
                     
-                    WebImage(url: URL(string: vm.anUser?.profileImageUrl ?? ""))
+                    WebImage(url: URL(string: vm.currentUser?.profileImageUrl ?? ""))
                         .resizable()
                         .scaledToFill()
                         .frame(width: 50, height: 50)
@@ -107,18 +114,12 @@ struct MainMessage : View {
                                 })
                         ])
                 }
-                .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
-                    
-                    //Home()
-                    ContentView()
-                    
-                }
                 
-                let usn = vm.anUser?.username
+                let usn = vm.currentUser?.username
                 
                 if usn != "" {
                     
-                    Text(vm.anUser?.username ?? "")
+                    Text(vm.currentUser?.username ?? "")
                         .font(.system(size: 20, weight: .bold))
                     
                 } else {
@@ -238,10 +239,10 @@ struct MainMessage : View {
                                 }
                                 .padding(.vertical, 15)
         //                        NavigationLink(destination: Chat(vm: vm, selectedUser: vm.selectedUser), isActive: $vm.isShowChatMessage) {
-                                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
-
-                                    EmptyView()
-                                }
+//                                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
+//
+//                                    EmptyView()
+//                                }
                             }
                             .contextMenu{
                                 

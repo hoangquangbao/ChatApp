@@ -47,6 +47,7 @@ struct Chat: View {
                 }
             }
             .navigationBarHidden(true)
+
             .onChange(of: vm.searchChat) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if newValue == vm.searchChat && vm.searchChat != "" {

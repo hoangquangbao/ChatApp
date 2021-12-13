@@ -5,9 +5,10 @@
 //  Created by Quang Bao on 17/11/2021.
 //
 
-import SwiftUI
+//import SwiftUI
+import Foundation
 import Firebase
-import FirebaseFirestore
+//import FirebaseFirestore
 
 class FirebaseManager : NSObject {
     
