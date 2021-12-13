@@ -11,17 +11,17 @@ import SDWebImageSwiftUI
 
 struct MainMessage : View {
     
-//    @ObservedObject var vm = HomeViewModel()
+    //    @ObservedObject var vm = HomeViewModel()
     @StateObject var vm = HomeViewModel()
-
-//    @State var isShowChatMessage : Bool = false
-
     
-//    @State var isShowSignOutButton : Bool = false
-//    @State var isShowHomePage : Bool = false
-//    @State var isShowNewMessage : Bool = false
-//    @State var isShowChatMessage : Bool = false
-//    @State var selectedUser : User?
+    //    @State var isShowChatMessage : Bool = false
+    
+    
+    //    @State var isShowSignOutButton : Bool = false
+    //    @State var isShowHomePage : Bool = false
+    //    @State var isShowNewMessage : Bool = false
+    //    @State var isShowChatMessage : Bool = false
+    //    @State var selectedUser : User?
     
     //@Environment(\.presentationMode) var presentationMode
     
@@ -99,15 +99,15 @@ struct MainMessage : View {
                                 Text("Sign Out"),
                                 action: {
                                     
-
+                                    
                                     
                                     //try? FirebaseManager.shared.auth.signOut()
-//
-//
-//                                    vm.fetchCurrentUser()
+                                    //
+                                    //
+                                    //                                    vm.fetchCurrentUser()
                                     //presentationMode.wrappedValue.dismiss()
-//                                    vm.isShowMainMessageView = false
-//                                    vm.isShowHomePage = true
+                                    //                                    vm.isShowMainMessageView = false
+                                    //                                    vm.isShowHomePage = true
                                     
                                     vm.handleSighOut()
                                     
@@ -220,7 +220,7 @@ struct MainMessage : View {
                                             Text(user.username)
                                                 .font(.system(size: 17, weight: .bold))
                                                 .foregroundColor(.black)
-                                                                                        
+                                            
                                             Text(user.text)
                                                 .font(.system(size: 12))
                                                 .foregroundColor(.gray)
@@ -238,11 +238,11 @@ struct MainMessage : View {
                                     .padding(.horizontal)
                                 }
                                 .padding(.vertical, 15)
-        //                        NavigationLink(destination: Chat(vm: vm, selectedUser: vm.selectedUser), isActive: $vm.isShowChatMessage) {
-//                                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
-//
-//                                    EmptyView()
-//                                }
+                                //                        NavigationLink(destination: Chat(vm: vm, selectedUser: vm.selectedUser), isActive: $vm.isShowChatMessage) {
+                                //                                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
+                                //
+                                //                                    EmptyView()
+                                //                                }
                             }
                             .contextMenu{
                                 
@@ -262,7 +262,7 @@ struct MainMessage : View {
             }
         }
     }
-
+    
     
     //MARK: - timeAgoDisplay
     //Convert data type of "timestam" from Timestamp to Date. After that set timeAgo format
@@ -272,7 +272,7 @@ struct MainMessage : View {
         let startOfNow = today
         let startOfTimeStamp = timestamp.dateValue()
         let secondsAgo = Calendar.current.dateComponents([.second], from: startOfTimeStamp, to: startOfNow).second!
-    
+        
         let minute = 60
         let hour = 60 * minute
         let day = 24 * hour

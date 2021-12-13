@@ -14,7 +14,7 @@ struct Home: View {
     @ObservedObject var vm = HomeViewModel()
     //    @State var isSignInMode : Bool = true
     @State var isHidePassword : Bool = true
-//    @State var isShowResetPasswordView : Bool = false
+    //    @State var isShowResetPasswordView : Bool = false
     
     var body: some View {
         
@@ -233,7 +233,7 @@ struct Home: View {
             }
             .fullScreenCover(isPresented: $vm.isShowResetPasswordView) {
                 ResetPassword()
-            }            
+            }
         }
     }
     

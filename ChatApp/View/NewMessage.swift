@@ -11,10 +11,10 @@ import SDWebImageSwiftUI
 struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @ObservedObject var vm : HomeViewModel
-//    @State var isShowChatMessage : Bool = false
-
-//    @State var selectedUser : User?
+    //    @ObservedObject var vm : HomeViewModel
+    //    @State var isShowChatMessage : Bool = false
+    
+    //    @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -112,7 +112,7 @@ struct NewMessage: View {
                     Button {
                         
                         vm.selectedUser = user
-
+                        
                         vm.searchNewMessage = ""
                         vm.isShowNewMessage = false
                         vm.fetchMessage(selectedUser: vm.selectedUser)
@@ -140,7 +140,7 @@ struct NewMessage: View {
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 15)
-//                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.vm.selectedUser), isActive: $vm.isShowChatMessage) {
+                    //                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.vm.selectedUser), isActive: $vm.isShowChatMessage) {
                     NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
                         EmptyView()
                     }

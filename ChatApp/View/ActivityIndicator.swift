@@ -26,7 +26,7 @@ struct ActivityIndicator: View {
                     
                 }.frame(width: geometry.size.width, height: geometry.size.height)
                     .rotationEffect(!self.isAnimating ? .degrees(0) : .degrees(360))
-
+                
                     .animation(Animation
                                 .timingCurve(0.5, 0.15 + Double(index) / 5, 0.25, 1, duration: 1.5)
                                 .repeatForever(autoreverses: false))

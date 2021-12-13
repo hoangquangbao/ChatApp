@@ -57,50 +57,50 @@ struct ImagePickerMessage: UIViewControllerRepresentable {
         
     }
     
-//    @Binding var isShowImagePickerMessage : Bool
-//    @Binding var imgMessage : Data
-//
-//    func makeCoordinator() -> Coordinator {
-//
-//        return ImagePickerMessage.Coordinator(parent1: self)
-//
-//    }
-//
-//    func makeUIViewController(context: Context) -> UIImagePickerController {
-//
-//        let picker = UIImagePickerController()
-//        picker.sourceType = .photoLibrary
-//        picker.delegate = context.coordinator
-//        return picker
-//
-//    }
-//
-//    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-//
-//    }
-//
-//    class Coordinator : NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
-//
-//        var parent : ImagePickerMessage
-//
-//        init(parent1: ImagePickerMessage) {
-//
-//            parent = parent1
-//
-//        }
-//
-//        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-//
-//            parent.isShowImagePickerMessage.toggle()
-//
-//        }
-//
-//        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//
-//            let image = info[.originalImage] as! UIImage
-//            parent.imgMessage = image.jpegData(compressionQuality: 0.5)!
-//            parent.isShowImagePickerMessage.toggle()
-//
-//        }
-//    }
+    //    @Binding var isShowImagePickerMessage : Bool
+    //    @Binding var imgMessage : Data
+    //
+    //    func makeCoordinator() -> Coordinator {
+    //
+    //        return ImagePickerMessage.Coordinator(parent1: self)
+    //
+    //    }
+    //
+    //    func makeUIViewController(context: Context) -> UIImagePickerController {
+    //
+    //        let picker = UIImagePickerController()
+    //        picker.sourceType = .photoLibrary
+    //        picker.delegate = context.coordinator
+    //        return picker
+    //
+    //    }
+    //
+    //    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
+    //
+    //    }
+    //
+    //    class Coordinator : NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    //
+    //        var parent : ImagePickerMessage
+    //
+    //        init(parent1: ImagePickerMessage) {
+    //
+    //            parent = parent1
+    //
+    //        }
+    //
+    //        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    //
+    //            parent.isShowImagePickerMessage.toggle()
+    //
+    //        }
+    //
+    //        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    //
+    //            let image = info[.originalImage] as! UIImage
+    //            parent.imgMessage = image.jpegData(compressionQuality: 0.5)!
+    //            parent.isShowImagePickerMessage.toggle()
+    //
+    //        }
+    //    }
 }
