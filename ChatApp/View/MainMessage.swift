@@ -37,12 +37,16 @@ struct MainMessage : View {
             .edgesIgnoringSafeArea(.bottom)
             //.onAppear(perform: vm.fetchRecentChatUser)
             .navigationBarHidden(true)
+            
+            //Navigation...
             .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
                 
                 //Home()
                 ContentView()
                 
             }
+            
+            //Filter...
             .onChange(of: vm.searchMainMessage) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
@@ -164,15 +168,15 @@ struct MainMessage : View {
                 }
                 
                 Divider()
-                    .frame(height: 1)
-                    .padding(.horizontal, 30)
-                    .background(Color.gray)
+//                    .frame(height: 1)
+//                    .padding(.horizontal, 30)
+//                    .background(Color.gray)
                 
             }
             .padding(.vertical)
             
             Text("Recent")
-                .font(.system(size: 15))
+                .font(.system(size: 12))
                 .foregroundColor(.gray)
             
         }

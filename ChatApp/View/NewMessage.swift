@@ -47,8 +47,8 @@ struct NewMessage: View {
             )
             
             //Navigation...
-            .fullScreenCover(isPresented: $vm.isShowGroupMessage, onDismiss: nil, content: {
-                GroupMessage(vm: vm)
+            .fullScreenCover(isPresented: $vm.isShowAddParticipants, onDismiss: nil, content: {
+                AddParticipants(vm: vm)
             })
             
             //Filter...
@@ -93,9 +93,9 @@ struct NewMessage: View {
                 }
 
                 Divider()
-                    .frame(height: 1)
-                    .padding(.horizontal, 30)
-                    .background(Color.gray)
+//                    .frame(height: 1)
+//                    .padding(.horizontal, 30)
+//                    .background(Color.gray)
 
             }
             .padding()
@@ -109,13 +109,14 @@ struct NewMessage: View {
             
             Button {
                 
-                vm.isShowGroupMessage.toggle()
+                vm.isShowAddParticipants.toggle()
                 
             } label: {
                 HStack(){
                     
                     Image(systemName: "person.3.fill")
                     Text("Create a New Group")
+                        .font(.system(size: 15))
                     Spacer()
 
                 }
@@ -127,7 +128,7 @@ struct NewMessage: View {
             LazyVStack(alignment: .leading){
                 
                 Text("Suggested")
-                    .font(.system(size: 15))
+                    .font(.system(size: 12))
                     .foregroundColor(.gray)
                     .padding()
                 
@@ -154,7 +155,7 @@ struct NewMessage: View {
                                 .shadow(color: .purple, radius: 2)
                             
                             Text(user.username)
-                                .font(.system(size: 17, weight: .bold))
+                                .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(.black)
                             
                             Spacer()

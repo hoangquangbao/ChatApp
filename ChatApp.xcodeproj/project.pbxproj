@@ -31,7 +31,8 @@
 		069DFBD6273BC3B2003E1419 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 069DFBD5273BC3B2003E1419 /* FirebaseStorage */; };
 		06A4065B27415768004C0D23 /* MainMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A4065A27415768004C0D23 /* MainMessage.swift */; };
 		06B00D5F273C0CF9000E7BAB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06B00D5E273C0CF9000E7BAB /* GoogleService-Info.plist */; };
-		06B845AD27684294005BDEAE /* GroupMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845AC27684294005BDEAE /* GroupMessage.swift */; };
+		06B845AF2768C383005BDEAE /* AddParticipants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845AE2768C383005BDEAE /* AddParticipants.swift */; };
+		06B845B12768C67C005BDEAE /* NewGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845B02768C67C005BDEAE /* NewGroup.swift */; };
 		06B9238E2743630000D9C974 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 06B9238D2743630000D9C974 /* SDWebImageSwiftUI */; };
 		06B923912743650500D9C974 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B923902743650500D9C974 /* HomeViewModel.swift */; };
 		06B92394274365CB00D9C974 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B92393274365CB00D9C974 /* User.swift */; };
@@ -88,7 +89,8 @@
 		067BD3132757DD46002ED73F /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		06A4065A27415768004C0D23 /* MainMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMessage.swift; sourceTree = "<group>"; };
 		06B00D5E273C0CF9000E7BAB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		06B845AC27684294005BDEAE /* GroupMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMessage.swift; sourceTree = "<group>"; };
+		06B845AE2768C383005BDEAE /* AddParticipants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipants.swift; sourceTree = "<group>"; };
+		06B845B02768C67C005BDEAE /* NewGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroup.swift; sourceTree = "<group>"; };
 		06B923902743650500D9C974 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		06B92393274365CB00D9C974 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		06CFE6602745FDB6005BC5B6 /* NewMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessage.swift; sourceTree = "<group>"; };
@@ -211,7 +213,8 @@
 				0635FCD2275460AE00EA30B1 /* ResetPassword.swift */,
 				06A4065A27415768004C0D23 /* MainMessage.swift */,
 				06CFE6602745FDB6005BC5B6 /* NewMessage.swift */,
-				06B845AC27684294005BDEAE /* GroupMessage.swift */,
+				06B845AE2768C383005BDEAE /* AddParticipants.swift */,
+				06B845B02768C67C005BDEAE /* NewGroup.swift */,
 				063967722746497500A99EEA /* Chat.swift */,
 			);
 			path = View;
@@ -515,13 +518,14 @@
 			files = (
 				0635FCD3275460AE00EA30B1 /* ResetPassword.swift in Sources */,
 				066DE1DF275BADA100F720B4 /* ActivityIndicator.swift in Sources */,
+				06B845B12768C67C005BDEAE /* NewGroup.swift in Sources */,
 				06B92394274365CB00D9C974 /* User.swift in Sources */,
-				06B845AD27684294005BDEAE /* GroupMessage.swift in Sources */,
 				067BD31027572255002ED73F /* RecentChatUser.swift in Sources */,
 				065C03E7273A59E9009016C3 /* ContentView.swift in Sources */,
 				06CFE6612745FDB6005BC5B6 /* NewMessage.swift in Sources */,
 				06A4065B27415768004C0D23 /* MainMessage.swift in Sources */,
 				066542AF2744E260008B79C1 /* FirebaseManager.swift in Sources */,
+				06B845AF2768C383005BDEAE /* AddParticipants.swift in Sources */,
 				063967732746497500A99EEA /* Chat.swift in Sources */,
 				0657D953276239180035C214 /* ImagePickerMessage.swift in Sources */,
 				0649EF942758A6DB0050D18E /* UserDefault.swift in Sources */,

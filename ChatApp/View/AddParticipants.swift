@@ -1,5 +1,5 @@
 //
-//  GroupMessage.swift
+//  AddParticipants.swift
 //  ChatApp
 //
 //  Created by Quang Bao on 14/12/2021.
@@ -8,8 +8,7 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct GroupMessage: View {
-    
+struct AddParticipants: View {
     @ObservedObject var vm = HomeViewModel()
 //    @State var filterGroupMessage = [User]()
     
@@ -19,15 +18,14 @@ struct GroupMessage: View {
         NavigationView{
             VStack{
                 
-                topbarGroupMessage
-                mainGroupMessage
+                topbarAddParticipants
+                mainAddParticipants
                 
             }
-            .navigationBarTitle("Group Message", displayMode: .inline)
+            .navigationBarTitle("Add Participants", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
                 
-                //vm.isShowNewMessage = false
                 presentationMode.wrappedValue.dismiss()
                 
             }, label: {
@@ -41,35 +39,39 @@ struct GroupMessage: View {
             .navigationBarItems(trailing:
                                     Button(action: {
                 
-                //vm.isShowNewMessage = false
-                //presentationMode.wrappedValue.dismiss()
+                vm.isShowNewGroup = true
                 
             }, label: {
                 
                 Text("NEXT")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(vm.groupChat.count < 2 ? .gray : .purple)
+                    .foregroundColor(vm.participantList.count < 2 ? .gray : .purple)
                 
-            }).disabled(vm.groupChat.count < 2)
+            }).disabled(vm.participantList.count < 2)
             )
             
+            //Navigation
+            .fullScreenCover(isPresented: $vm.isShowNewGroup, onDismiss: nil, content: {
+                NewGroup(vm: vm)
+            })
+            
             //Filter...
-            .onChange(of: vm.searchGroupMessage) { newValue in
+            .onChange(of: vm.searchAddParticipants) { newValue in
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     
-                    if newValue == vm.searchGroupMessage && vm.searchGroupMessage != "" {
+                    if newValue == vm.searchAddParticipants && vm.searchAddParticipants != "" {
                         
                         vm.filterForGroupMessage()
                         
                     }
                 }
                 
-                if vm.searchGroupMessage == ""{
+                if vm.searchAddParticipants == ""{
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterGroupMessage = vm.suggestUser
+                        vm.filterAddParticipants = vm.suggestUser
                         
                     }
                 }
@@ -79,7 +81,7 @@ struct GroupMessage: View {
     
     
     //MARK: - topbarGroupMessage
-    var topbarGroupMessage : some View {
+    var topbarAddParticipants : some View {
         
         VStack(spacing: 3){
             HStack {
@@ -87,7 +89,7 @@ struct GroupMessage: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 
-                TextField("Type a name", text: $vm.searchGroupMessage)
+                TextField("Type a name", text: $vm.searchAddParticipants)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .submitLabel(.search)
@@ -96,16 +98,16 @@ struct GroupMessage: View {
             .padding(.top)
             
             Divider()
-                .frame(height: 1)
-                .padding(.horizontal, 30)
-                .background(Color.gray)
+//                .frame(height: 1)
+//                .padding(.horizontal, 30)
+//                .background(Color.gray)
             
             //Selected user list
             ScrollView(.horizontal) {
                 
                 HStack(spacing: 25){
                     
-                    ForEach(vm.groupChat){ user in
+                    ForEach(vm.participantList){ user in
                         
                         VStack(spacing: 10){
                             
@@ -131,20 +133,20 @@ struct GroupMessage: View {
     
     
     //MARK: - mainGroupMessage
-    var mainGroupMessage : some View {
+    var mainAddParticipants : some View {
         
         ScrollView{
             
             LazyVStack(alignment: .leading){
                                 
-                ForEach(vm.filterGroupMessage) { user in
+                ForEach(vm.filterAddParticipants) { user in
                     
                     Button {
                       
                     //If the user not exist in groupChat array then add it.
                       if(isNotExist(user: user)) {
                           
-                          vm.groupChat.append(user)
+                          vm.participantList.append(user)
                           
                       }
 
@@ -160,7 +162,7 @@ struct GroupMessage: View {
                                 .shadow(color: .purple, radius: 2)
                             
                             Text(user.username)
-                                .font(.system(size: 17, weight: .bold))
+                                .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(.black)
                             
                             Spacer()
@@ -182,7 +184,7 @@ struct GroupMessage: View {
     //Check if a user is selected or not
     func isNotExist(user: User) -> Bool {
         
-        let data = vm.groupChat.filter {
+        let data = vm.participantList.filter {
               
               return $0.uid.contains(user.uid)
               
@@ -192,4 +194,5 @@ struct GroupMessage: View {
         
     }
 }
+
 

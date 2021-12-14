@@ -47,12 +47,15 @@ class HomeViewModel: ObservableObject {
     @Published var suggestUser = [User]()
     var firestoreListenerUserToSuggest: ListenerRegistration?
     
-    //Group Message
-    @Published var isShowGroupMessage : Bool = false
-    @Published var searchGroupMessage = ""
-    @Published var filterGroupMessage = [User]()
-    @Published var groupChat = [User]()
-
+    //Add Participants
+    @Published var isShowAddParticipants : Bool = false
+    @Published var searchAddParticipants = ""
+    @Published var filterAddParticipants = [User]()
+    @Published var participantList = [User]()
+    
+    //New Group
+    @Published var isShowNewGroup : Bool = false
+    @Published var groupName : String = ""
 
     //Chat
     @Published var isShowChat : Bool = false
@@ -367,7 +370,7 @@ class HomeViewModel: ObservableObject {
                 })
                 
                 self.filterNewMessage = self.suggestUser
-                self.filterGroupMessage = self.suggestUser
+                self.filterAddParticipants = self.suggestUser
                 
             }
     }
@@ -856,9 +859,9 @@ class HomeViewModel: ObservableObject {
         
         withAnimation(.linear){
             
-            self.filterGroupMessage = self.suggestUser.filter({
+            self.filterAddParticipants = self.suggestUser.filter({
                 
-                return $0.username.lowercased().contains(self.searchGroupMessage.lowercased())
+                return $0.username.lowercased().contains(self.searchAddParticipants.lowercased())
                 
             })
         }
