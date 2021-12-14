@@ -8,7 +8,7 @@
 //import SwiftUI
 import Foundation
 import Firebase
-//import FirebaseFirestore
+import FirebaseFirestore
 
 class FirebaseManager : NSObject {
     

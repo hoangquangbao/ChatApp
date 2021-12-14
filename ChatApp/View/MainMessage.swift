@@ -171,7 +171,7 @@ struct MainMessage : View {
             .padding(.vertical)
             
             Text("Recent")
-                .font(.system(size: 20))
+                .font(.system(size: 15))
                 .foregroundColor(.gray)
             
         }

@@ -47,6 +47,10 @@ class HomeViewModel: ObservableObject {
     @Published var filterNewMessage = [User]()
     var firestoreListenerUserToSuggest: ListenerRegistration?
     
+    //Group Message
+    @Published var isShowGroupMessage : Bool = false
+    @Published var groupChat = [User]()
+
     //Chat
     @Published var isShowChat : Bool = false
     @Published var allMessages = [Message]()

@@ -27,22 +27,26 @@ struct NewMessage: View {
                 topbarNewMassage
                 mainNewMessage
                 
-            }
+                }
+            
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
-                
+
                 vm.isShowNewMessage = false
                 //presentationMode.wrappedValue.dismiss()
-                
+
             }, label: {
-                
+
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.purple)
-                
+
             })
             )
+            .fullScreenCover(isPresented: $vm.isShowGroupMessage, onDismiss: nil, content: {
+                GroupMessage()
+            })
             .onChange(of: vm.searchNewMessage) { newValue in
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -64,39 +68,33 @@ struct NewMessage: View {
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     
     //MARK: - topbarNewMessage
     private var topbarNewMassage : some View {
         
-        VStack(alignment: .leading){
-            
-            HStack {
-                
-                Text("To: ")
-                    .foregroundColor(.gray)
-                
-                TextField("Type a name", text: $vm.searchNewMessage)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .submitLabel(.search)
-                
+            VStack(spacing: 3){
+                HStack {
+
+                    Text("To: ")
+                        .foregroundColor(.gray)
+
+                    TextField("Type a name", text: $vm.searchNewMessage)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .submitLabel(.search)
+
+                }
+
+                Divider()
+                    .frame(height: 1)
+                    .padding(.horizontal, 30)
+                    .background(Color.gray)
+
             }
+            .padding()
             
-            Divider()
-                .frame(height: 1)
-                .padding(.horizontal, 30)
-                .background(Color.gray)
-            
-            Text("Suggested")
-                .font(.system(size: 20))
-                .foregroundColor(.gray)
-            //.padding(.horizontal)
-            
-        }
-        .padding()
     }
     
     
@@ -105,7 +103,29 @@ struct NewMessage: View {
         
         ScrollView{
             
-            LazyVStack{
+            Button {
+                
+                vm.isShowGroupMessage.toggle()
+                
+            } label: {
+                HStack(){
+                    
+                    Image(systemName: "person.3.fill")
+                    Text("Create a New Group")
+                    Spacer()
+
+                }
+                .foregroundColor(.black)
+                .padding(.horizontal)
+                
+            }
+ 
+            LazyVStack(alignment: .leading){
+                
+                Text("Suggested")
+                    .font(.system(size: 15))
+                    .foregroundColor(.gray)
+                    .padding()
                 
                 ForEach(vm.filterNewMessage) { user in
                     
@@ -117,7 +137,6 @@ struct NewMessage: View {
                         vm.isShowNewMessage = false
                         vm.fetchMessage(selectedUser: vm.selectedUser)
                         vm.isShowChat = true
-                        
                         
                     } label: {
                         
