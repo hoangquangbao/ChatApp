@@ -11,6 +11,8 @@ import SDWebImageSwiftUI
 struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
+//    @State var filterNewMessage = [User]()
+
     //    @ObservedObject var vm : HomeViewModel
     //    @State var isShowChatMessage : Bool = false
     
@@ -27,26 +29,29 @@ struct NewMessage: View {
                 topbarNewMassage
                 mainNewMessage
                 
-                }
-            
+            }
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
-
+                
                 vm.isShowNewMessage = false
                 //presentationMode.wrappedValue.dismiss()
-
+                
             }, label: {
-
+                
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.purple)
-
+                
             })
             )
+            
+            //Navigation...
             .fullScreenCover(isPresented: $vm.isShowGroupMessage, onDismiss: nil, content: {
-                GroupMessage()
+                GroupMessage(vm: vm)
             })
+            
+            //Filter...
             .onChange(of: vm.searchNewMessage) { newValue in
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -62,7 +67,7 @@ struct NewMessage: View {
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterNewMessage = vm.allSuggestUsers
+                        vm.filterNewMessage = vm.suggestUser
                         
                     }
                 }
@@ -94,7 +99,6 @@ struct NewMessage: View {
 
             }
             .padding()
-            
     }
     
     
@@ -140,12 +144,12 @@ struct NewMessage: View {
                         
                     } label: {
                         
-                        HStack(spacing: 10){
+                        HStack(spacing: 15){
                             
                             WebImage(url: URL(string: user.profileImageUrl))
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 45, height: 45)
                                 .mask(Circle())
                                 .shadow(color: .purple, radius: 2)
                             

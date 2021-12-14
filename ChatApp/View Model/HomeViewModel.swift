@@ -42,14 +42,17 @@ class HomeViewModel: ObservableObject {
     
     //New Message
     @Published var isShowNewMessage : Bool = false
-    @Published var allSuggestUsers = [User]()
     @Published var searchNewMessage = ""
     @Published var filterNewMessage = [User]()
+    @Published var suggestUser = [User]()
     var firestoreListenerUserToSuggest: ListenerRegistration?
     
     //Group Message
     @Published var isShowGroupMessage : Bool = false
+    @Published var searchGroupMessage = ""
+    @Published var filterGroupMessage = [User]()
     @Published var groupChat = [User]()
+
 
     //Chat
     @Published var isShowChat : Bool = false
@@ -341,7 +344,7 @@ class HomeViewModel: ObservableObject {
     func fetchUserToSuggest() {
         
         firestoreListenerUserToSuggest?.remove()
-        self.allSuggestUsers.removeAll()
+        self.suggestUser.removeAll()
         firestoreListenerUserToSuggest = FirebaseManager.shared.firestore
             .collection("users")
             .addSnapshotListener { documentSnapshot, error in
@@ -358,12 +361,13 @@ class HomeViewModel: ObservableObject {
                     let user = User(data: data)
                     if user.uid != FirebaseManager.shared.auth.currentUser?.uid {
                         
-                        self.allSuggestUsers.append(.init(data: data))
+                        self.suggestUser.append(.init(data: data))
                         
                     }
                 })
                 
-                self.filterNewMessage = self.allSuggestUsers
+                self.filterNewMessage = self.suggestUser
+                self.filterGroupMessage = self.suggestUser
                 
             }
     }
@@ -816,14 +820,45 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    //MARK: - filterApplyOnUsers
+    //MARK: - filterForNewMessage
     func filterForNewMessage() {
         
         withAnimation(.linear){
             
-            self.filterNewMessage = self.allSuggestUsers.filter({
+            self.filterNewMessage = self.suggestUser.filter({
                 
                 return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
+                
+            })
+        }
+    }
+    
+    
+    //MARK: - filterSuggestUsers
+//    func filterSuggestUsers() -> [User] {
+//
+//        var data : [User]?
+//        withAnimation(.linear){
+//
+////            self.filterNewMessage = self.allSuggestUsers.filter({
+//            data = self.allSuggestUsers.filter({
+//
+//                return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
+//
+//            })
+//        }
+//        return data!
+//    }
+    
+    
+    //MARK: - filterForNewMessage
+    func filterForGroupMessage() {
+        
+        withAnimation(.linear){
+            
+            self.filterGroupMessage = self.suggestUser.filter({
+                
+                return $0.username.lowercased().contains(self.searchGroupMessage.lowercased())
                 
             })
         }

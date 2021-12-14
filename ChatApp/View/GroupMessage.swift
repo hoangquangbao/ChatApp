@@ -11,6 +11,7 @@ import SDWebImageSwiftUI
 struct GroupMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
+//    @State var filterGroupMessage = [User]()
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -51,6 +52,28 @@ struct GroupMessage: View {
                 
             }).disabled(vm.groupChat.count < 2)
             )
+            
+            //Filter...
+            .onChange(of: vm.searchGroupMessage) { newValue in
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    
+                    if newValue == vm.searchGroupMessage && vm.searchGroupMessage != "" {
+                        
+                        vm.filterForGroupMessage()
+                        
+                    }
+                }
+                
+                if vm.searchGroupMessage == ""{
+                    
+                    //do nothing
+                    withAnimation(.linear){
+                        vm.filterGroupMessage = vm.suggestUser
+                        
+                    }
+                }
+            }
         }
     }
     
@@ -64,7 +87,7 @@ struct GroupMessage: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 
-                TextField("Type a name", text: $vm.searchNewMessage)
+                TextField("Type a name", text: $vm.searchGroupMessage)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .submitLabel(.search)
@@ -89,12 +112,12 @@ struct GroupMessage: View {
                             WebImage(url: URL(string: user.profileImageUrl))
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 60, height: 60)
                                 .mask(Circle())
                                 .shadow(color: .purple, radius: 2)
                             
                             Text(user.username)
-                                .font(.system(size: 8, weight: .bold))
+                                .font(.system(size: 10))
                                 .foregroundColor(.black)
                             
                         }
@@ -111,22 +134,28 @@ struct GroupMessage: View {
     var mainGroupMessage : some View {
         
         ScrollView{
+            
             LazyVStack(alignment: .leading){
-                
-                ForEach(vm.filterNewMessage) { user in
+                                
+                ForEach(vm.filterGroupMessage) { user in
                     
                     Button {
-                        
-                        vm.groupChat.append(user)
-                        
+                      
+                    //If the user not exist in groupChat array then add it.
+                      if(isNotExist(user: user)) {
+                          
+                          vm.groupChat.append(user)
+                          
+                      }
+
                     } label: {
                         
-                        HStack(spacing: 10){
+                        HStack(spacing: 15){
                             
                             WebImage(url: URL(string: user.profileImageUrl))
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 45, height: 45)
                                 .mask(Circle())
                                 .shadow(color: .purple, radius: 2)
                             
@@ -147,10 +176,20 @@ struct GroupMessage: View {
             }
         }
     }
-}
-
-struct GroupMessage_Previews: PreviewProvider {
-    static var previews: some View {
-        GroupMessage()
+    
+    
+    //MARK: - isNotExist
+    //Check if a user is selected or not
+    func isNotExist(user: User) -> Bool {
+        
+        let data = vm.groupChat.filter {
+              
+              return $0.uid.contains(user.uid)
+              
+        }
+        
+        return data.isEmpty ? true : false
+        
     }
 }
+

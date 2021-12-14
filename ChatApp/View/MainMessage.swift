@@ -34,6 +34,7 @@ struct MainMessage : View {
                 NavigationLink("", destination: Chat(vm:vm), isActive: $vm.isShowChat)
                 
             }
+            .edgesIgnoringSafeArea(.bottom)
             //.onAppear(perform: vm.fetchRecentChatUser)
             .navigationBarHidden(true)
             .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
@@ -82,7 +83,7 @@ struct MainMessage : View {
                     WebImage(url: URL(string: vm.currentUser?.profileImageUrl ?? ""))
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 50, height: 50)
+                        .frame(width: 45, height: 45)
                         .mask(Circle())
                         .shadow(color: .purple, radius: 2)
                     
@@ -206,12 +207,12 @@ struct MainMessage : View {
                                     
                                 } label: {
                                     
-                                    HStack(spacing: 10){
+                                    HStack(spacing: 15){
                                         
                                         WebImage(url: URL(string: user.profileImageUrl))
                                             .resizable()
                                             .scaledToFill()
-                                            .frame(width: 50, height: 50)
+                                            .frame(width: 60, height: 60)
                                             .mask(Circle())
                                             .shadow(color: .purple, radius: 2)
                                         
@@ -297,7 +298,7 @@ struct MainMessage : View {
     //"func fetchUserToSuggest()" have to init at begin run app, it help "vm.allSuggestUsers" variable have data before calling "func getSelectedUser(uid: String) -> User". If not our get an error "Unexpectedly found nil while unwrapping an Optional value"
     func getSelectedUser(uid: String) -> User {
         
-        return vm.allSuggestUsers.first{$0.uid == uid }!
+        return vm.suggestUser.first{$0.uid == uid }!
         
     }
 }
