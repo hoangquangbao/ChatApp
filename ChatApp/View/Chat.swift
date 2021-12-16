@@ -79,43 +79,80 @@ struct Chat: View {
             
             HStack(spacing: 15) {
                 
-                WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 50, height: 50)
-                    .mask(Circle())
-                    .shadow(color: .black, radius: 2)
-                
-                VStack(alignment: .leading ,spacing: 5){
+                //Dòng này cần code lại để phù họp với mọi trường hợp
+                if vm.participantList.count <= 1 {
                     
-                    Text("\(vm.selectedUser?.username ?? "")")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                    WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 50, height: 50)
+                        .mask(Circle())
+                        .shadow(color: .black, radius: 2)
                     
-                    HStack(spacing: 5){
+                    VStack(alignment: .leading ,spacing: 5){
                         
-                        Image(systemName: "circle.fill")
-                            .frame(width: 10, height: 10)
-                            .mask(Circle())
-                            .foregroundColor(.green)
+                        Text("\(vm.selectedUser?.username ?? "")")
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
                         
-                        Text("Online Now")
+                        HStack(spacing: 5){
+                            
+                            Image(systemName: "circle.fill")
+                                .frame(width: 10, height: 10)
+                                .mask(Circle())
+                                .foregroundColor(.green)
+                            
+                            Text("Online Now")
+                                .font(.system(size: 10))
+                                .foregroundColor(.gray)
+                            
+                        }
+                    }
+                } else {
+                    
+                    Image("LotusLogo")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 50, height: 50)
+                        .mask(Circle())
+                        .shadow(color: .black, radius: 2)
+                    
+                    VStack(alignment: .leading, spacing: 5){
+                        
+                        Text(vm.groupName)
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                        
+                        Text("\(vm.participantList.count) participants")
                             .font(.system(size: 10))
                             .foregroundColor(.gray)
                         
                     }
                 }
-                
+
                 Spacer()
                 
                 Button {
                     
-                    vm.searchMainMessage = ""
-                    vm.searchNewMessage = ""
                     vm.searchChat = ""
                     //presentationMode.wrappedValue.dismiss()
                     //vm.fetchRecentChatUser()
-                    vm.isShowChat = false
                     
+                    //For Group
+                    vm.groupName = ""
+                    vm.participantList.removeAll()
+                    
+                    DispatchQueue.main.async {
+                        vm.isShowChat = false
+                    }
+                    DispatchQueue.main.async {
+                        vm.isShowNewGroup = false
+                    }
+                    DispatchQueue.main.async {
+                        vm.isShowAddParticipants = false
+                    }
+//                    DispatchQueue.main.async {
+//                        vm.isShowNewMessage = false
+//                    }
+                                        
                 } label: {
                     
                     Image(systemName: "multiply")

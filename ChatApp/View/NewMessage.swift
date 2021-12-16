@@ -33,7 +33,7 @@ struct NewMessage: View {
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
-                
+                vm.searchNewMessage = ""
                 vm.isShowNewMessage = false
                 //presentationMode.wrappedValue.dismiss()
                 
@@ -109,6 +109,7 @@ struct NewMessage: View {
             
             Button {
                 
+                vm.searchNewMessage = ""
                 vm.isShowAddParticipants.toggle()
                 
             } label: {
@@ -139,7 +140,7 @@ struct NewMessage: View {
                         vm.selectedUser = user
                         
                         vm.searchNewMessage = ""
-                        vm.isShowNewMessage = false
+//                        vm.isShowNewMessage = false
                         vm.fetchMessage(selectedUser: vm.selectedUser)
                         vm.isShowChat = true
                         

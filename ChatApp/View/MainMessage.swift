@@ -38,12 +38,15 @@ struct MainMessage : View {
             //.onAppear(perform: vm.fetchRecentChatUser)
             .navigationBarHidden(true)
             
-            //Navigation...
+            //Navigation to Home
             .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
-                
                 //Home()
                 ContentView()
-                
+            }
+            
+            //Navigation to NewMessage
+            .fullScreenCover(isPresented: $vm.isShowNewMessage, onDismiss: nil) {
+                NewMessage(vm: vm)
             }
             
             //Filter...
@@ -138,6 +141,7 @@ struct MainMessage : View {
                 
                 Button {
                     
+                    vm.searchMainMessage = ""
                     vm.isShowNewMessage = true
                     
                 } label: {
@@ -146,10 +150,6 @@ struct MainMessage : View {
                         .font(.system(size: 25))
                         .foregroundColor(.purple)
                     
-                }
-                .fullScreenCover(isPresented: $vm.isShowNewMessage, onDismiss: nil) {
-                    //NewMessage()
-                    NewMessage(vm: vm)
                 }
             }
             
@@ -205,6 +205,8 @@ struct MainMessage : View {
                                 Button {
                                     
                                     //Get the user follow User data type to provide to fetchMessage
+                                    //vm.searchMainMessage = ""
+                                    vm.searchMainMessage = ""
                                     vm.selectedUser = getSelectedUser(uid: user.toId )
                                     vm.fetchMessage(selectedUser: vm.selectedUser)
                                     vm.isShowChat = true

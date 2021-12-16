@@ -21,6 +21,10 @@ struct NewGroup: View {
                 
                 topbarNewGroup
                 mainNewGroup
+                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
+                    EmptyView()
+                }
+                
             }
             .navigationBarTitle("New Group", displayMode: .inline)
             .navigationBarItems(leading:
@@ -38,6 +42,12 @@ struct NewGroup: View {
             )
             .navigationBarItems(trailing:
                                     Button(action: {
+                
+                vm.isShowChat = true
+                
+//                vm.isShowNewGroup = false
+//                vm.isShowAddParticipants = false
+//                vm.isShowNewMessage = false
 
             }, label: {
 

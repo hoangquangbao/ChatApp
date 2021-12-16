@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct AddParticipants: View {
     @ObservedObject var vm = HomeViewModel()
+    @State var isBackToNewMessage = false
 //    @State var filterGroupMessage = [User]()
     
     @Environment(\.presentationMode) var presentationMode
@@ -20,13 +21,23 @@ struct AddParticipants: View {
                 
                 topbarAddParticipants
                 mainAddParticipants
-                
+
             }
             .navigationBarTitle("Add Participants", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
                 
-                presentationMode.wrappedValue.dismiss()
+                if vm.participantList.count >= 2 {
+                    
+                    isBackToNewMessage = true
+                    
+                } else {
+                    
+                    vm.searchAddParticipants = ""
+                    vm.participantList.removeAll()
+                    presentationMode.wrappedValue.dismiss()
+
+                }
                 
             }, label: {
                 
@@ -39,21 +50,43 @@ struct AddParticipants: View {
             .navigationBarItems(trailing:
                                     Button(action: {
                 
+                vm.searchAddParticipants = ""
                 vm.isShowNewGroup = true
                 
             }, label: {
                 
                 Text("NEXT")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(vm.participantList.count < 2 ? .gray : .purple)
+                    .foregroundColor(vm.participantList.count <= 1 ? .gray : .purple)
                 
-            }).disabled(vm.participantList.count < 2)
+            }).disabled(vm.participantList.count <= 1)
             )
             
-            //Navigation
+            //Navigation to NewGroup
             .fullScreenCover(isPresented: $vm.isShowNewGroup, onDismiss: nil, content: {
                 NewGroup(vm: vm)
             })
+            
+            //Navigation back to NewMessage
+            .actionSheet(isPresented: $isBackToNewMessage) {
+                
+                ActionSheet(
+                    
+                    title: Text("Discard group?"),
+                    message: Text("If you quit before creating your group, your changes won't be save."),
+                    buttons: [
+                        .cancel(),
+                        .destructive(
+                            Text("Discard Group"),
+                            action: {
+                                
+                                vm.searchAddParticipants = ""
+                                vm.participantList.removeAll()
+                                presentationMode.wrappedValue.dismiss()
+                                
+                            })
+                    ])
+            }
             
             //Filter...
             .onChange(of: vm.searchAddParticipants) { newValue in
@@ -146,6 +179,7 @@ struct AddParticipants: View {
                     //If the user not exist in groupChat array then add it.
                       if(isNotExist(user: user)) {
                           
+                          vm.searchAddParticipants = ""
                           vm.participantList.append(user)
                           
                       }
