@@ -11,6 +11,7 @@ import SDWebImageSwiftUI
 struct NewGroup: View {
     
     @ObservedObject var vm = HomeViewModel()
+        
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -43,6 +44,7 @@ struct NewGroup: View {
             .navigationBarItems(trailing:
                                     Button(action: {
                 
+                vm.createGroupChat()
                 vm.isShowChat = true
                 
 //                vm.isShowNewGroup = false

@@ -161,7 +161,7 @@ class HomeViewModel: ObservableObject {
                     self.isShowActivityIndicator = true
                     
                     //Upload image to Firebase
-                    self.uploadImageToStorage()
+                    self.uploadImgAvtUser()
                     
                 }
             }
@@ -170,7 +170,7 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - This will upload images into Storage and prints out the locations as well
-    func uploadImageToStorage() {
+    func uploadImgAvtUser() {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
@@ -207,7 +207,7 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - uploadImgMessageToStorage
-    func uploadImgMessageToStorage(selectedUser: User?, text: String, imgMessage: UIImage?) {
+    func uploadImgMessage(selectedUser: User?, text: String, imgMessage: UIImage?) {
         
         let imgMessageID =  NSUUID().uuidString
         
@@ -262,6 +262,64 @@ class HomeViewModel: ObservableObject {
         //            }
         //        }
     }
+    
+    
+    //MARK: - uploadImgMessageToStorage
+//    func uploadImgAvtGroupChatToStorage(selectedUser: [User]?) {
+//
+//        let imgMessageID =  NSUUID().uuidString
+//
+//        let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
+//
+//        guard let imageData = imgMessage?.jpegData(compressionQuality: 0.5) else { return }
+//
+//        ref.putData(imageData, metadata: nil) { metadata, err in
+//
+//            if let err = err {
+//
+//                self.isShowAlert = true
+//                self.alertMessage = err.localizedDescription
+//                return
+//
+//            }
+//
+//            ref.downloadURL { url, err in
+//
+//                if let err = err {
+//
+//                    self.isShowAlert = true
+//                    self.alertMessage = err.localizedDescription
+//                    return
+//
+//                }
+//
+//                guard let url = url else { return }
+//
+//                let imgMessageUrl = url.absoluteString
+//
+//                self.sendMessage(selectedUser: selectedUser, text: text, imgMessage: imgMessageUrl)
+//                //print("imgMessageLink= " + self.imageMessageLink)
+//            }
+//        }
+//
+//        //        let metadata = StorageMetadata()
+//        //        metadata.contentType = "image/jpeg"
+//        //
+//        //        let storage = Storage.storage().reference()
+//        //        storage.child("imageMessage").putData(imageV.jpegData(compressionQuality: 0.4), metadata: metadata) { meta, error in
+//        //            if let error = error {
+//        //                print(error)
+//        //                return
+//        //            }
+//        //
+//        //            storage.child(folder).downloadURL { url, error in
+//        //                if let error = error {
+//        //                    // Handle any errors
+//        //                    print(error)
+//        //                }
+//        //            }
+//        //        }
+//    }
     
     
     //MARK: - This will save newly created users to Firestore database collections
@@ -879,5 +937,48 @@ class HomeViewModel: ObservableObject {
                 
             })
         }
+    }
+    
+    //MARK: - createGroupChat
+    func createGroupChat() {
+        
+        let id = UUID().uuidString
+        guard let admin = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        var member = [String]()
+        
+//        ForEach(self.participantList){ user in
+//            uid?.append(user.uid)
+//        }
+//        self.participantList.compactMap({ user in
+//            uid?.append(user.uid)
+//        })
+        
+        for user in self.participantList {
+            member.append(user.uid)
+            
+        }
+        
+        if member.isEmpty { return }
+        
+        let groupData = ["id": id,
+                         "groupName": groupName,
+                         "admin": admin,
+                         "member" : member] as [String : Any]
+        
+        FirebaseManager.shared.firestore
+            .collection("groupChat")
+            .document(id)
+            .setData(groupData) { error in
+                
+                if let error = error {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = error.localizedDescription
+                    return
+                    
+                }
+            }
+        print("Successful store Group Chat info to Firestore")
     }
 }
