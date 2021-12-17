@@ -10,8 +10,6 @@ import SDWebImageSwiftUI
 
 struct AddParticipants: View {
     @ObservedObject var vm = HomeViewModel()
-    
-    //@State var participantList = [User]()
     @State var isBackToNewMessage = false
 //    @State var filterGroupMessage = [User]()
     

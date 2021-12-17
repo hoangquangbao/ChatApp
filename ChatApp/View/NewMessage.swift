@@ -16,7 +16,7 @@ struct NewMessage: View {
     //    @ObservedObject var vm : HomeViewModel
     //    @State var isShowChatMessage : Bool = false
     
-    //    @State var selectedUser : User?
+    @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -28,7 +28,9 @@ struct NewMessage: View {
                 
                 topbarNewMassage
                 mainNewMessage
-                
+                NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $vm.isShowChat) {
+                    EmptyView()
+                }
             }
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
@@ -137,11 +139,11 @@ struct NewMessage: View {
                     
                     Button {
                         
-                        vm.selectedUser = user
+                        selectedUser = user
                         
                         vm.searchNewMessage = ""
 //                        vm.isShowNewMessage = false
-                        vm.fetchMessage(selectedUser: vm.selectedUser)
+                        vm.fetchMessage(selectedUser: selectedUser)
                         vm.isShowChat = true
                         
                     } label: {
@@ -166,9 +168,7 @@ struct NewMessage: View {
                     }
                     .padding(.vertical, 15)
                     //                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.vm.selectedUser), isActive: $vm.isShowChatMessage) {
-                    NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
-                        EmptyView()
-                    }
+
                     //                        .fullScreenCover(isPresented: $isShowChatMessage, onDismiss: nil) {
                     //                            Chat(vm: vm, selectedUser: selectedUser)
                     //                        }

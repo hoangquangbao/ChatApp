@@ -11,6 +11,7 @@ import SDWebImageSwiftUI
 struct NewGroup: View {
     
     @ObservedObject var vm = HomeViewModel()
+    @State var selectedGrpID : String?
         
     @Environment(\.presentationMode) var presentationMode
     
@@ -22,7 +23,7 @@ struct NewGroup: View {
                 
                 topbarNewGroup
                 mainNewGroup
-                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
+                NavigationLink(destination: GroupChat(vm: vm, selectedGrpID: selectedGrpID), isActive: $vm.isShowGroupChat) {
                     EmptyView()
                 }
                 
@@ -44,8 +45,21 @@ struct NewGroup: View {
             .navigationBarItems(trailing:
                                     Button(action: {
                 
-                vm.createGroupChat()
-                vm.isShowChat = true
+                for user in vm.participantList {
+                    vm.memberID.append(user.uid)
+                }
+                selectedGrpID = vm.createGroupChat()
+                
+                if selectedGrpID != "faild" && selectedGrpID != nil{
+                    
+                    vm.isShowGroupChat = true
+
+                } else {
+                    
+                    vm.isShowAlert = true
+                    vm.alertMessage = "New group creation failed!"
+                    
+                }
                 
 //                vm.isShowNewGroup = false
 //                vm.isShowAddParticipants = false

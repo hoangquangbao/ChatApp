@@ -17,8 +17,8 @@ struct Chat: View {
     @State var text : String = ""
     @State var imageMessage: UIImage?
     @State var isShowImagePickerMessage : Bool = false
-    @State var imgMessage : Data = Data(count: 0)
-    //@State var selectedUser : User?
+    //@State var imgMessage : Data = Data(count: 0)
+    @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -80,9 +80,9 @@ struct Chat: View {
             HStack(spacing: 15) {
                 
                 //Dòng này cần code lại để phù họp với mọi trường hợp
-                if vm.participantList.count <= 1 {
+//                if vm.participantList.count <= 1 {
                     
-                    WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                    WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
                         .resizable()
                         .scaledToFill()
                         .frame(width: 50, height: 50)
@@ -91,7 +91,7 @@ struct Chat: View {
                     
                     VStack(alignment: .leading ,spacing: 5){
                         
-                        Text("\(vm.selectedUser?.username ?? "")")
+                        Text("\(selectedUser?.username ?? "")")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                         
                         HStack(spacing: 5){
@@ -107,48 +107,49 @@ struct Chat: View {
                             
                         }
                     }
-                } else {
-                    
-                    Image("LotusLogo")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 50, height: 50)
-                        .mask(Circle())
-                        .shadow(color: .black, radius: 2)
-                    
-                    VStack(alignment: .leading, spacing: 5){
-                        
-                        Text(vm.groupName)
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
-                        
-                        Text("\(vm.participantList.count) participants")
-                            .font(.system(size: 10))
-                            .foregroundColor(.gray)
-                        
-                    }
-                }
+//                } else {
+//
+//                    Image("LotusLogo")
+//                        .resizable()
+//                        .scaledToFill()
+//                        .frame(width: 50, height: 50)
+//                        .mask(Circle())
+//                        .shadow(color: .black, radius: 2)
+//
+//                    VStack(alignment: .leading, spacing: 5){
+//
+//                        Text(vm.groupName)
+//                            .font(.system(size: 18, weight: .bold, design: .rounded))
+//
+//                        Text("\(vm.participantList.count) participants")
+//                            .font(.system(size: 10))
+//                            .foregroundColor(.gray)
+//
+//                    }
+//                }
 
                 Spacer()
                 
                 Button {
                     
                     vm.searchChat = ""
+                    
                     //presentationMode.wrappedValue.dismiss()
                     //vm.fetchRecentChatUser()
                     
                     //For Group
-                    vm.groupName = ""
-                    vm.participantList.removeAll()
+//                    vm.groupName = ""
+//                    vm.participantList.removeAll()
                     
                     DispatchQueue.main.async {
                         vm.isShowChat = false
                     }
-                    DispatchQueue.main.async {
-                        vm.isShowNewGroup = false
-                    }
-                    DispatchQueue.main.async {
-                        vm.isShowAddParticipants = false
-                    }
+//                    DispatchQueue.main.async {
+//                        vm.isShowNewGroup = false
+//                    }
+//                    DispatchQueue.main.async {
+//                        vm.isShowAddParticipants = false
+//                    }
 //                    DispatchQueue.main.async {
 //                        vm.isShowNewMessage = false
 //                    }
@@ -196,16 +197,15 @@ struct Chat: View {
             //} else {
             
             ScrollView {
+                
                 LazyVStack{
                     
-                    //Chat one by one user
-                    if vm.participantList.count <= 1 {
                         ForEach(vm.filterChat){ content in
                             
                             VStack(){
                                 
                                 //My message
-                                if content.fromId != vm.selectedUser?.uid{
+                                if content.fromId != selectedUser?.uid{
                                     
                                     HStack() {
                                         
@@ -241,7 +241,7 @@ struct Chat: View {
                                         
                                         //                                    if vm.selectedUser?.profileImageUrl != nil{
                                         
-                                        WebImage(url: URL(string: vm.selectedUser?.profileImageUrl ?? ""))
+                                        WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 25, height: 25)
@@ -291,7 +291,7 @@ struct Chat: View {
                                 
                                 Button {
                                     
-                                    vm.deleteMessage(selectedUser: self.vm.selectedUser!, selectedMessage: content)
+                                    vm.deleteMessage(selectedUser: selectedUser!, selectedMessage: content)
                                     
                                 } label: {
                                     
@@ -300,7 +300,6 @@ struct Chat: View {
                                 }
                             }
                         }
-                    }
                 }
                 .rotationEffect(.degrees(180))
             }
@@ -336,7 +335,7 @@ struct Chat: View {
                     //..false: when fetchMessage success (fetchMessage)
                     vm.isShowActivityIndicator = true
                     
-                    vm.uploadImgMessage(selectedUser: vm.selectedUser, text: "", imgMessage: imageMessage!)
+                    vm.uploadImgMessage(selectedUser: selectedUser, text: "", imgMessage: imageMessage!)
                     //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
                 }
                 
@@ -358,7 +357,7 @@ struct Chat: View {
                     
                     if !text.isEmpty{
                         
-                        vm.sendMessage(selectedUser: vm.selectedUser, text: text, imgMessage: "")
+                        vm.sendMessage(selectedUser: selectedUser, text: text, imgMessage: "")
                         text = ""
                         
                     }
@@ -369,7 +368,7 @@ struct Chat: View {
                 
                 Button {
                     
-                    vm.sendMessage(selectedUser: vm.selectedUser, text: text, imgMessage: "")
+                    vm.sendMessage(selectedUser: selectedUser, text: text, imgMessage: "")
                     text = ""
                     
                 } label: {

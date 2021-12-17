@@ -1,13 +1,12 @@
 //
-//  GroupChat.swift
+//  GroupMessage.swift
 //  ChatApp
 //
 //  Created by Quang Bao on 17/12/2021.
 //
-
 import SwiftUI
 
-struct GroupChat: Identifiable {
+struct GroupMessage: Identifiable {
     
     let id: String
     

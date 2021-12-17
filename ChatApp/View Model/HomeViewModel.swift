@@ -15,7 +15,7 @@ class HomeViewModel: ObservableObject {
     
     //User
     @Published var currentUser : User?
-    @Published var selectedUser : User?
+    //    @Published var selectedUser : User?
     @Published var isShowActivityIndicator : Bool = false
     
     //Show error or caution
@@ -56,7 +56,7 @@ class HomeViewModel: ObservableObject {
     //New Group
     @Published var isShowNewGroup : Bool = false
     @Published var groupName : String = ""
-
+    
     //Chat
     @Published var isShowChat : Bool = false
     @Published var allMessages = [Message]()
@@ -64,6 +64,12 @@ class HomeViewModel: ObservableObject {
     @Published var filterChat = [Message]()
     @Published var isShowImagePickerMessage = false
     var firestoreListenerMessage: ListenerRegistration?
+    
+    //GroupChat
+    @Published var isShowGroupChat : Bool = false
+    @Published var searchGroupChat = ""
+    @Published var memberID = [String]()
+    
     
     init(){
         
@@ -265,61 +271,61 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - uploadImgMessageToStorage
-//    func uploadImgAvtGroupChatToStorage(selectedUser: [User]?) {
-//
-//        let imgMessageID =  NSUUID().uuidString
-//
-//        let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
-//
-//        guard let imageData = imgMessage?.jpegData(compressionQuality: 0.5) else { return }
-//
-//        ref.putData(imageData, metadata: nil) { metadata, err in
-//
-//            if let err = err {
-//
-//                self.isShowAlert = true
-//                self.alertMessage = err.localizedDescription
-//                return
-//
-//            }
-//
-//            ref.downloadURL { url, err in
-//
-//                if let err = err {
-//
-//                    self.isShowAlert = true
-//                    self.alertMessage = err.localizedDescription
-//                    return
-//
-//                }
-//
-//                guard let url = url else { return }
-//
-//                let imgMessageUrl = url.absoluteString
-//
-//                self.sendMessage(selectedUser: selectedUser, text: text, imgMessage: imgMessageUrl)
-//                //print("imgMessageLink= " + self.imageMessageLink)
-//            }
-//        }
-//
-//        //        let metadata = StorageMetadata()
-//        //        metadata.contentType = "image/jpeg"
-//        //
-//        //        let storage = Storage.storage().reference()
-//        //        storage.child("imageMessage").putData(imageV.jpegData(compressionQuality: 0.4), metadata: metadata) { meta, error in
-//        //            if let error = error {
-//        //                print(error)
-//        //                return
-//        //            }
-//        //
-//        //            storage.child(folder).downloadURL { url, error in
-//        //                if let error = error {
-//        //                    // Handle any errors
-//        //                    print(error)
-//        //                }
-//        //            }
-//        //        }
-//    }
+    //    func uploadImgAvtGroupChatToStorage(selectedUser: [User]?) {
+    //
+    //        let imgMessageID =  NSUUID().uuidString
+    //
+    //        let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
+    //
+    //        guard let imageData = imgMessage?.jpegData(compressionQuality: 0.5) else { return }
+    //
+    //        ref.putData(imageData, metadata: nil) { metadata, err in
+    //
+    //            if let err = err {
+    //
+    //                self.isShowAlert = true
+    //                self.alertMessage = err.localizedDescription
+    //                return
+    //
+    //            }
+    //
+    //            ref.downloadURL { url, err in
+    //
+    //                if let err = err {
+    //
+    //                    self.isShowAlert = true
+    //                    self.alertMessage = err.localizedDescription
+    //                    return
+    //
+    //                }
+    //
+    //                guard let url = url else { return }
+    //
+    //                let imgMessageUrl = url.absoluteString
+    //
+    //                self.sendMessage(selectedUser: selectedUser, text: text, imgMessage: imgMessageUrl)
+    //                //print("imgMessageLink= " + self.imageMessageLink)
+    //            }
+    //        }
+    //
+    //        //        let metadata = StorageMetadata()
+    //        //        metadata.contentType = "image/jpeg"
+    //        //
+    //        //        let storage = Storage.storage().reference()
+    //        //        storage.child("imageMessage").putData(imageV.jpegData(compressionQuality: 0.4), metadata: metadata) { meta, error in
+    //        //            if let error = error {
+    //        //                print(error)
+    //        //                return
+    //        //            }
+    //        //
+    //        //            storage.child(folder).downloadURL { url, error in
+    //        //                if let error = error {
+    //        //                    // Handle any errors
+    //        //                    print(error)
+    //        //                }
+    //        //            }
+    //        //        }
+    //    }
     
     
     //MARK: - This will save newly created users to Firestore database collections
@@ -896,20 +902,20 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - filterSuggestUsers
-//    func filterSuggestUsers() -> [User] {
-//
-//        var data : [User]?
-//        withAnimation(.linear){
-//
-////            self.filterNewMessage = self.allSuggestUsers.filter({
-//            data = self.allSuggestUsers.filter({
-//
-//                return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
-//
-//            })
-//        }
-//        return data!
-//    }
+    //    func filterSuggestUsers() -> [User] {
+    //
+    //        var data : [User]?
+    //        withAnimation(.linear){
+    //
+    ////            self.filterNewMessage = self.allSuggestUsers.filter({
+    //            data = self.allSuggestUsers.filter({
+    //
+    //                return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
+    //
+    //            })
+    //        }
+    //        return data!
+    //    }
     
     
     //MARK: - filterForNewMessage
@@ -940,31 +946,23 @@ class HomeViewModel: ObservableObject {
     }
     
     //MARK: - createGroupChat
-    func createGroupChat() {
+    func createGroupChat() -> String{
         
         let id = UUID().uuidString
-        guard let admin = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        guard let admin = FirebaseManager.shared.auth.currentUser?.uid else { return "faild"}
         
-        var member = [String]()
+        //        var memberID = [String]()
+        //
+        //        for user in self.participantList {
+        //            memberID.append(user.uid)
+        //        }
         
-//        ForEach(self.participantList){ user in
-//            uid?.append(user.uid)
-//        }
-//        self.participantList.compactMap({ user in
-//            uid?.append(user.uid)
-//        })
-        
-        for user in self.participantList {
-            member.append(user.uid)
-            
-        }
-        
-        if member.isEmpty { return }
+        if self.memberID.isEmpty { return "faild"}
         
         let groupData = ["id": id,
                          "groupName": groupName,
                          "admin": admin,
-                         "member" : member] as [String : Any]
+                         "member" : memberID] as [String : Any]
         
         FirebaseManager.shared.firestore
             .collection("groupChat")
@@ -976,9 +974,73 @@ class HomeViewModel: ObservableObject {
                     self.isShowAlert = true
                     self.alertMessage = error.localizedDescription
                     return
+                }
+            }
+        return id
+    }
+    
+    
+    //MARK: - sendGroupChat
+    func sendGroupChat(selectedGrpID: String, text: String, imgMessage: String) {
+        
+        //Với mỗi id trong [memberID] + currentUser, ta lưu theo struct Message/UserID/GroupID/MessageID/MessageContent
+        
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        //Store Sender Message
+        let senderMessageDocument = FirebaseManager.shared.firestore
+            .collection("messages")
+            .document(fromId)
+            .collection(selectedGrpID)
+            .document()
+        
+        // "id" field is key to delete message in deletedMessage function
+        let senderMessageData = ["id" : senderMessageDocument.documentID,
+                                 "fromId" : fromId,
+                                 "toId" : "Group",
+                                 "text" : text,
+                                 "imgMessage" : imgMessage,
+                                 "timestamp" : Timestamp()] as [String : Any]
+        
+        senderMessageDocument.setData(senderMessageData) { error in
+            
+            if let error = error {
+                
+                self.alertMessage = error.localizedDescription
+                print(self.alertMessage)
+                return
+                
+            }
+        }
+        
+        //Store Recipient Message
+        for uid in memberID {
+            
+            let recipientMessageDocument = FirebaseManager.shared.firestore
+                .collection("messages")
+                .document(uid)
+                .collection(selectedGrpID)
+                .document()
+            
+            let recipientMessageData = ["id" : recipientMessageDocument.documentID,
+                                        "fromId" : fromId,
+                                        "toId" : "Group",
+                                        "text" : text,
+                                        "imgMessage" : imgMessage,
+                                        "timestamp" : Timestamp()] as [String : Any]
+            
+            recipientMessageDocument.setData(recipientMessageData) { error in
+                
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    print(self.alertMessage)
+                    return
                     
                 }
             }
-        print("Successful store Group Chat info to Firestore")
+        }
+        //        self.lastMessageOfSender(selectedUser: selectedUser, text: text)
+        //        self.lastMessageOfReceiver(selectedUser: selectedUser, text: text)
     }
 }

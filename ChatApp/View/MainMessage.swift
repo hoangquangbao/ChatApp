@@ -21,7 +21,7 @@ struct MainMessage : View {
     //    @State var isShowHomePage : Bool = false
     //    @State var isShowNewMessage : Bool = false
     //    @State var isShowChatMessage : Bool = false
-    //    @State var selectedUser : User?
+        @State var selectedUser : User?
     
     //@Environment(\.presentationMode) var presentationMode
     
@@ -31,7 +31,7 @@ struct MainMessage : View {
                 
                 topNav
                 mainMessageView
-                NavigationLink("", destination: Chat(vm:vm), isActive: $vm.isShowChat)
+                NavigationLink("", destination: Chat(vm:vm, selectedUser: selectedUser), isActive: $vm.isShowChat)
                 
             }
             .edgesIgnoringSafeArea(.bottom)
@@ -46,7 +46,7 @@ struct MainMessage : View {
             
             //Navigation to NewMessage
             .fullScreenCover(isPresented: $vm.isShowNewMessage, onDismiss: nil) {
-                NewMessage(vm: vm)
+                NewMessage(vm: vm, selectedUser: selectedUser)
             }
             
             //Filter...
@@ -207,8 +207,8 @@ struct MainMessage : View {
                                     //Get the user follow User data type to provide to fetchMessage
                                     //vm.searchMainMessage = ""
                                     vm.searchMainMessage = ""
-                                    vm.selectedUser = getSelectedUser(uid: user.toId )
-                                    vm.fetchMessage(selectedUser: vm.selectedUser)
+                                    selectedUser = getSelectedUser(uid: user.toId )
+                                    vm.fetchMessage(selectedUser: selectedUser)
                                     vm.isShowChat = true
                                     
                                 } label: {
