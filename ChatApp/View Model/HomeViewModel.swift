@@ -918,8 +918,8 @@ class HomeViewModel: ObservableObject {
     //    }
     
     
-    //MARK: - filterForNewMessage
-    func filterForGroupMessage() {
+    //MARK: - filterForAddParticipants
+    func filterForAddParticipants() {
         
         withAnimation(.linear){
             

@@ -96,7 +96,7 @@ struct AddParticipants: View {
                     
                     if newValue == vm.searchAddParticipants && vm.searchAddParticipants != "" {
                         
-                        vm.filterForGroupMessage()
+                        vm.filterForAddParticipants()
                         
                     }
                 }
@@ -147,12 +147,30 @@ struct AddParticipants: View {
                 
                             Button(action: {
                                 
+                                //1. Remove the user from participantList..
                                 if let index = vm.participantList.firstIndex(where: { us in
                                     us.uid == user.uid
-                                }) {
-                                    vm.participantList.remove(at: index)
-                                }
-                                                                
+                                }) { vm.participantList.remove(at: index) }
+                                
+                                /*COMMENT*/
+                                //2. Get user location on suggestUser..
+                                // and set isAdded is false..
+                                // to change the User status is checkmark.green
+                                
+                                //Trạng thái isAdded phải change từ gốc suggestUser.
+                                //Nếu change từ ngọn ở filterAddParticipants thì khi tìm kiếm, data load lại nó sẽ sai.
+                                //Nên ta khóa hàm này lại, chuyển sang dùng hàm dưới.
+//                                if let index = vm.filterAddParticipants.firstIndex(where: { us in
+//                                    us.uid == user.uid
+//                                }) { vm.filterAddParticipants[index].isAdded = false }
+                                
+                                if let index = vm.suggestUser.firstIndex(where: { us in
+                                    us.uid == user.uid
+                                }) { vm.suggestUser[index].isAdded = false }
+                                
+                                //3. Update.
+                                vm.filterAddParticipants = vm.suggestUser
+                                
                             }, label: {
                                 
                                 WebImage(url: URL(string: user.profileImageUrl))
@@ -195,17 +213,26 @@ struct AddParticipants: View {
                                 
                 ForEach(vm.filterAddParticipants) { user in
                     
-                    var isAdded = false
                     Button {
                       
                     //If the user not exist in groupChat array then add it.
                       if(isNotExist(user: user)) {
                           
                           vm.searchAddParticipants = ""
+                          
+                          //Add the user to participantList
                           vm.participantList.append(user)
                           
+                          //Khóa hàm này vì lý do : xem ở /*COMMENT*/ ở trên
+//                          if let index = vm.filterAddParticipants.firstIndex(where: { us in
+//                              us.uid == user.uid
+//                          }) { vm.filterAddParticipants[index].isAdded = true }
+                          if let index = vm.suggestUser.firstIndex(where: { us in
+                              us.uid == user.uid
+                          }) { vm.suggestUser[index].isAdded = true }
+                          vm.filterAddParticipants = vm.suggestUser
+                          
                       }
-
                     } label: {
                         
                         HStack(spacing: 15){
@@ -225,12 +252,23 @@ struct AddParticipants: View {
                             
 //                            Image(systemName: "plus.circle")
 //                                .foregroundColor(.gray)
-                            Image(systemName: "plus")
-                                .foregroundColor(.white)
-                                .padding(2)
-                                .background(isAdded ? .gray : .green)
-                                .clipShape(Circle())
-                            
+                            if user.isAdded {
+                                
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.white)
+                                    .padding(2)
+                                    .background(.green)
+                                    .clipShape(Circle())
+                                
+                            } else {
+                                
+                                Image(systemName: "plus")
+                                    .foregroundColor(.white)
+                                    .padding(2)
+                                    .background(.gray)
+                                    .clipShape(Circle())
+                                
+                            }
                         }
                         .padding(.horizontal)
                     }
