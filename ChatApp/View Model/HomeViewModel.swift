@@ -119,7 +119,6 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    
     //MARK: - hadleSignOut
     func handleSighOut() {
         
@@ -129,6 +128,7 @@ class HomeViewModel: ObservableObject {
         self.isShowMainMessageView = false
         
     }
+    
     
     //MARK: - SignUp
     func signUp() {
@@ -532,7 +532,7 @@ class HomeViewModel: ObservableObject {
         self.lastMessageOfSender(selectedUser: selectedUser, text: text)
         self.lastMessageOfReceiver(selectedUser: selectedUser, text: text)
         
-        print("Current ID: \(String(describing: FirebaseManager.shared.auth.currentUser?.uid))")
+        print("isShowNewMessage: \(isShowNewMessage)")
         
     }
     

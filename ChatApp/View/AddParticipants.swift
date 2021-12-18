@@ -10,7 +10,8 @@ import SDWebImageSwiftUI
 
 struct AddParticipants: View {
     @ObservedObject var vm = HomeViewModel()
-    @State var isBackToNewMessage = false
+    @State var isShowConfirmDiscardGroup = false
+
 //    @State var filterGroupMessage = [User]()
     
     @Environment(\.presentationMode) var presentationMode
@@ -29,7 +30,7 @@ struct AddParticipants: View {
                 
                 if vm.participantList.count >= 2 {
                     
-                    isBackToNewMessage = true
+                    isShowConfirmDiscardGroup = true
                     
                 } else {
                     
@@ -68,7 +69,7 @@ struct AddParticipants: View {
             })
             
             //Navigation back to NewMessage
-            .actionSheet(isPresented: $isBackToNewMessage) {
+            .actionSheet(isPresented: $isShowConfirmDiscardGroup) {
                 
                 ActionSheet(
                     
@@ -143,13 +144,32 @@ struct AddParticipants: View {
                     ForEach(vm.participantList){ user in
                         
                         VStack(spacing: 10){
-                            
-                            WebImage(url: URL(string: user.profileImageUrl))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 60, height: 60)
-                                .mask(Circle())
-                                .shadow(color: .purple, radius: 2)
+                
+                            Button(action: {
+                                
+                                if let index = vm.participantList.firstIndex(where: { us in
+                                    us.uid == user.uid
+                                }) {
+                                    vm.participantList.remove(at: index)
+                                }
+                                                                
+                            }, label: {
+                                
+                                WebImage(url: URL(string: user.profileImageUrl))
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 60, height: 60)
+                                    .mask(Circle())
+                                    .shadow(color: .purple, radius: 2)
+                                    .overlay(
+                                        Image(systemName: "minus")
+                                            .foregroundColor(.white)
+                                            .padding(8)
+                                            .background(.pink)
+                                            .clipShape(Circle())
+                                            .offset(x: 20, y: -20)
+                                    )
+                            })
                             
                             Text(user.username)
                                 .font(.system(size: 10))
@@ -159,6 +179,7 @@ struct AddParticipants: View {
                     }
                 }
                 .padding(.vertical)
+                .padding(.leading, 3)
             }
         }
         .padding(.horizontal)
@@ -174,6 +195,7 @@ struct AddParticipants: View {
                                 
                 ForEach(vm.filterAddParticipants) { user in
                     
+                    var isAdded = false
                     Button {
                       
                     //If the user not exist in groupChat array then add it.
@@ -201,8 +223,13 @@ struct AddParticipants: View {
                             
                             Spacer()
                             
-                            Image(systemName: "plus.circle")
-                                .foregroundColor(.gray)
+//                            Image(systemName: "plus.circle")
+//                                .foregroundColor(.gray)
+                            Image(systemName: "plus")
+                                .foregroundColor(.white)
+                                .padding(2)
+                                .background(isAdded ? .gray : .green)
+                                .clipShape(Circle())
                             
                         }
                         .padding(.horizontal)

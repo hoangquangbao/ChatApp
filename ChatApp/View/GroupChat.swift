@@ -25,14 +25,12 @@ struct GroupChat: View {
         NavigationView{
             
             VStack {
-                
+
                 topbar
                 main
-                
                 if vm.isShowActivityIndicator {
                     
                     bottom.overlay(
-                        
                         ActivityIndicator()
                             .frame(width: 30, height: 30)
                             .foregroundColor(.gray)
@@ -108,13 +106,19 @@ struct GroupChat: View {
                     vm.participantList.removeAll()
                     
                     DispatchQueue.main.async {
-                        vm.isShowGroupChat = false
+                        //vm.isShowGroupChat = false
+                        presentationMode.wrappedValue.dismiss()
+
                     }
                     DispatchQueue.main.async {
-                        vm.isShowNewGroup = false
+                        //vm.isShowNewGroup = false
+                        presentationMode.wrappedValue.dismiss()
+
                     }
                     DispatchQueue.main.async {
-                        vm.isShowAddParticipants = false
+                        //vm.isShowAddParticipants = false
+                        presentationMode.wrappedValue.dismiss()
+
                     }
                     //                    DispatchQueue.main.async {
                     //                        vm.isShowNewMessage = false
@@ -152,6 +156,7 @@ struct GroupChat: View {
     var main : some View {
         
         ScrollView {
+            
             LazyVStack{
                 
             }

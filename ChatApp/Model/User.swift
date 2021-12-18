@@ -21,3 +21,4 @@ struct User: Identifiable {
         self.username = data["username"] as? String ?? ""
     }
 }
+

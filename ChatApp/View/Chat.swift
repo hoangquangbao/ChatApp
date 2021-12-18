@@ -142,7 +142,10 @@ struct Chat: View {
 //                    vm.participantList.removeAll()
                     
                     DispatchQueue.main.async {
-                        vm.isShowChat = false
+                        
+                        //vm.isShowChat = false
+                        presentationMode.wrappedValue.dismiss()
+
                     }
 //                    DispatchQueue.main.async {
 //                        vm.isShowNewGroup = false

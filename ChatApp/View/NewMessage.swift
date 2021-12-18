@@ -30,14 +30,15 @@ struct NewMessage: View {
                 mainNewMessage
                 NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $vm.isShowChat) {
                     EmptyView()
+                    
                 }
             }
             .navigationBarTitle("New Message", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
                 vm.searchNewMessage = ""
-                vm.isShowNewMessage = false
-                //presentationMode.wrappedValue.dismiss()
+//                vm.isShowNewMessage = false
+                presentationMode.wrappedValue.dismiss()
                 
             }, label: {
                 
@@ -112,7 +113,7 @@ struct NewMessage: View {
             Button {
                 
                 vm.searchNewMessage = ""
-                vm.isShowAddParticipants.toggle()
+                vm.isShowAddParticipants = true
                 
             } label: {
                 HStack(){
