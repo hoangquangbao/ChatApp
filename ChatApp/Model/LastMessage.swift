@@ -8,11 +8,11 @@
 import SwiftUI
 import Firebase
 
-struct RecentChatUser: Identifiable {
+struct LastMessage: Identifiable {
     
-    var id: String
+//    var id: String
     
-    let fromId, toId, username, profileImageUrl, text: String
+    let id, fromId, toId, name, profileImageUrl, text: String
     let timestamp: Timestamp
 //    let timestamp: Date
 
@@ -29,4 +29,3 @@ struct RecentChatUser: Identifiable {
 //
 //    }
 }
-

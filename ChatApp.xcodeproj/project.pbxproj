@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0604A0D0276C8561006DF9C8 /* GroupMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604A0CF276C8561006DF9C8 /* GroupMessage.swift */; };
 		0604A0D2276C85A1006DF9C8 /* GroupChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604A0D1276C85A1006DF9C8 /* GroupChat.swift */; };
 		0635FCD3275460AE00EA30B1 /* ResetPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0635FCD2275460AE00EA30B1 /* ResetPassword.swift */; };
 		063967732746497500A99EEA /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063967722746497500A99EEA /* Chat.swift */; };
@@ -27,11 +26,12 @@
 		0661C4E5274B4EFD00B3C9AF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0661C4E4274B4EFD00B3C9AF /* Message.swift */; };
 		066542AF2744E260008B79C1 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066542AE2744E260008B79C1 /* FirebaseManager.swift */; };
 		066DE1DF275BADA100F720B4 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066DE1DE275BADA100F720B4 /* ActivityIndicator.swift */; };
-		067BD31027572255002ED73F /* RecentChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067BD30F27572255002ED73F /* RecentChatUser.swift */; };
 		067BD3122757DC19002ED73F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 067BD3112757DC18002ED73F /* libz.tbd */; };
 		069DFBD4273BC3B2003E1419 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 069DFBD3273BC3B2003E1419 /* FirebaseAuth */; };
 		069DFBD6273BC3B2003E1419 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 069DFBD5273BC3B2003E1419 /* FirebaseStorage */; };
 		06A4065B27415768004C0D23 /* MainMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A4065A27415768004C0D23 /* MainMessage.swift */; };
+		06A99135277028990073E33D /* GroupUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A99134277028990073E33D /* GroupUser.swift */; };
+		06A991392770722A0073E33D /* LastMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A991382770722A0073E33D /* LastMessage.swift */; };
 		06B00D5F273C0CF9000E7BAB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06B00D5E273C0CF9000E7BAB /* GoogleService-Info.plist */; };
 		06B845AF2768C383005BDEAE /* AddParticipants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845AE2768C383005BDEAE /* AddParticipants.swift */; };
 		06B845B12768C67C005BDEAE /* NewGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845B02768C67C005BDEAE /* NewGroup.swift */; };
@@ -62,7 +62,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0604A0CF276C8561006DF9C8 /* GroupMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMessage.swift; sourceTree = "<group>"; };
 		0604A0D1276C85A1006DF9C8 /* GroupChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChat.swift; sourceTree = "<group>"; };
 		0635FCD2275460AE00EA30B1 /* ResetPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPassword.swift; sourceTree = "<group>"; };
 		063967722746497500A99EEA /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
@@ -88,10 +87,11 @@
 		0661C4E4274B4EFD00B3C9AF /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		066542AE2744E260008B79C1 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		066DE1DE275BADA100F720B4 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
-		067BD30F27572255002ED73F /* RecentChatUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatUser.swift; sourceTree = "<group>"; };
 		067BD3112757DC18002ED73F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		067BD3132757DD46002ED73F /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		06A4065A27415768004C0D23 /* MainMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMessage.swift; sourceTree = "<group>"; };
+		06A99134277028990073E33D /* GroupUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupUser.swift; sourceTree = "<group>"; };
+		06A991382770722A0073E33D /* LastMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastMessage.swift; sourceTree = "<group>"; };
 		06B00D5E273C0CF9000E7BAB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		06B845AE2768C383005BDEAE /* AddParticipants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipants.swift; sourceTree = "<group>"; };
 		06B845B02768C67C005BDEAE /* NewGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroup.swift; sourceTree = "<group>"; };
@@ -238,9 +238,9 @@
 			isa = PBXGroup;
 			children = (
 				06B92393274365CB00D9C974 /* User.swift */,
-				067BD30F27572255002ED73F /* RecentChatUser.swift */,
 				0661C4E4274B4EFD00B3C9AF /* Message.swift */,
-				0604A0CF276C8561006DF9C8 /* GroupMessage.swift */,
+				06A991382770722A0073E33D /* LastMessage.swift */,
+				06A99134277028990073E33D /* GroupUser.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -525,17 +525,17 @@
 				0635FCD3275460AE00EA30B1 /* ResetPassword.swift in Sources */,
 				066DE1DF275BADA100F720B4 /* ActivityIndicator.swift in Sources */,
 				06B845B12768C67C005BDEAE /* NewGroup.swift in Sources */,
-				0604A0D0276C8561006DF9C8 /* GroupMessage.swift in Sources */,
 				06B92394274365CB00D9C974 /* User.swift in Sources */,
-				067BD31027572255002ED73F /* RecentChatUser.swift in Sources */,
 				065C03E7273A59E9009016C3 /* ContentView.swift in Sources */,
 				0604A0D2276C85A1006DF9C8 /* GroupChat.swift in Sources */,
 				06CFE6612745FDB6005BC5B6 /* NewMessage.swift in Sources */,
 				06A4065B27415768004C0D23 /* MainMessage.swift in Sources */,
 				066542AF2744E260008B79C1 /* FirebaseManager.swift in Sources */,
+				06A99135277028990073E33D /* GroupUser.swift in Sources */,
 				06B845AF2768C383005BDEAE /* AddParticipants.swift in Sources */,
 				063967732746497500A99EEA /* Chat.swift in Sources */,
 				0657D953276239180035C214 /* ImagePickerMessage.swift in Sources */,
+				06A991392770722A0073E33D /* LastMessage.swift in Sources */,
 				0649EF942758A6DB0050D18E /* UserDefault.swift in Sources */,
 				0661C4E5274B4EFD00B3C9AF /* Message.swift in Sources */,
 				065C0410273A6173009016C3 /* Home.swift in Sources */,

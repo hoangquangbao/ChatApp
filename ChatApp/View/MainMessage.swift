@@ -123,11 +123,11 @@ struct MainMessage : View {
                         ])
                 }
                 
-                let usn = vm.currentUser?.username
+                let usn = vm.currentUser?.name
                 
                 if usn != "" {
                     
-                    Text(vm.currentUser?.username ?? "")
+                    Text(vm.currentUser?.name ?? "")
                         .font(.system(size: 20, weight: .bold))
                     
                 } else {
@@ -224,7 +224,7 @@ struct MainMessage : View {
                                         
                                         VStack(alignment: .leading, spacing: 4){
                                             
-                                            Text(user.username)
+                                            Text(user.name)
                                                 .font(.system(size: 17, weight: .bold))
                                                 .foregroundColor(.black)
                                             
@@ -304,7 +304,7 @@ struct MainMessage : View {
     //"func fetchUserToSuggest()" have to init at begin run app, it help "vm.allSuggestUsers" variable have data before calling "func getSelectedUser(uid: String) -> User". If not our get an error "Unexpectedly found nil while unwrapping an Optional value"
     func getSelectedUser(uid: String) -> User {
         
-        return vm.suggestUser.first{$0.uid == uid }!
+        return vm.suggestUser.first{$0.id == uid }!
         
     }
 }

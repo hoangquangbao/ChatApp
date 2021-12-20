@@ -158,7 +158,7 @@ struct NewMessage: View {
                                 .mask(Circle())
                                 .shadow(color: .purple, radius: 2)
                             
-                            Text(user.username)
+                            Text(user.name)
                                 .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(.black)
                             

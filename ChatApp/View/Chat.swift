@@ -91,7 +91,7 @@ struct Chat: View {
                     
                     VStack(alignment: .leading ,spacing: 5){
                         
-                        Text("\(selectedUser?.username ?? "")")
+                        Text("\(selectedUser?.name ?? "")")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                         
                         HStack(spacing: 5){
@@ -147,6 +147,9 @@ struct Chat: View {
                         presentationMode.wrappedValue.dismiss()
 
                     }
+                    
+                    //Delete allMessages data in here if not when open another chat, it have fast show in < 1 sencond.
+                    vm.allMessages.removeAll()
 //                    DispatchQueue.main.async {
 //                        vm.isShowNewGroup = false
 //                    }
@@ -200,15 +203,13 @@ struct Chat: View {
             //} else {
             
             ScrollView {
-                
                 LazyVStack{
-                    
                         ForEach(vm.filterChat){ content in
-                            
                             VStack(){
                                 
                                 //My message
-                                if content.fromId != selectedUser?.uid{
+//                                if content.fromId != selectedUser?.uid{
+                                if content.fromId == vm.currentUser?.id {
                                     
                                     HStack() {
                                         
@@ -240,27 +241,13 @@ struct Chat: View {
                                     }
                                 } else {
                                     
-                                    HStack(alignment: .top){
-                                        
-                                        //                                    if vm.selectedUser?.profileImageUrl != nil{
+                                    HStack(alignment: .bottom){
                                         
                                         WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 25, height: 25)
                                             .mask(Circle())
-                                        
-                                        //                                    } else {
-                                        //
-                                        //                                        Image(systemName: "person.fill")
-                                        //                                            .font(.system(size: 25))
-                                        //                                            .padding(10)
-                                        //                                            .foregroundColor(.black)
-                                        //                                            .background(
-                                        //                                                Circle()
-                                        //                                                    .stroke(.black)
-                                        //                                            )
-                                        //                                    }
                                         
                                         //If text == "", it's a photo
                                         let text = content.text

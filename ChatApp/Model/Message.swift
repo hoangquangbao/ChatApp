@@ -10,9 +10,9 @@ import Firebase
 
 struct Message: Identifiable {
     
-    var id: String
+//    var id: String
     
-    let fromId, toId, text, imgMessage: String
+    let id, fromId, toId, text, imgMessage: String
 //    let imgMessage : Data
 //    let timestamp: NSNumber
     let timestamp: Timestamp

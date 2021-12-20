@@ -15,7 +15,6 @@ class HomeViewModel: ObservableObject {
     
     //User
     @Published var currentUser : User?
-    //    @Published var selectedUser : User?
     @Published var isShowActivityIndicator : Bool = false
     
     //Show error or caution
@@ -27,17 +26,17 @@ class HomeViewModel: ObservableObject {
     @Published var username : String = ""
     @Published var password :  String = ""
     @Published var isShowImagePicker = false
-    @Published var imgAvatar: UIImage?
+    @Published var profileImage: UIImage?
     @Published var isSignInMode : Bool = true
     @Published var isShowResetPasswordView : Bool = false
     
     //Main Message
-    @Published var isShowMainMessageView : Bool = false
+    @Published var isShowMainMessage : Bool = false
     @Published var isShowSignOutButton : Bool = false
     @Published var isShowHomePage : Bool = false
-    @Published var allRecentChatUsers = [RecentChatUser]()
+    @Published var allRecentChatUsers = [LastMessage]()
     @Published var searchMainMessage = ""
-    @Published var filterMainMessage = [RecentChatUser]()
+    @Published var filterMainMessage = [LastMessage]()
     var firestoreListenerRecentChatUser: ListenerRegistration?
     
     //New Message
@@ -55,7 +54,7 @@ class HomeViewModel: ObservableObject {
     
     //New Group
     @Published var isShowNewGroup : Bool = false
-    @Published var groupName : String = ""
+    @Published var groupname : String = ""
     
     //Chat
     @Published var isShowChat : Bool = false
@@ -68,13 +67,15 @@ class HomeViewModel: ObservableObject {
     //GroupChat
     @Published var isShowGroupChat : Bool = false
     @Published var searchGroupChat = ""
-    @Published var memberID = [String]()
+    @Published var memberIdList = [String]()
+    @Published var selectedGroup : GroupUser?
+
     
     
     init(){
         
         fetchCurrentUser()
-        fetchRecentChatUser()
+        fetchLastMessage()
         //This initialization main purpose is using for "func getSelectedUser(uid: String) -> User" in MainMessage. It conver data type from RecentChatUser to User.
         fetchUserToSuggest()
         
@@ -112,7 +113,7 @@ class HomeViewModel: ObservableObject {
             } else {
                 
                 UserDefaults.standard.setIsLoggedIn(value: true)
-                self.isShowMainMessageView = true
+                self.isShowMainMessage = true
                 
             }
         }
@@ -125,7 +126,7 @@ class HomeViewModel: ObservableObject {
         try? FirebaseManager.shared.auth.signOut()
         UserDefaults.standard.setIsLoggedIn(value: false)
         self.isShowHomePage = true
-        self.isShowMainMessageView = false
+        self.isShowMainMessage = false
         
     }
     
@@ -133,7 +134,7 @@ class HomeViewModel: ObservableObject {
     //MARK: - SignUp
     func signUp() {
         
-        //Check username is set?
+        //Check name is set?
         if self.username == ""{
             
             isShowAlert = true
@@ -143,7 +144,7 @@ class HomeViewModel: ObservableObject {
         } else {
             
             //Check avatar image is set?
-            if  self.imgAvatar == nil{
+            if  self.profileImage == nil{
                 
                 isShowAlert = true
                 alertMessage = "You must set avatar image for your account."
@@ -167,7 +168,7 @@ class HomeViewModel: ObservableObject {
                     self.isShowActivityIndicator = true
                     
                     //Upload image to Firebase
-                    self.uploadImgAvtUser()
+                    self.uploadProfileImageUser()
                     
                 }
             }
@@ -176,13 +177,13 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - This will upload images into Storage and prints out the locations as well
-    func uploadImgAvtUser() {
+    func uploadProfileImageUser() {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
         
-        guard let imageData = self.imgAvatar?.jpegData(compressionQuality: 0.5) else { return }
+        guard let imageData = self.profileImage?.jpegData(compressionQuality: 0.5) else { return }
         
         ref.putData(imageData, metadata: nil) { metadata, err in
             
@@ -333,13 +334,13 @@ class HomeViewModel: ObservableObject {
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        let userData = ["username": username,
+        let userData = ["name": username,
                         "email": email,
-                        "uid": uid,
+                        "id": uid,
                         "profileImageUrl": profileImageUrl.absoluteString]
         
         FirebaseManager.shared.firestore
-            .collection("users")
+            .collection("user")
             .document(uid)
             .setData(userData) { err in
                 
@@ -359,7 +360,7 @@ class HomeViewModel: ObservableObject {
                 self.username = ""
                 self.email = ""
                 self.password = ""
-                self.imgAvatar = nil
+                self.profileImage = nil
                 
                 //...and show alert successfully created
                 self.isShowAlert = true
@@ -383,7 +384,7 @@ class HomeViewModel: ObservableObject {
         }
         
         FirebaseManager.shared.firestore
-            .collection("users")
+            .collection("user")
             .document(uid)
             .getDocument { snapshot, error in
                 if let error = error {
@@ -407,13 +408,14 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    //MARK: - fetchAllUsersToSuggest
+    //MARK: - fetchUserToSuggest
     func fetchUserToSuggest() {
         
         firestoreListenerUserToSuggest?.remove()
         self.suggestUser.removeAll()
+        
         firestoreListenerUserToSuggest = FirebaseManager.shared.firestore
-            .collection("users")
+            .collection("user")
             .addSnapshotListener { documentSnapshot, error in
                 
                 if let error = error {
@@ -426,7 +428,7 @@ class HomeViewModel: ObservableObject {
                 documentSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
                     let user = User(data: data)
-                    if user.uid != FirebaseManager.shared.auth.currentUser?.uid {
+                    if user.id != FirebaseManager.shared.auth.currentUser?.uid {
                         
                         self.suggestUser.append(.init(data: data))
                         
@@ -476,7 +478,7 @@ class HomeViewModel: ObservableObject {
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        guard let toId = selectedUser?.uid else { return }
+        guard let toId = selectedUser?.id else { return }
         
         print("imgMessage: " + imgMessage)
         let senderMessageDocument = FirebaseManager.shared.firestore
@@ -544,7 +546,7 @@ class HomeViewModel: ObservableObject {
         self.allMessages.removeAll()
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        guard let toId = selectedUser?.uid else { return    }
+        guard let toId = selectedUser?.id else { return    }
         
         firestoreListenerMessage = FirebaseManager.shared.firestore
             .collection("messages")
@@ -678,19 +680,19 @@ class HomeViewModel: ObservableObject {
     //        let uidR = toId + fromId
     //
     //        //Sender
-    //        guard let usernameS = selectedUser?.username else { return }
+    //        guard let nameS = selectedUser?.name else { return }
     //
     //        guard let profileImageUrlS = selectedUser?.profileImageUrl else { return }
     //
     //        let senderData = ["fromId" : fromId,
     //                          "toId" : toId,
-    //                          "username" : usernameS,
+    //                          "name" : nameS,
     //                          "profileImageUrl" : profileImageUrlS,
     //                          "text" : text,
     //                          "timestamp" : Timestamp()] as [String : Any]
     //
     //        FirebaseManager.shared.firestore
-    //            .collection("recentChatUser") //.collection("recentUserChat")
+    //            .collection("lastMessage") //.collection("recentUserChat")
     //            .document(uidS)
     //            .setData(senderData) { error in
     //
@@ -704,19 +706,19 @@ class HomeViewModel: ObservableObject {
     //            }
     //
     //        //Receiver
-    //        guard let usernameR = anUser?.username else { return }
+    //        guard let nameR = anUser?.name else { return }
     //
     //        guard let profileImageUrlR = anUser?.profileImageUrl else { return }
     //
     //        let receiverData = ["fromId" : toId,
     //                            "toId" : fromId,
-    //                            "username" : usernameR,
+    //                            "name" : nameR,
     //                            "profileImageUrl" : profileImageUrlR,
     //                            "text" : text,
     //                            "timestamp" : Timestamp()] as [String : Any]
     //
     //        FirebaseManager.shared.firestore
-    //            .collection("recentChatUser")
+    //            .collection("lastMessage")
     //            .document(uidR)
     //            .setData(receiverData) { error in
     //
@@ -736,11 +738,11 @@ class HomeViewModel: ObservableObject {
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        guard let toId = selectedUser?.uid else { return }
+        guard let toId = selectedUser?.id else { return }
         
         let uid = fromId + toId
         
-        guard let username = selectedUser?.username else { return }
+        guard let name = selectedUser?.name else { return }
         
         guard let profileImageUrl = selectedUser?.profileImageUrl else { return }
         
@@ -749,13 +751,13 @@ class HomeViewModel: ObservableObject {
         
         let senderData = ["fromId" : fromId,
                           "toId" : toId,
-                          "username" : username,
+                          "name" : name,
                           "profileImageUrl" : profileImageUrl,
                           "text" : checkText,
                           "timestamp" : Timestamp()] as [String : Any]
         
         FirebaseManager.shared.firestore
-            .collection("recentChatUser") //.collection("recentUserChat")
+            .collection("lastMessage") //.collection("recentUserChat")
             .document(uid)
             .setData(senderData) { error in
                 
@@ -773,13 +775,13 @@ class HomeViewModel: ObservableObject {
     //MARK: - lastMessageOfReceiver
     func lastMessageOfReceiver(selectedUser: User?,text: String) {
         
-        guard let fromId = selectedUser?.uid else { return }
+        guard let fromId = selectedUser?.id else { return }
         
         guard let toId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         let uid = fromId + toId
         
-        guard let username = currentUser?.username else { return }
+        guard let name = currentUser?.name else { return }
         
         guard let profileImageUrl = currentUser?.profileImageUrl else { return }
         
@@ -788,13 +790,13 @@ class HomeViewModel: ObservableObject {
         
         let receiverData = ["fromId" : fromId,
                             "toId" : toId,
-                            "username" : username,
+                            "name" : name,
                             "profileImageUrl" : profileImageUrl,
                             "text" : checkText,
                             "timestamp" : Timestamp()] as [String : Any]
         
         FirebaseManager.shared.firestore
-            .collection("recentChatUser")
+            .collection("lastMessage")
             .document(uid)
             .setData(receiverData) { error in
                 
@@ -809,18 +811,18 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    //MARK: - fetchRecentChatUser
-    func fetchRecentChatUser() {
+    //MARK: - fetchLastMessage
+    func fetchLastMessage() {
         
         firestoreListenerRecentChatUser?.remove()
         self.allRecentChatUsers.removeAll()
+        
         guard let currentUserId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
         firestoreListenerRecentChatUser = FirebaseManager.shared.firestore
-            .collection("recentChatUser")
+            .collection("lastMessage")
             .order(by: "timestamp", descending: true)
             .addSnapshotListener { documentSnapshot, error in
-                //            .getDocuments { documentSnapshot, error in
                 
                 if let error = error {
                     
@@ -836,7 +838,7 @@ class HomeViewModel: ObservableObject {
                     let id = snapshot.documentID
                     let fromId = snapshot.get("fromId") as? String ?? ""
                     let toId = snapshot.get("toId") as? String ?? ""
-                    let username = snapshot.get("username") as? String ?? ""
+                    let name = snapshot.get("name") as? String ?? ""
                     let profileImageUrl = snapshot.get("profileImageUrl") as? String ?? ""
                     let text = snapshot.get("text") as? String ?? ""
                     let timestamp = snapshot.get("timestamp") as? Timestamp
@@ -844,13 +846,15 @@ class HomeViewModel: ObservableObject {
                     
                     if currentUserId == fromId {
                         
-                        return RecentChatUser(id: id, fromId: fromId, toId: toId, username: username, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
+                        return LastMessage(id: id, fromId: fromId, toId: toId, name: name, profileImageUrl: profileImageUrl, text: text, timestamp: timestamp!)
                         
                         
                     } else { return nil }
                 })
                 
                 self.filterMainMessage = self.allRecentChatUsers
+                
+                
                 print(self.allRecentChatUsers.count == 0 ? "allRecentChatUsers: Empty" : "allRecentChatUsers: Have data")
                 
             }
@@ -858,10 +862,10 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - deleteRecentChatUser
-    func deleteRecentChatUser(selectedUser: RecentChatUser) {
+    func deleteRecentChatUser(selectedUser: LastMessage) {
         
         FirebaseManager.shared.firestore
-            .collection("recentChatUser")
+            .collection("lastMessage")
             .document(selectedUser.fromId + selectedUser.toId)
             .delete { error in
                 
@@ -880,7 +884,7 @@ class HomeViewModel: ObservableObject {
             
             self.filterMainMessage = self.allRecentChatUsers.filter({
                 
-                return $0.username.lowercased().contains(self.searchMainMessage.lowercased())
+                return $0.name.lowercased().contains(self.searchMainMessage.lowercased())
                 
             })
         }
@@ -894,7 +898,7 @@ class HomeViewModel: ObservableObject {
             
             self.filterNewMessage = self.suggestUser.filter({
                 
-                return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
+                return $0.name.lowercased().contains(self.searchNewMessage.lowercased())
                 
             })
         }
@@ -910,7 +914,7 @@ class HomeViewModel: ObservableObject {
     ////            self.filterNewMessage = self.allSuggestUsers.filter({
     //            data = self.allSuggestUsers.filter({
     //
-    //                return $0.username.lowercased().contains(self.searchNewMessage.lowercased())
+    //                return $0.name.lowercased().contains(self.searchNewMessage.lowercased())
     //
     //            })
     //        }
@@ -925,7 +929,7 @@ class HomeViewModel: ObservableObject {
             
             self.filterAddParticipants = self.suggestUser.filter({
                 
-                return $0.username.lowercased().contains(self.searchAddParticipants.lowercased())
+                return $0.name.lowercased().contains(self.searchAddParticipants.lowercased())
                 
             })
         }
@@ -945,29 +949,66 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    //MARK: - createGroupChat
-    func createGroupChat() -> String{
+    
+    //MARK: - This will upload images into Storage and prints out the locations as well
+    func uploadProfileImageGroup(groupId : String) {
+                
+        let ref = FirebaseManager.shared.storage.reference(withPath: groupId)
         
-        let id = UUID().uuidString
-        guard let admin = FirebaseManager.shared.auth.currentUser?.uid else { return "faild"}
+        //Set default profileImage
+        let profileImage = UIImage(named: "LotusLogo")
         
-        //        var memberID = [String]()
-        //
-        //        for user in self.participantList {
-        //            memberID.append(user.uid)
-        //        }
+        guard let imageData = profileImage?.jpegData(compressionQuality: 0.5) else { return }
+
+        ref.putData(imageData, metadata: nil) { metadata, err in
+            
+            if let err = err {
+                
+                self.isShowAlert = true
+                self.alertMessage = err.localizedDescription
+                return
+                
+            }
+            
+            ref.downloadURL { url, err in
+                
+                if let err = err {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    return
+                    
+                }
+                
+                guard let url = url else { return }
+                
+                self.storeGroupInformation(groupId: groupId, profileImageUrl: url)
+            }
+        }
+    }
+    
+    
+    //MARK: - storeGroupChatInformation
+    func storeGroupInformation(groupId: String, profileImageUrl: URL) {
         
-        if self.memberID.isEmpty { return "faild"}
+        guard let admin = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        let groupData = ["id": id,
-                         "groupName": groupName,
-                         "admin": admin,
-                         "member" : memberID] as [String : Any]
+        for user in participantList {
+            memberIdList.append(user.id)
+        }
+        
+        if self.memberIdList.isEmpty { return }
+        
+        let groupUser = ["id" : groupId,
+                         "name" : groupname,
+                         "profileImageUrl" : profileImageUrl.absoluteString,
+                         "admin" : admin,
+                         "member" : memberIdList] as [String : Any]
         
         FirebaseManager.shared.firestore
-            .collection("groupChat")
-            .document(id)
-            .setData(groupData) { error in
+            .collection("group")
+            .document(groupId)
+            .setData(groupUser) { error in
                 
                 if let error = error {
                     
@@ -976,28 +1017,65 @@ class HomeViewModel: ObservableObject {
                     return
                 }
             }
-        return id
+        
+        fetchGroup(groupId: groupId)
     }
     
     
-    //MARK: - sendGroupChat
-    func sendGroupChat(selectedGrpID: String, text: String, imgMessage: String) {
+    //MARK: - fetchGroup
+    func fetchGroup(groupId: String) {
         
-        //Với mỗi id trong [memberID] + currentUser, ta lưu theo struct Message/UserID/GroupID/MessageID/MessageContent
+        FirebaseManager.shared.firestore
+            .collection("group")
+            .document(groupId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    
+                    self.alertMessage = error.localizedDescription
+                    print(self.alertMessage)
+                    return
+                    
+                }
+                
+                guard let data = snapshot?.data() else {
+                    
+                    print("No data found")
+                    return
+                    
+                }
+                
+                self.selectedGroup = .init(data: data)
+                
+                self.lastGroupMessageOfSender(selectedGroup: self.selectedGroup, text: "You created this group")
+                self.lastGroupMessageOfReceiver(selectedGroup: self.selectedGroup, text: "\(self.currentUser!.name) created this group")
+                
+                self.isShowActivityIndicator = false
+                self.isShowGroupChat = true
+
+            }
+    }
+    
+    
+    //MARK: - sendGroupMessage
+    func sendGroupMessage(selectedGroup: GroupUser, text: String, imgMessage: String) {
+        
+        //Với mỗi id trong [memberIdList + currentUser], ta lưu theo struct Message/UserID/GroupID/MessageID/MessageContent
         
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        let groupId = selectedGroup.id
         
         //Store Sender Message
         let senderMessageDocument = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
-            .collection(selectedGrpID)
+            .collection(groupId)
             .document()
         
         // "id" field is key to delete message in deletedMessage function
         let senderMessageData = ["id" : senderMessageDocument.documentID,
                                  "fromId" : fromId,
-                                 "toId" : "Group",
+                                 "toId" : groupId,
                                  "text" : text,
                                  "imgMessage" : imgMessage,
                                  "timestamp" : Timestamp()] as [String : Any]
@@ -1014,17 +1092,17 @@ class HomeViewModel: ObservableObject {
         }
         
         //Store Recipient Message
-        for uid in memberID {
+        for toId in memberIdList {
             
             let recipientMessageDocument = FirebaseManager.shared.firestore
                 .collection("messages")
-                .document(uid)
-                .collection(selectedGrpID)
+                .document(toId)
+                .collection(groupId)
                 .document()
             
             let recipientMessageData = ["id" : recipientMessageDocument.documentID,
                                         "fromId" : fromId,
-                                        "toId" : "Group",
+                                        "toId" : toId,
                                         "text" : text,
                                         "imgMessage" : imgMessage,
                                         "timestamp" : Timestamp()] as [String : Any]
@@ -1033,6 +1111,7 @@ class HomeViewModel: ObservableObject {
                 
                 if let error = error {
                     
+                    self.isShowAlert = true
                     self.alertMessage = error.localizedDescription
                     print(self.alertMessage)
                     return
@@ -1040,7 +1119,88 @@ class HomeViewModel: ObservableObject {
                 }
             }
         }
-        //        self.lastMessageOfSender(selectedUser: selectedUser, text: text)
-        //        self.lastMessageOfReceiver(selectedUser: selectedUser, text: text)
+
+        self.lastGroupMessageOfSender(selectedGroup: selectedGroup, text: text)
+        self.lastGroupMessageOfReceiver(selectedGroup: selectedGroup, text: text)
+        
+    }
+    
+    
+    //MARK: - lastGroupMessageOfSender
+    func lastGroupMessageOfSender(selectedGroup: GroupUser?, text: String) {
+
+        guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
+
+        guard let groupId = selectedGroup?.id else { return }
+
+        let id = fromId + groupId
+
+        guard let groupName = selectedGroup?.name else { return }
+        
+        guard let profileImageUrl = selectedGroup?.profileImageUrl else { return }
+
+        //If text == "", it's a photo
+        let checkText = (text == "") ? "A photo" : text
+
+        let senderData = ["fromId" : fromId,
+                          "toId" : groupId,
+                          "name" : groupName,
+                          "profileImageUrl" : profileImageUrl,
+                          "text" : checkText,
+                          "timestamp" : Timestamp()] as [String : Any]
+
+        FirebaseManager.shared.firestore
+            .collection("lastMessage") //.collection("recentUserChat")
+            .document(id)
+            .setData(senderData) { error in
+
+                if let error = error {
+
+                    self.isShowAlert = true
+                    self.alertMessage = error.localizedDescription
+                    return
+
+                }
+            }
+    }
+    
+    
+    //MARK: - lastGroupMessageOfReceiver
+    func lastGroupMessageOfReceiver(selectedGroup: GroupUser?,text: String) {
+                
+        guard let groupId = selectedGroup?.id else { return }
+        
+        for toId in memberIdList {
+            
+            let id = toId + groupId
+
+            guard let name = selectedGroup?.name else { return }
+            
+            guard let profileImageUrl = selectedGroup?.profileImageUrl else { return }
+            
+            //If text == "", it's a photo
+            let checkText = (text == "") ? "A photo" : text
+            
+            let receiverData = ["fromId" : toId,
+                                "toId" : groupId,
+                                "name" : name,
+                                "profileImageUrl" : profileImageUrl,
+                                "text" : checkText,
+                                "timestamp" : Timestamp()] as [String : Any]
+            
+            FirebaseManager.shared.firestore
+                .collection("lastMessage")
+                .document(id)
+                .setData(receiverData) { error in
+                    
+                    if let error = error {
+                        
+                        self.isShowAlert = true
+                        self.alertMessage = error.localizedDescription
+                        return
+                        
+                    }
+                }
+        }
     }
 }

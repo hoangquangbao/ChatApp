@@ -81,6 +81,17 @@ struct AddParticipants: View {
                             Text("Discard Group"),
                             action: {
                                 
+                                //Reset isAdded status for all users of participantList
+                                for user in vm.participantList {
+                                    
+                                    if let index = vm.suggestUser.firstIndex(where: { us in
+                                        us.id == user.id
+                                    }) { vm.suggestUser[index].isAdded = false }
+                                    
+                                }
+                                //Update.
+                                vm.filterAddParticipants = vm.suggestUser
+                                
                                 vm.searchAddParticipants = ""
                                 vm.participantList.removeAll()
                                 presentationMode.wrappedValue.dismiss()
@@ -149,7 +160,7 @@ struct AddParticipants: View {
                                 
                                 //1. Remove the user from participantList..
                                 if let index = vm.participantList.firstIndex(where: { us in
-                                    us.uid == user.uid
+                                    us.id == user.id
                                 }) { vm.participantList.remove(at: index) }
                                 
                                 /*COMMENT*/
@@ -165,7 +176,7 @@ struct AddParticipants: View {
 //                                }) { vm.filterAddParticipants[index].isAdded = false }
                                 
                                 if let index = vm.suggestUser.firstIndex(where: { us in
-                                    us.uid == user.uid
+                                    us.id == user.id
                                 }) { vm.suggestUser[index].isAdded = false }
                                 
                                 //3. Update.
@@ -189,7 +200,7 @@ struct AddParticipants: View {
                                     )
                             })
                             
-                            Text(user.username)
+                            Text(user.name)
                                 .font(.system(size: 10))
                                 .foregroundColor(.black)
                             
@@ -197,7 +208,7 @@ struct AddParticipants: View {
                     }
                 }
                 .padding(.vertical)
-                .padding(.leading, 3)
+                .padding(.horizontal, 3)
             }
         }
         .padding(.horizontal)
@@ -228,7 +239,7 @@ struct AddParticipants: View {
 //                              us.uid == user.uid
 //                          }) { vm.filterAddParticipants[index].isAdded = true }
                           if let index = vm.suggestUser.firstIndex(where: { us in
-                              us.uid == user.uid
+                              us.id == user.id
                           }) { vm.suggestUser[index].isAdded = true }
                           vm.filterAddParticipants = vm.suggestUser
                           
@@ -244,7 +255,7 @@ struct AddParticipants: View {
                                 .mask(Circle())
                                 .shadow(color: .purple, radius: 2)
                             
-                            Text(user.username)
+                            Text(user.name)
                                 .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(.black)
                             
@@ -285,7 +296,7 @@ struct AddParticipants: View {
         
         let data = vm.participantList.filter {
               
-              return $0.uid.contains(user.uid)
+              return $0.id.contains(user.id)
               
         }
         

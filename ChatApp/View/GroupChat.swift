@@ -11,7 +11,9 @@ import SDWebImageSwiftUI
 struct GroupChat: View {
     
     @ObservedObject var vm = HomeViewModel()
-    @State var selectedGrpID : String?
+//    @State var selectedGroupId : String?
+    @State var selectedGroup : GroupUser?
+    
     
     @State var text : String = ""
     @State var imageMessage: UIImage?
@@ -43,6 +45,9 @@ struct GroupChat: View {
                 }
             }
             .navigationBarHidden(true)
+            .fullScreenCover(isPresented: $vm.isShowMainMessage) {
+                MainMessage()
+            }
             
             //            .onChange(of: vm.searchChat) { newValue in
             //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -84,7 +89,7 @@ struct GroupChat: View {
                 
                 VStack(alignment: .leading, spacing: 5){
                     
-                    Text(vm.groupName)
+                    Text(vm.groupname)
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                     
                     Text("\(vm.participantList.count) participants")
@@ -102,27 +107,32 @@ struct GroupChat: View {
                     //vm.fetchRecentChatUser()
                     
                     //For Group
-                    vm.groupName = ""
+                    vm.searchGroupChat = ""
                     vm.participantList.removeAll()
+                    
+                    vm.isShowMainMessage = true
                     
                     DispatchQueue.main.async {
                         //vm.isShowGroupChat = false
                         presentationMode.wrappedValue.dismiss()
-
+                        
                     }
                     DispatchQueue.main.async {
                         //vm.isShowNewGroup = false
                         presentationMode.wrappedValue.dismiss()
-
+                        
                     }
                     DispatchQueue.main.async {
                         //vm.isShowAddParticipants = false
                         presentationMode.wrappedValue.dismiss()
-
+                        
                     }
-                    //                    DispatchQueue.main.async {
-                    //                        vm.isShowNewMessage = false
-                    //                    }
+                    DispatchQueue.main.async {
+                        //vm.isShowNewMessage = false
+                        presentationMode.wrappedValue.dismiss()
+                        
+                    }
+
                     
                 } label: {
                     
@@ -192,7 +202,7 @@ struct GroupChat: View {
                     
                     if !text.isEmpty{
                         
-                        vm.sendGroupChat(selectedGrpID: selectedGrpID!, text: text, imgMessage: "")
+                        vm.sendGroupMessage(selectedGroup: selectedGroup!, text: text, imgMessage: "")
                         text = ""
                         
                     }
@@ -203,7 +213,7 @@ struct GroupChat: View {
                 
                 Button {
                     
-                    vm.sendGroupChat(selectedGrpID: selectedGrpID!, text: text, imgMessage: "")
+                    vm.sendGroupMessage(selectedGroup: selectedGroup!, text: text, imgMessage: "")
                     text = ""
                     
                 } label: {

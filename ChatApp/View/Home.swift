@@ -25,7 +25,7 @@ struct Home: View {
                 signView.overlay(
                     
                     ActivityIndicator()
-                        .frame(width: 100, height: 100)
+                        .frame(width: 40, height: 40)
                         .foregroundColor(.gray)
                     
                 )
@@ -67,6 +67,15 @@ struct Home: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.bottom)
+            //Reset item value if transfer tab SIGN IN <=> SIGN UP
+            .onChange(of: vm.isSignInMode) { newValue in
+                 
+                    vm.username = ""
+                    vm.email = ""
+                    vm.password = ""
+                    vm.profileImage = nil
+                
+            }
             
             VStack(spacing: 30) {
                 
@@ -97,7 +106,7 @@ struct Home: View {
                             
                             VStack {
                                 
-                                if let image = vm.imgAvatar {
+                                if let image = vm.profileImage {
                                     
                                     Image(uiImage: image)
                                         .resizable()
@@ -226,9 +235,9 @@ struct Home: View {
                 }
             }
             .fullScreenCover(isPresented: $vm.isShowImagePicker, onDismiss: nil) {
-                ImagePicker(image: $vm.imgAvatar)
+                ImagePicker(image: $vm.profileImage)
             }
-            .fullScreenCover(isPresented: $vm.isShowMainMessageView) {
+            .fullScreenCover(isPresented: $vm.isShowMainMessage) {
                 MainMessage()
             }
             .fullScreenCover(isPresented: $vm.isShowResetPasswordView) {

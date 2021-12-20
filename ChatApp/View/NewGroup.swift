@@ -11,7 +11,9 @@ import SDWebImageSwiftUI
 struct NewGroup: View {
     
     @ObservedObject var vm = HomeViewModel()
-    @State var selectedGrpID : String?
+    @State var groupId : String?
+    //@State var selectedGroup : GroupUser?
+
         
     @Environment(\.presentationMode) var presentationMode
     
@@ -22,8 +24,23 @@ struct NewGroup: View {
             VStack{
                 
                 topbarNewGroup
-                mainNewGroup
-                NavigationLink(destination: GroupChat(vm: vm, selectedGrpID: selectedGrpID), isActive: $vm.isShowGroupChat) {
+                
+                if vm.isShowActivityIndicator{
+                    
+                    mainNewGroup.overlay(
+                        
+                        ActivityIndicator()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(.gray)
+                        
+                    )
+                } else {
+                    
+                    mainNewGroup
+                    
+                }
+                
+                NavigationLink(destination: GroupChat(vm: vm, selectedGroup: vm.selectedGroup), isActive: $vm.isShowGroupChat) {
                     EmptyView()
                 }
                 
@@ -45,22 +62,11 @@ struct NewGroup: View {
             .navigationBarItems(trailing:
                                     Button(action: {
                 
-                for user in vm.participantList {
-                    vm.memberID.append(user.uid)
-                }
-                selectedGrpID = vm.createGroupChat()
+                vm.isShowActivityIndicator = true
                 
-                if selectedGrpID != "faild" && selectedGrpID != nil{
-                    
-                    vm.isShowGroupChat = true
+                groupId = NSUUID().uuidString
+                vm.uploadProfileImageGroup(groupId: groupId!)
 
-                } else {
-                    
-                    vm.isShowAlert = true
-                    vm.alertMessage = "New group creation failed!"
-                    
-                }
-                
 //                vm.isShowNewGroup = false
 //                vm.isShowAddParticipants = false
 //                vm.isShowNewMessage = false
@@ -69,9 +75,9 @@ struct NewGroup: View {
 
                 Text("CREATE")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(vm.groupName == "" ? .gray : .purple)
+                    .foregroundColor(vm.groupname == "" ? .gray : .purple)
 
-            }).disabled(vm.groupName == "")
+            }).disabled(vm.groupname == "")
             )
         }
     }
@@ -85,7 +91,7 @@ struct NewGroup: View {
             Text("Name your new chat")
                 .padding()
 
-            TextField("Group Name", text: $vm.groupName)
+            TextField("Group Name", text: $vm.groupname)
             
             Divider()
             
@@ -117,7 +123,7 @@ struct NewGroup: View {
                                 .mask(Circle())
                                 .shadow(color: .purple, radius: 2)
                             
-                            Text(user.username)
+                            Text(user.name)
                                 .font(.system(size: 15, weight: .bold))
                                                     
                         }
