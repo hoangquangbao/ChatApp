@@ -65,19 +65,19 @@ class HomeViewModel: ObservableObject {
     var firestoreListenerMessage: ListenerRegistration?
     
     //GroupChat
-    @Published var isShowGroupChat : Bool = false
+    @Published var isShowGroup : Bool = false
     @Published var searchGroupChat = ""
     @Published var memberIdList = [String]()
     @Published var selectedGroup : GroupUser?
+    @Published var isShowImagePickerGroup = false
 
-    
-    
+
     init(){
         
         fetchCurrentUser()
         fetchLastMessage()
         //This initialization main purpose is using for "func getSelectedUser(uid: String) -> User" in MainMessage. It conver data type from RecentChatUser to User.
-        fetchUserToSuggest()
+        fetchSuggestUserList()
         
     }
     
@@ -214,13 +214,13 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - uploadImgMessageToStorage
-    func uploadImgMessage(selectedUser: User?, text: String, imgMessage: UIImage?) {
+    func uploadImageMessage(selectedUser: User?, text: String, imageMessage: UIImage?) {
         
-        let imgMessageID =  NSUUID().uuidString
+        let imageMessageId =  NSUUID().uuidString
         
-        let ref = FirebaseManager.shared.storage.reference(withPath: imgMessageID)
+        let ref = FirebaseManager.shared.storage.reference(withPath: imageMessageId)
         
-        guard let imageData = imgMessage?.jpegData(compressionQuality: 0.5) else { return }
+        guard let imageData = imageMessage?.jpegData(compressionQuality: 0.5) else { return }
         
         ref.putData(imageData, metadata: nil) { metadata, err in
             
@@ -409,7 +409,7 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - fetchUserToSuggest
-    func fetchUserToSuggest() {
+    func fetchSuggestUserList() {
         
         firestoreListenerUserToSuggest?.remove()
         self.suggestUser.removeAll()
@@ -480,7 +480,6 @@ class HomeViewModel: ObservableObject {
         
         guard let toId = selectedUser?.id else { return }
         
-        print("imgMessage: " + imgMessage)
         let senderMessageDocument = FirebaseManager.shared.firestore
             .collection("messages")
             .document(fromId)
@@ -540,13 +539,15 @@ class HomeViewModel: ObservableObject {
     
     
     //MARK: - fetchMessage
-    func fetchMessage(selectedUser: User?) {
+//    func fetchMessage(selectedUser: User?) {
+    func fetchMessage(selectedObjectId: String?) {
         
         firestoreListenerMessage?.remove()
         self.allMessages.removeAll()
+        
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         
-        guard let toId = selectedUser?.id else { return    }
+        guard let toId = selectedObjectId else { return }
         
         firestoreListenerMessage = FirebaseManager.shared.firestore
             .collection("messages")
@@ -572,17 +573,11 @@ class HomeViewModel: ObservableObject {
                     let text = snap.get("text") as? String ?? ""
                     let imgMessage = snap.get("imgMessage") as? String ?? ""
                     let timestamp = snap.get("timestamp") as? Timestamp
-                    //                    let timestamp = snap.get("timestamp") as? Date ?? Date.now
-                    
-                    //                    let formatter = DateFormatter()
-                    //                    formatter.dateFormat = "MMM d yyyy"
-                    //                    let date = formatter.string(from: timestamp.dateValue())
-                    //                    formatter.dateFormat = "HH:mm"
-                    //                    let time = formatter.string(from: timestamp.dateValue())
                     
                     return Message(id: id, fromId: fromId, toId: toId, text: text, imgMessage: imgMessage, timestamp: timestamp!)
                     
                 })
+                
                 self.filterChat = self.allMessages
                 
                 //Activate activity indicator..
@@ -592,6 +587,16 @@ class HomeViewModel: ObservableObject {
             }
     }
     
+    
+    //MARK: - Transfer data type of selected user from "LastMessage" to "User"
+    //Refer link for find an object in array: https://stackoverflow.com/questions/28727845/find-an-object-in-array
+    //"func fetchSuggestUserList()" have to init at begin run app, it help "vm.allSuggestUsers" variable have data before calling "func getUserInfo(uid: String) -> User". If not our get an error "Unexpectedly found nil while unwrapping an Optional value"
+    func getUserInfo(selectedObjectId: String) -> User {
+        
+        return suggestUser.first{$0.id == selectedObjectId }!
+        
+    }
+
     
     //MARK: - deleteSenderMessage
     func deleteMessage(selectedUser: User, selectedMessage: Message) {
@@ -854,7 +859,6 @@ class HomeViewModel: ObservableObject {
                 
                 self.filterMainMessage = self.allRecentChatUsers
                 
-                
                 print(self.allRecentChatUsers.count == 0 ? "allRecentChatUsers: Empty" : "allRecentChatUsers: Have data")
                 
             }
@@ -1018,12 +1022,12 @@ class HomeViewModel: ObservableObject {
                 }
             }
         
-        fetchGroup(groupId: groupId)
+        getGroupInfo(groupId: groupId)
     }
     
     
-    //MARK: - fetchGroup
-    func fetchGroup(groupId: String) {
+    //MARK: - implementNewGroup
+    func getGroupInfo(groupId: String) {
         
         FirebaseManager.shared.firestore
             .collection("group")
@@ -1046,18 +1050,87 @@ class HomeViewModel: ObservableObject {
                 
                 self.selectedGroup = .init(data: data)
                 
-                self.lastGroupMessageOfSender(selectedGroup: self.selectedGroup, text: "You created this group")
-                self.lastGroupMessageOfReceiver(selectedGroup: self.selectedGroup, text: "\(self.currentUser!.name) created this group")
+                if self.isCreatingNewGroup(groupId: groupId) {
+                    
+                    self.implementNewGroup(groupId: groupId)
+                    
+                }
                 
-                self.isShowActivityIndicator = false
-                self.isShowGroupChat = true
-
+                self.isShowGroup = true
             }
     }
     
     
+    //MARK: - isCreatingNewGroup
+    func isCreatingNewGroup(groupId: String) -> Bool {
+        
+        for lastMessage in self.allRecentChatUsers {
+            
+            if groupId == lastMessage.toId {
+                return false
+            }
+        }
+        return true
+    }
+    
+    
+    //MARK: - implementNewGroup
+    func implementNewGroup(groupId: String) {
+        
+        self.lastGroupMessageOfSender(selectedGroup: self.selectedGroup, text: "You created this group")
+        
+        self.lastGroupMessageOfReceiver(selectedGroup: self.selectedGroup, text: "\(self.currentUser!.name) created this group")
+        
+        //Reset allMessage when create a new Group or selecte a group from MainMessage
+        self.fetchMessage(selectedObjectId: groupId)
+        
+        //Create new Group success
+        self.isShowActivityIndicator = false
+    }
+    
+    
+    //MARK: - uploadImgMessageToStorage
+    func uploadImageGroup(selectedGroup: GroupUser?, text: String, imageGroup: UIImage?) {
+        
+        let imageMessageId =  NSUUID().uuidString
+        
+        let ref = FirebaseManager.shared.storage.reference(withPath: imageMessageId)
+        
+        guard let imageData = imageGroup?.jpegData(compressionQuality: 0.5) else { return }
+        
+        ref.putData(imageData, metadata: nil) { metadata, err in
+            
+            if let err = err {
+                
+                self.isShowAlert = true
+                self.alertMessage = err.localizedDescription
+                return
+                
+            }
+            
+            ref.downloadURL { url, err in
+                
+                if let err = err {
+                    
+                    self.isShowAlert = true
+                    self.alertMessage = err.localizedDescription
+                    return
+                    
+                }
+                
+                guard let url = url else { return }
+                
+                let imgMessageUrl = url.absoluteString
+                
+                self.sendGroup(selectedGroup: selectedGroup!, text: text, imgMessage: imgMessageUrl)
+
+            }
+        }
+    }
+    
+    
     //MARK: - sendGroupMessage
-    func sendGroupMessage(selectedGroup: GroupUser, text: String, imgMessage: String) {
+    func sendGroup(selectedGroup: GroupUser, text: String, imgMessage: String) {
         
         //Với mỗi id trong [memberIdList + currentUser], ta lưu theo struct Message/UserID/GroupID/MessageID/MessageContent
         

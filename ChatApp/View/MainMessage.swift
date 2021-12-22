@@ -21,7 +21,11 @@ struct MainMessage : View {
     //    @State var isShowHomePage : Bool = false
     //    @State var isShowNewMessage : Bool = false
     //    @State var isShowChatMessage : Bool = false
-        @State var selectedUser : User?
+    
+    @State var selectedUser : User?
+//    @State var selectedGroup : GroupUser?
+//    @State var selectedObjectId : String?
+
     
     //@Environment(\.presentationMode) var presentationMode
     
@@ -32,6 +36,7 @@ struct MainMessage : View {
                 topNav
                 mainMessageView
                 NavigationLink("", destination: Chat(vm:vm, selectedUser: selectedUser), isActive: $vm.isShowChat)
+                NavigationLink("", destination: GroupChat(vm:vm, selectedGroup: vm.selectedGroup), isActive: $vm.isShowGroup)
                 
             }
             .edgesIgnoringSafeArea(.bottom)
@@ -46,7 +51,7 @@ struct MainMessage : View {
             
             //Navigation to NewMessage
             .fullScreenCover(isPresented: $vm.isShowNewMessage, onDismiss: nil) {
-                NewMessage(vm: vm, selectedUser: selectedUser)
+                NewMessage(vm: vm)
             }
             
             //Filter...
@@ -106,16 +111,6 @@ struct MainMessage : View {
                             .destructive(
                                 Text("Sign Out"),
                                 action: {
-                                    
-                                    
-                                    
-                                    //try? FirebaseManager.shared.auth.signOut()
-                                    //
-                                    //
-                                    //                                    vm.fetchCurrentUser()
-                                    //presentationMode.wrappedValue.dismiss()
-                                    //                                    vm.isShowMainMessageView = false
-                                    //                                    vm.isShowHomePage = true
                                     
                                     vm.handleSighOut()
                                     
@@ -199,23 +194,38 @@ struct MainMessage : View {
             } else {
                 ScrollView {
                     LazyVStack{
-                        ForEach(vm.filterMainMessage) { user in
+                        ForEach(vm.filterMainMessage) { object in
                             VStack{
                                 
                                 Button {
                                     
                                     //Get the user follow User data type to provide to fetchMessage
-                                    //vm.searchMainMessage = ""
                                     vm.searchMainMessage = ""
-                                    selectedUser = getSelectedUser(uid: user.toId )
-                                    vm.fetchMessage(selectedUser: selectedUser)
-                                    vm.isShowChat = true
                                     
+                                    let selectedObjectId = object.toId
+                                    vm.fetchMessage(selectedObjectId: selectedObjectId)
+                                    //Check it is group or user:
+                                    //if have "-" is group
+                                    //else it is user
+                                    if (selectedObjectId.contains("-")) {
+                                        
+                                    vm.getGroupInfo(groupId: selectedObjectId)
+                                    //isShowGroup = true should put in fetchGroup because when we initialization a new group that need to call "fetchGroup" and show "Group UI". Otherwise, isShowGroup = true put in here, "Group UI" can't show.
+                                    //vm.isShowGroup = true
+
+                                    } else {
+                                                                                
+                                        selectedUser = vm.getUserInfo(selectedObjectId: selectedObjectId )
+//                                        vm.filterChat = vm.allMessages
+                                        vm.isShowChat = true
+
+                                    }
+
                                 } label: {
                                     
                                     HStack(spacing: 15){
                                         
-                                        WebImage(url: URL(string: user.profileImageUrl))
+                                        WebImage(url: URL(string: object.profileImageUrl))
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 60, height: 60)
@@ -224,11 +234,11 @@ struct MainMessage : View {
                                         
                                         VStack(alignment: .leading, spacing: 4){
                                             
-                                            Text(user.name)
+                                            Text(object.name)
                                                 .font(.system(size: 17, weight: .bold))
                                                 .foregroundColor(.black)
                                             
-                                            Text(user.text)
+                                            Text(object.text)
                                                 .font(.system(size: 12))
                                                 .foregroundColor(.gray)
                                                 .lineLimit(1)
@@ -237,7 +247,7 @@ struct MainMessage : View {
                                         
                                         Spacer()
                                         
-                                        Text(timeAgoDisplay(timestamp: user.timestamp))
+                                        Text(timeAgoDisplay(timestamp: object.timestamp))
                                             .font(.system(size: 12))
                                             .foregroundColor(.gray)
                                         
@@ -255,7 +265,7 @@ struct MainMessage : View {
                                 
                                 Button {
                                     
-                                    vm.deleteRecentChatUser(selectedUser: user)
+                                    vm.deleteRecentChatUser(selectedUser: object)
                                     
                                 } label: {
                                     
@@ -295,16 +305,6 @@ struct MainMessage : View {
             return "\(secondsAgo / day)d ago"
         }
         return "\(secondsAgo / week)w ago"
-        
-    }
-    
-    
-    //MARK: - Transfer data type of selected user from "RecentChatUser" to "User"
-    //Refer link for find an object in array: https://stackoverflow.com/questions/28727845/find-an-object-in-array
-    //"func fetchUserToSuggest()" have to init at begin run app, it help "vm.allSuggestUsers" variable have data before calling "func getSelectedUser(uid: String) -> User". If not our get an error "Unexpectedly found nil while unwrapping an Optional value"
-    func getSelectedUser(uid: String) -> User {
-        
-        return vm.suggestUser.first{$0.id == uid }!
         
     }
 }

@@ -40,7 +40,7 @@ struct NewGroup: View {
                     
                 }
                 
-                NavigationLink(destination: GroupChat(vm: vm, selectedGroup: vm.selectedGroup), isActive: $vm.isShowGroupChat) {
+                NavigationLink(destination: GroupChat(vm: vm, selectedGroup: vm.selectedGroup), isActive: $vm.isShowGroup) {
                     EmptyView()
                 }
                 
@@ -65,7 +65,13 @@ struct NewGroup: View {
                 vm.isShowActivityIndicator = true
                 
                 groupId = NSUUID().uuidString
-                vm.uploadProfileImageGroup(groupId: groupId!)
+                    
+                    vm.uploadProfileImageGroup(groupId: groupId!)
+                    
+//                    vm.fetchMessage(selectedObjectId: groupId)
+//                    
+//                    vm.isShowActivityIndicator = false
+//                    vm.isShowGroup = true
 
 //                vm.isShowNewGroup = false
 //                vm.isShowAddParticipants = false

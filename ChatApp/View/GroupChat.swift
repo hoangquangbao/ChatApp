@@ -13,10 +13,10 @@ struct GroupChat: View {
     @ObservedObject var vm = HomeViewModel()
 //    @State var selectedGroupId : String?
     @State var selectedGroup : GroupUser?
-    
+    @State var imageGroup: UIImage?
+
     
     @State var text : String = ""
-    @State var imageMessage: UIImage?
     @State var isShowImagePickerMessage : Bool = false
     @State var imgMessage : Data = Data(count: 0)
     
@@ -48,24 +48,25 @@ struct GroupChat: View {
             .fullScreenCover(isPresented: $vm.isShowMainMessage) {
                 MainMessage()
             }
-            
-            //            .onChange(of: vm.searchChat) { newValue in
-            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            //                    if newValue == vm.searchChat && vm.searchChat != "" {
-            //                        //Check func in here
-            //                        vm.filterForChat()
-            //                    }
-            //                }
-            //
-            //                if vm.searchChat == ""{
-            //
-            //                    //do nothing
-            //                    withAnimation(.linear){
-            //                        vm.filterChat = vm.allMessages
-            //
-            //                    }
-            //                }
-            //            }
+            .fullScreenCover(isPresented: $vm.isShowImagePickerGroup, onDismiss: {
+                
+                if imageGroup != nil
+                {
+                    
+                    //Activate activity indicator..
+                    //..true: when start send Image Message (bottomChat)
+                    //..false: when fetchMessage success (fetchMessage)
+                    vm.isShowActivityIndicator = true
+                    
+                    vm.uploadImageGroup(selectedGroup: selectedGroup, text: "", imageGroup: imageGroup)
+
+                }
+                
+            }) {
+                
+                ImagePickerGroup(imageGroup: $imageGroup)
+                
+            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -80,7 +81,7 @@ struct GroupChat: View {
             
             HStack(spacing: 15) {
                 
-                Image("LotusLogo")
+                WebImage(url: URL(string: selectedGroup?.profileImageUrl ?? ""))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 50, height: 50)
@@ -89,10 +90,10 @@ struct GroupChat: View {
                 
                 VStack(alignment: .leading, spacing: 5){
                     
-                    Text(vm.groupname)
+                    Text(selectedGroup!.name)
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                     
-                    Text("\(vm.participantList.count) participants")
+                    Text("\(selectedGroup!.member.count + 1) participants")
                         .font(.system(size: 10))
                         .foregroundColor(.gray)
                     
@@ -102,38 +103,11 @@ struct GroupChat: View {
                 
                 Button {
                     
-                    vm.searchChat = ""
-                    //presentationMode.wrappedValue.dismiss()
-                    //vm.fetchRecentChatUser()
-                    
-                    //For Group
                     vm.searchGroupChat = ""
                     vm.participantList.removeAll()
                     
                     vm.isShowMainMessage = true
-                    
-                    DispatchQueue.main.async {
-                        //vm.isShowGroupChat = false
-                        presentationMode.wrappedValue.dismiss()
-                        
-                    }
-                    DispatchQueue.main.async {
-                        //vm.isShowNewGroup = false
-                        presentationMode.wrappedValue.dismiss()
-                        
-                    }
-                    DispatchQueue.main.async {
-                        //vm.isShowAddParticipants = false
-                        presentationMode.wrappedValue.dismiss()
-                        
-                    }
-                    DispatchQueue.main.async {
-                        //vm.isShowNewMessage = false
-                        presentationMode.wrappedValue.dismiss()
-                        
-                    }
 
-                    
                 } label: {
                     
                     Image(systemName: "multiply")
@@ -151,9 +125,9 @@ struct GroupChat: View {
                     .disableAutocorrection(true)
                 
                 Divider()
-                    .frame(height: 1)
-                    .padding(.horizontal, 30)
-                    .background(Color.gray)
+//                    .frame(height: 1)
+//                    .padding(.horizontal, 30)
+//                    .background(Color.gray)
                 
             }
             .padding(.vertical)
@@ -165,14 +139,91 @@ struct GroupChat: View {
     //MARK: - mainChat
     var main : some View {
         
-        ScrollView {
-            
-            LazyVStack{
-                
+        VStack {
+            ScrollView {
+                LazyVStack {
+                        ForEach(vm.filterChat){ content in
+                            VStack() {
+                                
+                                if content.fromId == vm.currentUser?.id {
+                                    
+                                    HStack() {
+                                        
+                                        Spacer()
+                                        
+                                        //If text == "", it's a photo
+                                        let text = content.text
+                                        if text == "" {
+                                            
+                                            WebImage(url: URL(string: content.imgMessage ))
+                                                .resizable()
+                                                .scaledToFit()
+                                                .cornerRadius(15)
+                                                .frame(maxWidth: UIScreen.main.bounds.width - 150)
+                                            
+                                        } else {
+                                            
+                                            Text(text)
+                                                .padding()
+                                                .background(Color("BG_Chat"))
+                                                .clipShape(ChatBubble(mymsg: true))
+                                                .foregroundColor(.white)
+                                            
+                                        }
+                                    }
+                                } else {
+                                    
+                                    HStack(alignment: .bottom){
+                                        
+                                            let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
+
+                                            WebImage(url: URL(string: memberGroup.profileImageUrl ))
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 25, height: 25)
+                                                .mask(Circle())
+                                            
+                                        VStack {
+                                            
+                                            Text(memberGroup.name)
+                                                .foregroundColor(.gray)
+                                                .font(.system(size: 8))
+                                            
+                                            //If text == "", it's a photo
+                                            let text = content.text
+                                            if text == "" {
+                                                
+                                                WebImage(url: URL(string: content.imgMessage ))
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .cornerRadius(15)
+                                                    .frame(maxWidth: UIScreen.main.bounds.width - 150)
+                                                    .padding(.leading, 0)
+                                                //.scaledToFit()
+                                                //                                                .padding(.top)
+                                                
+                                            } else {
+                                                
+                                                Text(text)
+                                                    .padding()
+                                                    .background(Color.gray.opacity(0.2))
+                                                    .clipShape(ChatBubble(mymsg: false))
+                                                
+                                            }
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                }
+                .rotationEffect(.degrees(180))
             }
             .rotationEffect(.degrees(180))
         }
-        .rotationEffect(.degrees(180))
     }
     
     
@@ -183,7 +234,7 @@ struct GroupChat: View {
             
             Button {
                 
-                vm.isShowImagePickerMessage = true
+                vm.isShowImagePickerGroup = true
                 
             } label: {
                 
@@ -202,7 +253,7 @@ struct GroupChat: View {
                     
                     if !text.isEmpty{
                         
-                        vm.sendGroupMessage(selectedGroup: selectedGroup!, text: text, imgMessage: "")
+                        vm.sendGroup(selectedGroup: selectedGroup!, text: text, imgMessage: "")
                         text = ""
                         
                     }
@@ -213,7 +264,7 @@ struct GroupChat: View {
                 
                 Button {
                     
-                    vm.sendGroupMessage(selectedGroup: selectedGroup!, text: text, imgMessage: "")
+                    vm.sendGroup(selectedGroup: selectedGroup!, text: text, imgMessage: "")
                     text = ""
                     
                 } label: {

@@ -12,7 +12,7 @@ struct User: Identifiable {
     
     //var id: String {id}
     
-    let id, email, profileImageUrl, name: String
+    let id, email, name, profileImageUrl: String
     
     // To identify whether it is added to Participant List....
     var isAdded: Bool = false
@@ -20,9 +20,9 @@ struct User: Identifiable {
     init(data: [String: Any]) {
         
         self.id = data["id"] as? String ?? ""
+        self.name = data["name"] as? String ?? ""
         self.email = data["email"] as? String ?? ""
         self.profileImageUrl = data["profileImageUrl"] as? String ?? ""
-        self.name = data["name"] as? String ?? ""
         self.isAdded = (data["isAdded"] != nil)
         
     }

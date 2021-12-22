@@ -16,7 +16,6 @@ struct LastMessage: Identifiable {
     let timestamp: Timestamp
 //    let timestamp: Date
 
-    
 //    init(data: [String: Any]) {
 //
 //        //self.id = UUID().uuidString

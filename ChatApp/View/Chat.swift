@@ -16,7 +16,7 @@ struct Chat: View {
     
     @State var text : String = ""
     @State var imageMessage: UIImage?
-    @State var isShowImagePickerMessage : Bool = false
+//    @State var isShowImagePickerMessage : Bool = false
     //@State var imgMessage : Data = Data(count: 0)
     @State var selectedUser : User?
     
@@ -28,12 +28,12 @@ struct Chat: View {
             
             VStack {
                 
-                topbarChat
-                mainChat
+                topbar
+                main
                 
                 if vm.isShowActivityIndicator {
                     
-                    bottomChat.overlay(
+                    bottom.overlay(
                         
                         ActivityIndicator()
                             .frame(width: 30, height: 30)
@@ -42,12 +42,34 @@ struct Chat: View {
                     )
                 } else {
                     
-                    bottomChat
+                    bottom
                     
                 }
             }
             .navigationBarHidden(true)
-            
+//            .fullScreenCover(isPresented: $vm.isShowMainMessage) {
+//                MainMessage()
+//            }
+            .fullScreenCover(isPresented: $vm.isShowImagePickerMessage, onDismiss: {
+                
+                if imageMessage != nil
+                {
+                    
+                    //Activate activity indicator..
+                    //..true: when start send Image Message (bottomChat)
+                    //..false: when fetchMessage success (fetchMessage)
+                    vm.isShowActivityIndicator = true
+                    
+                    vm.uploadImageMessage(selectedUser: selectedUser, text: "", imageMessage: imageMessage!)
+                    //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
+                }
+                
+            }) {
+                
+                //                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
+                ImagePickerMessage(imageMessage: $imageMessage)
+                
+            }
             .onChange(of: vm.searchChat) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if newValue == vm.searchChat && vm.searchChat != "" {
@@ -73,14 +95,11 @@ struct Chat: View {
     
     
     //MARK: - topbarChat
-    var topbarChat : some View {
+    var topbar : some View {
         
         VStack{
             
             HStack(spacing: 15) {
-                
-                //Dòng này cần code lại để phù họp với mọi trường hợp
-//                if vm.participantList.count <= 1 {
                     
                     WebImage(url: URL(string: selectedUser?.profileImageUrl ?? ""))
                         .resizable()
@@ -107,39 +126,13 @@ struct Chat: View {
                             
                         }
                     }
-//                } else {
-//
-//                    Image("LotusLogo")
-//                        .resizable()
-//                        .scaledToFill()
-//                        .frame(width: 50, height: 50)
-//                        .mask(Circle())
-//                        .shadow(color: .black, radius: 2)
-//
-//                    VStack(alignment: .leading, spacing: 5){
-//
-//                        Text(vm.groupName)
-//                            .font(.system(size: 18, weight: .bold, design: .rounded))
-//
-//                        Text("\(vm.participantList.count) participants")
-//                            .font(.system(size: 10))
-//                            .foregroundColor(.gray)
-//
-//                    }
-//                }
 
                 Spacer()
                 
                 Button {
                     
                     vm.searchChat = ""
-                    
-                    //presentationMode.wrappedValue.dismiss()
-                    //vm.fetchRecentChatUser()
-                    
-                    //For Group
-//                    vm.groupName = ""
-//                    vm.participantList.removeAll()
+                    //vm.isShowMainMessage = true
                     
                     DispatchQueue.main.async {
                         
@@ -150,6 +143,7 @@ struct Chat: View {
                     
                     //Delete allMessages data in here if not when open another chat, it have fast show in < 1 sencond.
                     vm.allMessages.removeAll()
+                    vm.filterChat.removeAll()
 //                    DispatchQueue.main.async {
 //                        vm.isShowNewGroup = false
 //                    }
@@ -177,9 +171,9 @@ struct Chat: View {
                     .disableAutocorrection(true)
                 
                 Divider()
-                    .frame(height: 1)
-                    .padding(.horizontal, 30)
-                    .background(Color.gray)
+//                    .frame(height: 1)
+//                    .padding(.horizontal, 30)
+//                    .background(Color.gray)
                 
             }
             .padding(.vertical)
@@ -189,7 +183,7 @@ struct Chat: View {
     
     
     //MARK: - mainChat
-    var mainChat : some View {
+    var main : some View {
         
         VStack{
             
@@ -300,7 +294,7 @@ struct Chat: View {
     
     
     //MARK: - bottomChat
-    var bottomChat : some View {
+    var bottom : some View {
         
         HStack(spacing: 10) {
             
@@ -313,26 +307,6 @@ struct Chat: View {
                 Image(systemName: "photo.on.rectangle.angled")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.purple)
-                
-            }
-            .fullScreenCover(isPresented: $vm.isShowImagePickerMessage, onDismiss: {
-                
-                if imageMessage != nil
-                {
-                    
-                    //Activate activity indicator..
-                    //..true: when start send Image Message (bottomChat)
-                    //..false: when fetchMessage success (fetchMessage)
-                    vm.isShowActivityIndicator = true
-                    
-                    vm.uploadImgMessage(selectedUser: selectedUser, text: "", imgMessage: imageMessage!)
-                    //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
-                }
-                
-            }) {
-                
-                //                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
-                ImagePickerMessage(imageMessage: $imageMessage)
                 
             }
             
