@@ -1165,7 +1165,7 @@ class HomeViewModel: ObservableObject {
         }
         
         //Store Recipient Message
-        for toId in memberIdList {
+        for toId in selectedGroup.member {
             
             let recipientMessageDocument = FirebaseManager.shared.firestore
                 .collection("messages")
@@ -1193,8 +1193,8 @@ class HomeViewModel: ObservableObject {
             }
         }
 
-        self.lastGroupMessageOfSender(selectedGroup: selectedGroup, text: text)
-        self.lastGroupMessageOfReceiver(selectedGroup: selectedGroup, text: text)
+        self.lastGroupMessageOfSender(selectedGroup: self.selectedGroup, text: text)
+        self.lastGroupMessageOfReceiver(selectedGroup: self.selectedGroup, text: text)
         
     }
     
@@ -1243,7 +1243,7 @@ class HomeViewModel: ObservableObject {
                 
         guard let groupId = selectedGroup?.id else { return }
         
-        for toId in memberIdList {
+        for toId in selectedGroup!.member {
             
             let id = toId + groupId
 

@@ -175,19 +175,17 @@ struct GroupChat: View {
                                     
                                     HStack(alignment: .bottom){
                                         
-                                            let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
+                                        let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
+                                        let firstName = getFirstName(name: memberGroup.name)
 
-                                            WebImage(url: URL(string: memberGroup.profileImageUrl ))
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 25, height: 25)
-                                                .mask(Circle())
-                                            
-                                        VStack {
-                                            
-                                            Text(memberGroup.name)
-                                                .foregroundColor(.gray)
-                                                .font(.system(size: 8))
+                                        WebImage(url: URL(string: memberGroup.profileImageUrl ))
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 25, height: 25)
+                                            .mask(Circle())
+                                        
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
                                             
                                             //If text == "", it's a photo
                                             let text = content.text
@@ -210,6 +208,11 @@ struct GroupChat: View {
                                                     .clipShape(ChatBubble(mymsg: false))
                                                 
                                             }
+                                            
+                                            Text(firstName)
+                                                .foregroundColor(.gray)
+                                                .font(.system(size: 8))
+                                            
                                         }
                                         
                                         Spacer()
@@ -281,5 +284,18 @@ struct GroupChat: View {
         .cornerRadius(45)
         .padding(.horizontal)
         .animation(.easeOut)
+    }
+    
+    
+    //MARK: - firstName
+    func getFirstName(name: String) -> String {
+        
+        var components = name.components(separatedBy: " ")
+        if components.count > 0{
+            
+            let firstName = components.removeFirst()
+            return firstName
+        }
+        return name
     }
 }
