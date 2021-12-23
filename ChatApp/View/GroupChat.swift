@@ -64,6 +64,24 @@ struct GroupChat: View {
                 ImagePickerGroup(imageGroup: $imageGroup)
                 
             }
+            .onChange(of: vm.searchChat) { newValue in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if newValue == vm.searchChat && vm.searchChat != "" {
+                        //Check func in here
+                        vm.filterForChat()
+                        
+                    }
+                }
+                
+                if vm.searchChat == ""{
+                    
+                    //do nothing
+                    withAnimation(.linear){
+                        vm.filterAllMessages = vm.allMessages
+                        
+                    }
+                }
+            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -80,10 +98,11 @@ struct GroupChat: View {
                 
                 Button {
                     
-                    vm.searchGroupChat = ""
-                    vm.participantList.removeAll()
-                    
+                    vm.searchChat = ""
                     presentationMode.wrappedValue.dismiss()
+                    DispatchQueue.main.async {
+                        vm.isShowNewGroup = false
+                    }
                     
                 } label: {
                     
@@ -120,11 +139,12 @@ struct GroupChat: View {
                     
                 } label: {
                     
-                    Image(systemName: "info")
-                        .padding(8)
-                        .foregroundColor(.white)
-                        .background(.purple)
-                        .mask(Circle())
+                    Image(systemName: "info.circle")
+                        //.padding(8)
+                        .foregroundColor(.purple)
+                        .font(.system(size: 20))
+                        //.background(.purple)
+                        //.mask(Circle())
                     
                 }
             }
@@ -132,7 +152,7 @@ struct GroupChat: View {
             
             VStack{
                 
-                TextField("Search in chat", text: $vm.searchGroupChat)
+                TextField("Search in chat", text: $vm.searchChat)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                 
@@ -235,6 +255,19 @@ struct GroupChat: View {
                             }
                         }
                         .padding(.horizontal)
+                        .contextMenu{
+                            
+                            Button {
+                                
+                                let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
+                                vm.deleteMessage(selectedUser: memberGroup, selectedMessage: content)
+                                
+                            } label: {
+                                
+                                Text("Remove")
+                                
+                            }
+                        }
                     }
                 }
                 .rotationEffect(.degrees(180))
@@ -318,4 +351,23 @@ struct GroupChat: View {
         return name
         
     }
+    
+    
+//    func dismissTo(vc: UIViewController?, count: Int?, animated: Bool, completion: (() -> Void)? = nil) {
+//        var loopCount = 0
+//        var dummyVC: UIViewController? = self
+//        for _ in 0..<(count ?? 100) {
+//            loopCount = loopCount + 1
+//            dummyVC = dummyVC?.presentingViewController
+//            if let dismissToVC = vc {
+//                if dummyVC != nil && dummyVC!.isKind(of: dismissToVC.classForCoder) {
+//                    dummyVC?.dismiss(animated: animated, completion: completion)
+//                }
+//            }
+//        }
+//
+//        if count != nil {
+//            dummyVC?.dismiss(animated: animated, completion: completion)
+//        }
+//    }
 }

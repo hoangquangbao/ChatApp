@@ -28,7 +28,7 @@ struct NewGroup: View {
                     mainNewGroup.overlay(
                         
                         ActivityIndicator()
-                            .frame(width: 40, height: 40)
+                            .frame(width: 60, height: 60)
                             .foregroundColor(.gray)
                         
                     )
@@ -65,15 +65,6 @@ struct NewGroup: View {
                 groupId = NSUUID().uuidString
                 
                 vm.uploadProfileImageGroup(groupId: groupId!)
-                
-                //                    vm.fetchMessage(selectedObjectId: groupId)
-                //
-                //                    vm.isShowActivityIndicator = false
-                //                    vm.isShowGroup = true
-                
-                //                vm.isShowNewGroup = false
-                //                vm.isShowAddParticipants = false
-                //                vm.isShowNewMessage = false
                 
             }, label: {
                 

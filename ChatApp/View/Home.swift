@@ -23,7 +23,7 @@ struct Home: View {
                 signView.overlay(
                     
                     ActivityIndicator()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 60, height: 60)
                         .foregroundColor(.gray)
                     
                 )

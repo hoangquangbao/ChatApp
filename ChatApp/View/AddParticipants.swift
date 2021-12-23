@@ -9,6 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct AddParticipants: View {
+    
     @ObservedObject var vm = HomeViewModel()
     @State var isShowConfirmDiscardGroup = false
     
@@ -32,6 +33,7 @@ struct AddParticipants: View {
                     
                 } else {
                     
+                    vm.resetIsAddedStatus()
                     vm.searchAddParticipants = ""
                     vm.participantList.removeAll()
                     presentationMode.wrappedValue.dismiss()
@@ -62,6 +64,12 @@ struct AddParticipants: View {
             )
             
             //Navigation to NewGroup
+//            .fullScreenCover(isPresented: $vm.isShowNewGroup, onDismiss: {
+//                vm.isShowAddParticipants = false
+//            }, content: {
+//                NewGroup(vm: vm)
+//
+//            })
             .fullScreenCover(isPresented: $vm.isShowNewGroup, onDismiss: nil, content: {
                 NewGroup(vm: vm)
             })
@@ -79,17 +87,9 @@ struct AddParticipants: View {
                             Text("Discard Group"),
                             action: {
                                 
-                                //Reset isAdded status for all users of participantList
-                                for user in vm.participantList {
-                                    
-                                    if let index = vm.allSuggestUser.firstIndex(where: { us in
-                                        us.id == user.id
-                                    }) { vm.allSuggestUser[index].isAdded = false }
-                                    
-                                }
-                                //Update.
-                                vm.filterParticipantList = vm.allSuggestUser
+                                vm.resetIsAddedStatus()
                                 
+                                vm.groupname = ""
                                 vm.searchAddParticipants = ""
                                 vm.participantList.removeAll()
                                 presentationMode.wrappedValue.dismiss()
@@ -114,7 +114,7 @@ struct AddParticipants: View {
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterParticipantList = vm.allSuggestUser
+                        vm.filterSuggestParticipant = vm.allSuggestUser
                         
                     }
                 }
@@ -178,7 +178,7 @@ struct AddParticipants: View {
                                 }) { vm.allSuggestUser[index].isAdded = false }
                                 
                                 //3. Update.
-                                vm.filterParticipantList = vm.allSuggestUser
+                                vm.filterSuggestParticipant = vm.allSuggestUser
                                 
                             }, label: {
                                 
@@ -222,7 +222,7 @@ struct AddParticipants: View {
             
             LazyVStack(alignment: .leading){
                 
-                ForEach(vm.filterParticipantList) { user in
+                ForEach(vm.filterSuggestParticipant) { user in
                     
                     Button {
                         
@@ -241,7 +241,7 @@ struct AddParticipants: View {
                             if let index = vm.allSuggestUser.firstIndex(where: { us in
                                 us.id == user.id
                             }) { vm.allSuggestUser[index].isAdded = true }
-                            vm.filterParticipantList = vm.allSuggestUser
+                            vm.filterSuggestParticipant = vm.allSuggestUser
                             
                         }
                     } label: {

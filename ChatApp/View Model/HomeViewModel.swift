@@ -49,7 +49,7 @@ class HomeViewModel: ObservableObject {
     //Add Participants
     @Published var isShowAddParticipants : Bool = false
     @Published var searchAddParticipants = ""
-    @Published var filterParticipantList = [User]()
+    @Published var filterSuggestParticipant = [User]()
     @Published var participantList = [User]()
     
     //New Group
@@ -66,7 +66,7 @@ class HomeViewModel: ObservableObject {
     
     //GroupChat
     @Published var isShowGroup : Bool = false
-    @Published var searchGroupChat = ""
+    //@Published var searchGroupChat = ""
     @Published var memberIdList = [String]()
     @Published var selectedGroup : GroupUser?
     @Published var isShowImagePickerGroup = false
@@ -320,7 +320,7 @@ class HomeViewModel: ObservableObject {
                 })
                 
                 self.filterAllSuggestUser = self.allSuggestUser
-                self.filterParticipantList = self.allSuggestUser
+                self.filterSuggestParticipant = self.allSuggestUser
                 
             }
     }
@@ -877,7 +877,7 @@ class HomeViewModel: ObservableObject {
         
         withAnimation(.linear){
             
-            self.filterParticipantList = self.allSuggestUser.filter({
+            self.filterSuggestParticipant = self.allSuggestUser.filter({
                 
                 return $0.name.lowercased().contains(self.searchAddParticipants.lowercased())
                 
@@ -1008,6 +1008,11 @@ class HomeViewModel: ObservableObject {
                     
                 }
                 
+                //Reset the value of all parameters involved to creating a new group
+                self.resetIsAddedStatus()
+                self.participantList.removeAll()
+                self.memberIdList.removeAll()
+                self.groupname = ""
                 self.isShowGroup = true
                 
             }
@@ -1215,6 +1220,27 @@ class HomeViewModel: ObservableObject {
             }
         }
         allMember.append(currentUser!)
+        
+    }
+    
+    
+    //MARK: - resetIsAddedStatus
+    //Reset isAdded for user
+    func resetIsAddedStatus() {
+        
+        //Reset isAdded status for all users of participantList
+        for user in self.participantList {
+            
+            if let index = self.allSuggestUser.firstIndex(where: { us in
+                us.id == user.id
+            }) {
+                
+                self.allSuggestUser[index].isAdded = false
+                
+            }
+        }
+        //Update.
+        self.filterSuggestParticipant = self.allSuggestUser
         
     }
 }

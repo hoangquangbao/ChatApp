@@ -127,26 +127,8 @@ struct Chat: View {
                 Button {
                     
                     vm.searchChat = ""
-                    
-                    DispatchQueue.main.async {
-                        
-                        //vm.isShowChat = false
-                        presentationMode.wrappedValue.dismiss()
-                        
-                    }
-                    
-                    //Delete allMessages data in here if not when open another chat, it have fast show in < 1 sencond.
-                    vm.allMessages.removeAll()
-                    vm.filterAllMessages.removeAll()
-                    //                    DispatchQueue.main.async {
-                    //                        vm.isShowNewGroup = false
-                    //                    }
-                    //                    DispatchQueue.main.async {
-                    //                        vm.isShowAddParticipants = false
-                    //                    }
-                    //                    DispatchQueue.main.async {
-                    //                        vm.isShowNewMessage = false
-                    //                    }
+                    presentationMode.wrappedValue.dismiss()
+
                     
                 } label: {
                     

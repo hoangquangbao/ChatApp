@@ -34,6 +34,7 @@
 		06A99135277028990073E33D /* GroupUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A99134277028990073E33D /* GroupUser.swift */; };
 		06A991392770722A0073E33D /* LastMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A991382770722A0073E33D /* LastMessage.swift */; };
 		06ABE9E427742F1A0005FECC /* GroupDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ABE9E327742F1A0005FECC /* GroupDetail.swift */; };
+		06ABE9E62774C6830005FECC /* DismissView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ABE9E52774C6830005FECC /* DismissView.swift */; };
 		06B00D5F273C0CF9000E7BAB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06B00D5E273C0CF9000E7BAB /* GoogleService-Info.plist */; };
 		06B845AF2768C383005BDEAE /* AddParticipants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845AE2768C383005BDEAE /* AddParticipants.swift */; };
 		06B845B12768C67C005BDEAE /* NewGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B845B02768C67C005BDEAE /* NewGroup.swift */; };
@@ -96,6 +97,7 @@
 		06A99134277028990073E33D /* GroupUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupUser.swift; sourceTree = "<group>"; };
 		06A991382770722A0073E33D /* LastMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastMessage.swift; sourceTree = "<group>"; };
 		06ABE9E327742F1A0005FECC /* GroupDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetail.swift; sourceTree = "<group>"; };
+		06ABE9E52774C6830005FECC /* DismissView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissView.swift; sourceTree = "<group>"; };
 		06B00D5E273C0CF9000E7BAB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		06B845AE2768C383005BDEAE /* AddParticipants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipants.swift; sourceTree = "<group>"; };
 		06B845B02768C67C005BDEAE /* NewGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroup.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				063967722746497500A99EEA /* Chat.swift */,
 				0604A0D1276C85A1006DF9C8 /* GroupChat.swift */,
 				06ABE9E327742F1A0005FECC /* GroupDetail.swift */,
+				06ABE9E52774C6830005FECC /* DismissView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -543,6 +546,7 @@
 				0657D953276239180035C214 /* ImagePickerMessage.swift in Sources */,
 				06A991392770722A0073E33D /* LastMessage.swift in Sources */,
 				06ABE9E427742F1A0005FECC /* GroupDetail.swift in Sources */,
+				06ABE9E62774C6830005FECC /* DismissView.swift in Sources */,
 				0649EF942758A6DB0050D18E /* UserDefault.swift in Sources */,
 				0661C4E5274B4EFD00B3C9AF /* Message.swift in Sources */,
 				066C885D2772320600358F29 /* ImagePickerGroup.swift in Sources */,
