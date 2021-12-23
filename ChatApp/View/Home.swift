@@ -12,9 +12,7 @@ import Firebase
 struct Home: View {
     
     @ObservedObject var vm = HomeViewModel()
-    //    @State var isSignInMode : Bool = true
     @State var isHidePassword : Bool = true
-    //    @State var isShowResetPasswordView : Bool = false
     
     var body: some View {
         
@@ -69,11 +67,11 @@ struct Home: View {
             .padding(.bottom)
             //Reset item value if transfer tab SIGN IN <=> SIGN UP
             .onChange(of: vm.isSignInMode) { newValue in
-                 
-                    vm.username = ""
-                    vm.email = ""
-                    vm.password = ""
-                    vm.profileImage = nil
+                
+                vm.username = ""
+                vm.email = ""
+                vm.password = ""
+                vm.profileImage = nil
                 
             }
             

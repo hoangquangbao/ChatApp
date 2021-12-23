@@ -9,15 +9,9 @@ import SwiftUI
 import Firebase
 
 struct Message: Identifiable {
-    
-//    var id: String
-    
+        
     let id, fromId, toId, text, imgMessage: String
-//    let imgMessage : Data
-//    let timestamp: NSNumber
     let timestamp: Timestamp
-//    let timestamp: Date
-
 
 //        init(data: [String: Any]) {
 //    
@@ -29,10 +23,6 @@ struct Message: Identifiable {
 //    
 //        }
 }
-
-
-
-
 
 
 //extension Date{

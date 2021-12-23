@@ -11,11 +11,8 @@ import SDWebImageSwiftUI
 struct GroupChat: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @State var selectedGroupId : String?
     @State var selectedGroup : GroupUser?
     @State var imageGroup: UIImage?
-
-    
     @State var text : String = ""
     @State var isShowImagePickerMessage : Bool = false
     @State var imgMessage : Data = Data(count: 0)
@@ -27,12 +24,12 @@ struct GroupChat: View {
         NavigationView{
             
             VStack {
-
-                topbar
-                main
+                
+                topGroupChat
+                mainGroupChat
                 if vm.isShowActivityIndicator {
                     
-                    bottom.overlay(
+                    bottomGroupChat.overlay(
                         ActivityIndicator()
                             .frame(width: 30, height: 30)
                             .foregroundColor(.gray)
@@ -40,14 +37,14 @@ struct GroupChat: View {
                     )
                 } else {
                     
-                    bottom
+                    bottomGroupChat
                     
                 }
             }
             .navigationBarHidden(true)
-            .fullScreenCover(isPresented: $vm.isShowMainMessage) {
-                MainMessage()
-            }
+            .sheet(isPresented: $vm.isShowGroupDetail, onDismiss: nil, content: {
+                GroupDetail(vm: vm, selectedGroup: selectedGroup)
+            })
             .fullScreenCover(isPresented: $vm.isShowImagePickerGroup, onDismiss: {
                 
                 if imageGroup != nil
@@ -58,8 +55,8 @@ struct GroupChat: View {
                     //..false: when fetchMessage success (fetchMessage)
                     vm.isShowActivityIndicator = true
                     
-                    vm.uploadImageGroup(selectedGroup: selectedGroup, text: "", imageGroup: imageGroup)
-
+                    vm.uploadImageMessageOfGroup(selectedGroup: selectedGroup, text: "", imageGroup: imageGroup)
+                    
                 }
                 
             }) {
@@ -70,16 +67,31 @@ struct GroupChat: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        //.navigationViewStyle(StackNavigationViewStyle())
+        
     }
     
     
-    //MARK: - topbarChat
-    var topbar : some View {
+    //MARK: - topGroupChat
+    private var topGroupChat : some View {
         
         VStack{
             
             HStack(spacing: 15) {
+                
+                Button {
+                    
+                    vm.searchGroupChat = ""
+                    vm.participantList.removeAll()
+                    
+                    presentationMode.wrappedValue.dismiss()
+                    
+                } label: {
+                    
+                    Image(systemName: "arrow.backward")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.purple)
+                    
+                }
                 
                 WebImage(url: URL(string: selectedGroup?.profileImageUrl ?? ""))
                     .resizable()
@@ -93,7 +105,7 @@ struct GroupChat: View {
                     Text(selectedGroup!.name)
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                     
-                    Text("\(selectedGroup!.member.count + 1) participants")
+                    Text("\(selectedGroup!.member.count) participants")
                         .font(.system(size: 10))
                         .foregroundColor(.gray)
                     
@@ -103,16 +115,16 @@ struct GroupChat: View {
                 
                 Button {
                     
-                    vm.searchGroupChat = ""
-                    vm.participantList.removeAll()
+                    vm.fetchMemberList(selectedGroup: selectedGroup)
+                    vm.isShowGroupDetail = true
                     
-                    vm.isShowMainMessage = true
-
                 } label: {
                     
-                    Image(systemName: "multiply")
-                        .font(.system(size: 25, weight: .bold))
-                        .foregroundColor(.purple)
+                    Image(systemName: "info")
+                        .padding(8)
+                        .foregroundColor(.white)
+                        .background(.purple)
+                        .mask(Circle())
                     
                 }
             }
@@ -125,31 +137,69 @@ struct GroupChat: View {
                     .disableAutocorrection(true)
                 
                 Divider()
-//                    .frame(height: 1)
-//                    .padding(.horizontal, 30)
-//                    .background(Color.gray)
+                //                    .frame(height: 1)
+                //                    .padding(.horizontal, 30)
+                //                    .background(Color.gray)
                 
             }
             .padding(.vertical)
+            
         }
         .padding(.horizontal)
+        
     }
     
     
-    //MARK: - mainChat
-    var main : some View {
+    //MARK: - mainGroupChat
+    private var mainGroupChat : some View {
         
         VStack {
             ScrollView {
                 LazyVStack {
-                        ForEach(vm.filterChat){ content in
-                            VStack() {
+                    ForEach(vm.filterAllMessages){ content in
+                        VStack() {
+                            
+                            if content.fromId == vm.currentUser?.id {
                                 
-                                if content.fromId == vm.currentUser?.id {
+                                HStack() {
                                     
-                                    HStack() {
+                                    Spacer()
+                                    
+                                    //If text == "", it's a photo
+                                    let text = content.text
+                                    if text == "" {
                                         
-                                        Spacer()
+                                        WebImage(url: URL(string: content.imgMessage ))
+                                            .resizable()
+                                            .scaledToFit()
+                                            .cornerRadius(15)
+                                            .frame(maxWidth: UIScreen.main.bounds.width - 150)
+                                        
+                                    } else {
+                                        
+                                        Text(text)
+                                            .padding()
+                                            .background(Color("BG_Chat"))
+                                            .clipShape(ChatBubble(mymsg: true))
+                                            .foregroundColor(.white)
+                                        
+                                    }
+                                }
+                            } else {
+                                
+                                HStack(alignment: .bottom){
+                                    
+                                    let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
+                                    let firstName = getFirstName(name: memberGroup.name)
+                                    
+                                    WebImage(url: URL(string: memberGroup.profileImageUrl ))
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 25, height: 25)
+                                        .mask(Circle())
+                                    
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
                                         
                                         //If text == "", it's a photo
                                         let text = content.text
@@ -160,78 +210,44 @@ struct GroupChat: View {
                                                 .scaledToFit()
                                                 .cornerRadius(15)
                                                 .frame(maxWidth: UIScreen.main.bounds.width - 150)
+                                                .padding(.leading, 0)
+                                            //.scaledToFit()
+                                            //                                                .padding(.top)
                                             
                                         } else {
                                             
                                             Text(text)
                                                 .padding()
-                                                .background(Color("BG_Chat"))
-                                                .clipShape(ChatBubble(mymsg: true))
-                                                .foregroundColor(.white)
+                                                .background(Color.gray.opacity(0.2))
+                                                .clipShape(ChatBubble(mymsg: false))
                                             
                                         }
+                                        
+                                        Text(firstName)
+                                            .foregroundColor(.gray)
+                                            .font(.system(size: 8))
+                                        
                                     }
-                                } else {
                                     
-                                    HStack(alignment: .bottom){
-                                        
-                                        let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
-                                        let firstName = getFirstName(name: memberGroup.name)
-
-                                        WebImage(url: URL(string: memberGroup.profileImageUrl ))
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 25, height: 25)
-                                            .mask(Circle())
-                                        
-                                        
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            
-                                            //If text == "", it's a photo
-                                            let text = content.text
-                                            if text == "" {
-                                                
-                                                WebImage(url: URL(string: content.imgMessage ))
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .cornerRadius(15)
-                                                    .frame(maxWidth: UIScreen.main.bounds.width - 150)
-                                                    .padding(.leading, 0)
-                                                //.scaledToFit()
-                                                //                                                .padding(.top)
-                                                
-                                            } else {
-                                                
-                                                Text(text)
-                                                    .padding()
-                                                    .background(Color.gray.opacity(0.2))
-                                                    .clipShape(ChatBubble(mymsg: false))
-                                                
-                                            }
-                                            
-                                            Text(firstName)
-                                                .foregroundColor(.gray)
-                                                .font(.system(size: 8))
-                                            
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                    }
+                                    Spacer()
+                                    
                                 }
                             }
-                            .padding(.horizontal)
                         }
+                        .padding(.horizontal)
+                    }
                 }
                 .rotationEffect(.degrees(180))
+                
             }
             .rotationEffect(.degrees(180))
+            
         }
     }
     
     
-    //MARK: - bottomChat
-    var bottom : some View {
+    //MARK: - bottomGroupChat
+    private var bottomGroupChat : some View {
         
         HStack(spacing: 10) {
             
@@ -256,7 +272,7 @@ struct GroupChat: View {
                     
                     if !text.isEmpty{
                         
-                        vm.sendGroup(selectedGroup: selectedGroup!, text: text, imgMessage: "")
+                        vm.sendGroupMessage(selectedGroup: selectedGroup!, text: text, imgMessage: "")
                         text = ""
                         
                     }
@@ -267,7 +283,7 @@ struct GroupChat: View {
                 
                 Button {
                     
-                    vm.sendGroup(selectedGroup: selectedGroup!, text: text, imgMessage: "")
+                    vm.sendGroupMessage(selectedGroup: selectedGroup!, text: text, imgMessage: "")
                     text = ""
                     
                 } label: {
@@ -284,18 +300,22 @@ struct GroupChat: View {
         .cornerRadius(45)
         .padding(.horizontal)
         .animation(.easeOut)
+        
     }
     
     
-    //MARK: - firstName
+    //MARK: - getFirstName
     func getFirstName(name: String) -> String {
         
         var components = name.components(separatedBy: " ")
+        
         if components.count > 0{
             
             let firstName = components.removeFirst()
             return firstName
+            
         }
         return name
+        
     }
 }

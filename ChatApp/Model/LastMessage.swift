@@ -9,12 +9,9 @@ import SwiftUI
 import Firebase
 
 struct LastMessage: Identifiable {
-    
-//    var id: String
-    
+        
     let id, fromId, toId, name, profileImageUrl, text: String
     let timestamp: Timestamp
-//    let timestamp: Date
 
 //    init(data: [String: Any]) {
 //

@@ -11,11 +11,6 @@ import SDWebImageSwiftUI
 struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
-//    @State var filterNewMessage = [User]()
-
-    //    @ObservedObject var vm : HomeViewModel
-    //    @State var isShowChatMessage : Bool = false
-    
     @State var selectedUser : User?
     
     @Environment(\.presentationMode) var presentationMode
@@ -26,7 +21,7 @@ struct NewMessage: View {
             
             VStack{
                 
-                topbarNewMassage
+                topNewMassage
                 mainNewMessage
                 NavigationLink(destination: Chat(vm: vm, selectedUser: selectedUser), isActive: $vm.isShowChat) {
                     EmptyView()
@@ -37,7 +32,7 @@ struct NewMessage: View {
             .navigationBarItems(leading:
                                     Button(action: {
                 vm.searchNewMessage = ""
-//                vm.isShowNewMessage = false
+                //                vm.isShowNewMessage = false
                 presentationMode.wrappedValue.dismiss()
                 
             }, label: {
@@ -70,7 +65,7 @@ struct NewMessage: View {
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterNewMessage = vm.suggestUser
+                        vm.filterAllSuggestUser = vm.allSuggestUser
                         
                     }
                 }
@@ -79,29 +74,29 @@ struct NewMessage: View {
     }
     
     
-    //MARK: - topbarNewMessage
-    private var topbarNewMassage : some View {
+    //MARK: - topNewMassage
+    private var topNewMassage : some View {
         
-            VStack(spacing: 3){
-                HStack {
-
-                    Text("To: ")
-                        .foregroundColor(.gray)
-
-                    TextField("Type a name", text: $vm.searchNewMessage)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
-                        .submitLabel(.search)
-
-                }
-
-                Divider()
-//                    .frame(height: 1)
-//                    .padding(.horizontal, 30)
-//                    .background(Color.gray)
-
+        VStack(spacing: 3){
+            HStack {
+                
+                Text("To: ")
+                    .foregroundColor(.gray)
+                
+                TextField("Type a name", text: $vm.searchNewMessage)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .submitLabel(.search)
+                
             }
-            .padding()
+            
+            Divider()
+            //                    .frame(height: 1)
+            //                    .padding(.horizontal, 30)
+            //                    .background(Color.gray)
+            
+        }
+        .padding()
     }
     
     
@@ -122,13 +117,13 @@ struct NewMessage: View {
                     Text("Create a New Group")
                         .font(.system(size: 15))
                     Spacer()
-
+                    
                 }
                 .foregroundColor(.black)
                 .padding(.horizontal)
                 
             }
- 
+            
             LazyVStack(alignment: .leading){
                 
                 Text("Suggested")
@@ -136,15 +131,15 @@ struct NewMessage: View {
                     .foregroundColor(.gray)
                     .padding()
                 
-                ForEach(vm.filterNewMessage) { user in
+                ForEach(vm.filterAllSuggestUser) { user in
                     
                     Button {
                         
                         selectedUser = user
                         
                         vm.searchNewMessage = ""
-//                        vm.isShowNewMessage = false
-//                        vm.fetchMessage(selectedObjectId: selectedUser)
+                        //                        vm.isShowNewMessage = false
+                        //                        vm.fetchMessage(selectedObjectId: selectedUser)
                         vm.fetchMessage(selectedObjectId: user.id)
                         vm.isShowChat = true
                         
@@ -169,11 +164,6 @@ struct NewMessage: View {
                         .padding(.horizontal)
                     }
                     .padding(.vertical, 15)
-                    //                    NavigationLink(destination: Chat(vm: vm, selectedUser: self.vm.selectedUser), isActive: $vm.isShowChatMessage) {
-
-                    //                        .fullScreenCover(isPresented: $isShowChatMessage, onDismiss: nil) {
-                    //                            Chat(vm: vm, selectedUser: selectedUser)
-                    //                        }
                 }
             }
         }

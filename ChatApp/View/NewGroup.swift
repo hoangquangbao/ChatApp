@@ -12,18 +12,16 @@ struct NewGroup: View {
     
     @ObservedObject var vm = HomeViewModel()
     @State var groupId : String?
-    //@State var selectedGroup : GroupUser?
-
-        
+    
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         
         NavigationView{
-         
+            
             VStack{
                 
-                topbarNewGroup
+                topNewGroup
                 
                 if vm.isShowActivityIndicator{
                     
@@ -48,15 +46,15 @@ struct NewGroup: View {
             .navigationBarTitle("New Group", displayMode: .inline)
             .navigationBarItems(leading:
                                     Button(action: {
-
+                
                 presentationMode.wrappedValue.dismiss()
-
+                
             }, label: {
-
+                
                 Image(systemName: "arrow.backward")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.purple)
-
+                
             })
             )
             .navigationBarItems(trailing:
@@ -65,38 +63,38 @@ struct NewGroup: View {
                 vm.isShowActivityIndicator = true
                 
                 groupId = NSUUID().uuidString
-                    
-                    vm.uploadProfileImageGroup(groupId: groupId!)
-                    
-//                    vm.fetchMessage(selectedObjectId: groupId)
-//                    
-//                    vm.isShowActivityIndicator = false
-//                    vm.isShowGroup = true
-
-//                vm.isShowNewGroup = false
-//                vm.isShowAddParticipants = false
-//                vm.isShowNewMessage = false
-
+                
+                vm.uploadProfileImageGroup(groupId: groupId!)
+                
+                //                    vm.fetchMessage(selectedObjectId: groupId)
+                //
+                //                    vm.isShowActivityIndicator = false
+                //                    vm.isShowGroup = true
+                
+                //                vm.isShowNewGroup = false
+                //                vm.isShowAddParticipants = false
+                //                vm.isShowNewMessage = false
+                
             }, label: {
-
+                
                 Text("CREATE")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(vm.groupname == "" ? .gray : .purple)
-
+                
             }).disabled(vm.groupname == "")
             )
         }
     }
     
     
-    //MARK: - topbarNewGroup
-    var topbarNewGroup : some View {
+    //MARK: - topNewGroup
+    private var topNewGroup : some View {
         
         VStack{
             
             Text("Name your new chat")
                 .padding()
-
+            
             TextField("Group Name", text: $vm.groupname)
             
             Divider()
@@ -108,36 +106,38 @@ struct NewGroup: View {
     
     
     //MARK: - mainNewGroup
-    var mainNewGroup : some View {
-            
-            ScrollView{
-                LazyVStack(alignment: .leading){
+    private var mainNewGroup : some View {
+        
+        ScrollView{
+            LazyVStack(alignment: .leading){
+                
+                Text("\(vm.participantList.count) participants")
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                    .padding(.vertical)
+                
+                ForEach(vm.participantList) { user in
                     
-                    Text("\(vm.participantList.count) participants")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                        .padding(.vertical)
-
-                    ForEach(vm.participantList) { user in
+                    HStack(spacing: 15){
                         
-                        HStack(spacing: 15){
-                            
-                            WebImage(url: URL(string: user.profileImageUrl))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 45, height: 45)
-                                .mask(Circle())
-                                .shadow(color: .purple, radius: 2)
-                            
-                            Text(user.name)
-                                .font(.system(size: 15, weight: .bold))
-                                                    
-                        }
-                        .padding(.vertical, 10)
+                        WebImage(url: URL(string: user.profileImageUrl))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 45, height: 45)
+                            .mask(Circle())
+                            .shadow(color: .purple, radius: 2)
+                        
+                        Text(user.name)
+                            .font(.system(size: 15, weight: .bold))
+                        
                     }
+                    .padding(.vertical, 10)
+                    
                 }
-                .padding(.horizontal)
             }
+            .padding(.horizontal)
+            
+        }
     }
 }
 

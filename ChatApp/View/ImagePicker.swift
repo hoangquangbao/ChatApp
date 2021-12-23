@@ -10,8 +10,6 @@ import SwiftUI
 struct ImagePicker: UIViewControllerRepresentable {
     
     @Binding var image: UIImage?
-    //@Binding var imgMessage: Data
-    
     private let controller = UIImagePickerController()
     
     func makeCoordinator() -> Coordinator {

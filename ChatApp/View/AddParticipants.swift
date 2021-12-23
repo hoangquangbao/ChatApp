@@ -11,8 +11,6 @@ import SDWebImageSwiftUI
 struct AddParticipants: View {
     @ObservedObject var vm = HomeViewModel()
     @State var isShowConfirmDiscardGroup = false
-
-//    @State var filterGroupMessage = [User]()
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -20,9 +18,9 @@ struct AddParticipants: View {
         NavigationView{
             VStack{
                 
-                topbarAddParticipants
+                topAddParticipants
                 mainAddParticipants
-
+                
             }
             .navigationBarTitle("Add Participants", displayMode: .inline)
             .navigationBarItems(leading:
@@ -37,7 +35,7 @@ struct AddParticipants: View {
                     vm.searchAddParticipants = ""
                     vm.participantList.removeAll()
                     presentationMode.wrappedValue.dismiss()
-
+                    
                 }
                 
             }, label: {
@@ -84,13 +82,13 @@ struct AddParticipants: View {
                                 //Reset isAdded status for all users of participantList
                                 for user in vm.participantList {
                                     
-                                    if let index = vm.suggestUser.firstIndex(where: { us in
+                                    if let index = vm.allSuggestUser.firstIndex(where: { us in
                                         us.id == user.id
-                                    }) { vm.suggestUser[index].isAdded = false }
+                                    }) { vm.allSuggestUser[index].isAdded = false }
                                     
                                 }
                                 //Update.
-                                vm.filterAddParticipants = vm.suggestUser
+                                vm.filterParticipantList = vm.allSuggestUser
                                 
                                 vm.searchAddParticipants = ""
                                 vm.participantList.removeAll()
@@ -116,7 +114,7 @@ struct AddParticipants: View {
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterAddParticipants = vm.suggestUser
+                        vm.filterParticipantList = vm.allSuggestUser
                         
                     }
                 }
@@ -125,8 +123,8 @@ struct AddParticipants: View {
     }
     
     
-    //MARK: - topbarGroupMessage
-    var topbarAddParticipants : some View {
+    //MARK: - topAddParticipants
+    private var topAddParticipants : some View {
         
         VStack(spacing: 3){
             HStack {
@@ -143,9 +141,9 @@ struct AddParticipants: View {
             .padding(.top)
             
             Divider()
-//                .frame(height: 1)
-//                .padding(.horizontal, 30)
-//                .background(Color.gray)
+            //                .frame(height: 1)
+            //                .padding(.horizontal, 30)
+            //                .background(Color.gray)
             
             //Selected user list
             ScrollView(.horizontal) {
@@ -155,7 +153,7 @@ struct AddParticipants: View {
                     ForEach(vm.participantList){ user in
                         
                         VStack(spacing: 10){
-                
+                            
                             Button(action: {
                                 
                                 //1. Remove the user from participantList..
@@ -171,16 +169,16 @@ struct AddParticipants: View {
                                 //Trạng thái isAdded phải change từ gốc suggestUser.
                                 //Nếu change từ ngọn ở filterAddParticipants thì khi tìm kiếm, data load lại nó sẽ sai.
                                 //Nên ta khóa hàm này lại, chuyển sang dùng hàm dưới.
-//                                if let index = vm.filterAddParticipants.firstIndex(where: { us in
-//                                    us.uid == user.uid
-//                                }) { vm.filterAddParticipants[index].isAdded = false }
+                                //                                if let index = vm.filterAddParticipants.firstIndex(where: { us in
+                                //                                    us.uid == user.uid
+                                //                                }) { vm.filterAddParticipants[index].isAdded = false }
                                 
-                                if let index = vm.suggestUser.firstIndex(where: { us in
+                                if let index = vm.allSuggestUser.firstIndex(where: { us in
                                     us.id == user.id
-                                }) { vm.suggestUser[index].isAdded = false }
+                                }) { vm.allSuggestUser[index].isAdded = false }
                                 
                                 //3. Update.
-                                vm.filterAddParticipants = vm.suggestUser
+                                vm.filterParticipantList = vm.allSuggestUser
                                 
                             }, label: {
                                 
@@ -209,41 +207,43 @@ struct AddParticipants: View {
                 }
                 .padding(.vertical)
                 .padding(.horizontal, 3)
+                
             }
         }
         .padding(.horizontal)
+        
     }
     
     
-    //MARK: - mainGroupMessage
-    var mainAddParticipants : some View {
+    //MARK: - mainAddParticipants
+    private var mainAddParticipants : some View {
         
         ScrollView{
             
             LazyVStack(alignment: .leading){
-                                
-                ForEach(vm.filterAddParticipants) { user in
+                
+                ForEach(vm.filterParticipantList) { user in
                     
                     Button {
-                      
-                    //If the user not exist in groupChat array then add it.
-                      if(isNotExist(user: user)) {
-                          
-                          vm.searchAddParticipants = ""
-                          
-                          //Add the user to participantList
-                          vm.participantList.append(user)
-                          
-                          //Khóa hàm này vì lý do : xem ở /*COMMENT*/ ở trên
-//                          if let index = vm.filterAddParticipants.firstIndex(where: { us in
-//                              us.uid == user.uid
-//                          }) { vm.filterAddParticipants[index].isAdded = true }
-                          if let index = vm.suggestUser.firstIndex(where: { us in
-                              us.id == user.id
-                          }) { vm.suggestUser[index].isAdded = true }
-                          vm.filterAddParticipants = vm.suggestUser
-                          
-                      }
+                        
+                        //If the user not exist in groupChat array then add it.
+                        if(isNotExist(user: user)) {
+                            
+                            vm.searchAddParticipants = ""
+                            
+                            //Add the user to participantList
+                            vm.participantList.append(user)
+                            
+                            //Khóa hàm này vì lý do : xem ở /*COMMENT*/ ở trên
+                            //                          if let index = vm.filterAddParticipants.firstIndex(where: { us in
+                            //                              us.uid == user.uid
+                            //                          }) { vm.filterAddParticipants[index].isAdded = true }
+                            if let index = vm.allSuggestUser.firstIndex(where: { us in
+                                us.id == user.id
+                            }) { vm.allSuggestUser[index].isAdded = true }
+                            vm.filterParticipantList = vm.allSuggestUser
+                            
+                        }
                     } label: {
                         
                         HStack(spacing: 15){
@@ -261,8 +261,8 @@ struct AddParticipants: View {
                             
                             Spacer()
                             
-//                            Image(systemName: "plus.circle")
-//                                .foregroundColor(.gray)
+                            //                            Image(systemName: "plus.circle")
+                            //                                .foregroundColor(.gray)
                             if user.isAdded {
                                 
                                 Image(systemName: "checkmark")
@@ -282,8 +282,10 @@ struct AddParticipants: View {
                             }
                         }
                         .padding(.horizontal)
+                        
                     }
                     .padding(.vertical, 15)
+                    
                 }
             }
         }
@@ -295,9 +297,9 @@ struct AddParticipants: View {
     func isNotExist(user: User) -> Bool {
         
         let data = vm.participantList.filter {
-              
-              return $0.id.contains(user.id)
-              
+            
+            return $0.id.contains(user.id)
+            
         }
         
         return data.isEmpty ? true : false

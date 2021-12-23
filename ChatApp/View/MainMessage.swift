@@ -11,21 +11,8 @@ import SDWebImageSwiftUI
 
 struct MainMessage : View {
     
-    //    @ObservedObject var vm = HomeViewModel()
     @StateObject var vm = HomeViewModel()
-    
-    //    @State var isShowChatMessage : Bool = false
-    
-    
-    //    @State var isShowSignOutButton : Bool = false
-    //    @State var isShowHomePage : Bool = false
-    //    @State var isShowNewMessage : Bool = false
-    //    @State var isShowChatMessage : Bool = false
-    
     @State var selectedUser : User?
-//    @State var selectedGroup : GroupUser?
-//    @State var selectedObjectId : String?
-
     
     //@Environment(\.presentationMode) var presentationMode
     
@@ -33,8 +20,8 @@ struct MainMessage : View {
         NavigationView{
             VStack {
                 
-                topNav
-                mainMessageView
+                topMainMessage
+                mainMainMessage
                 NavigationLink("", destination: Chat(vm:vm, selectedUser: selectedUser), isActive: $vm.isShowChat)
                 NavigationLink("", destination: GroupChat(vm:vm, selectedGroup: vm.selectedGroup), isActive: $vm.isShowGroup)
                 
@@ -69,7 +56,7 @@ struct MainMessage : View {
                     
                     //do nothing
                     withAnimation(.linear){
-                        vm.filterMainMessage = vm.allRecentChatUsers
+                        vm.filterAllLastMessage = vm.allLastMessage
                         
                     }
                 }
@@ -79,8 +66,8 @@ struct MainMessage : View {
     }
     
     
-    //MARK: - topbarMessenges
-    private var topNav : some View {
+    //MARK: - topMainMessage
+    private var topMainMessage : some View {
         
         VStack(alignment: .leading){
             
@@ -163,9 +150,9 @@ struct MainMessage : View {
                 }
                 
                 Divider()
-//                    .frame(height: 1)
-//                    .padding(.horizontal, 30)
-//                    .background(Color.gray)
+                //                    .frame(height: 1)
+                //                    .padding(.horizontal, 30)
+                //                    .background(Color.gray)
                 
             }
             .padding(.vertical)
@@ -179,12 +166,12 @@ struct MainMessage : View {
     }
     
     
-    //MARK: - messengesView
-    private var mainMessageView : some View {
+    //MARK: - mainMainMessage
+    private var mainMainMessage : some View {
         
         VStack {
             
-            if vm.allRecentChatUsers.count == 0{
+            if vm.allLastMessage.count == 0{
                 
                 Spacer()
                 Text("Haven't any chat. Start now!")
@@ -194,7 +181,7 @@ struct MainMessage : View {
             } else {
                 ScrollView {
                     LazyVStack{
-                        ForEach(vm.filterMainMessage) { object in
+                        ForEach(vm.filterAllLastMessage) { object in
                             VStack{
                                 
                                 Button {
@@ -209,18 +196,18 @@ struct MainMessage : View {
                                     //else it is user
                                     if (selectedObjectId.contains("-")) {
                                         
-                                    vm.getGroupInfo(groupId: selectedObjectId)
-                                    //isShowGroup = true should put in fetchGroup because when we initialization a new group that need to call "fetchGroup" and show "Group UI". Otherwise, isShowGroup = true put in here, "Group UI" can't show.
-                                    //vm.isShowGroup = true
-
+                                        vm.getGroupInfo(groupId: selectedObjectId)
+                                        //isShowGroup = true should put in fetchGroup because when we initialization a new group that need to call "fetchGroup" and show "Group UI". Otherwise, isShowGroup = true put in here, "Group UI" can't show.
+                                        //vm.isShowGroup = true
+                                        
                                     } else {
-                                                                                
+                                        
                                         selectedUser = vm.getUserInfo(selectedObjectId: selectedObjectId )
-//                                        vm.filterChat = vm.allMessages
+                                        //                                        vm.filterChat = vm.allMessages
                                         vm.isShowChat = true
-
+                                        
                                     }
-
+                                    
                                 } label: {
                                     
                                     HStack(spacing: 15){
@@ -255,17 +242,12 @@ struct MainMessage : View {
                                     .padding(.horizontal)
                                 }
                                 .padding(.vertical, 15)
-                                //                        NavigationLink(destination: Chat(vm: vm, selectedUser: vm.selectedUser), isActive: $vm.isShowChatMessage) {
-                                //                                NavigationLink(destination: Chat(vm: vm), isActive: $vm.isShowChat) {
-                                //
-                                //                                    EmptyView()
-                                //                                }
                             }
                             .contextMenu{
                                 
                                 Button {
                                     
-                                    vm.deleteRecentChatUser(selectedUser: object)
+                                    vm.deleteLastMessage(selectedUser: object)
                                     
                                 } label: {
                                     

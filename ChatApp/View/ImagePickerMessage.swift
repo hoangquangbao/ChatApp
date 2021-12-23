@@ -11,8 +11,6 @@ import SDWebImageSwiftUI
 struct ImagePickerMessage: UIViewControllerRepresentable {
     
     @Binding var imageMessage: UIImage?
-    //@Binding var imgMessage: Data
-    
     private let controller = UIImagePickerController()
     
     func makeCoordinator() -> Coordinator {

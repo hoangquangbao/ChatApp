@@ -96,12 +96,3 @@ struct ResetPassword: View {
         }
     }
 }
-
-struct ResetPassword_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        
-        ResetPassword()
-        
-    }
-}

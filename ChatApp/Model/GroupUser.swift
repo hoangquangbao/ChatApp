@@ -11,7 +11,6 @@ struct GroupUser: Identifiable {
     
     let id, name, profileImageUrl, admin: String
     let member: [String]
-    //let profileImageUrl: String
     
     init(data: [String: Any]) {
         self.id = data["id"] as? String ?? ""
@@ -20,7 +19,6 @@ struct GroupUser: Identifiable {
         self.admin = data["admin"] as? String ?? ""
         self.member = data["member"] as? [String] ?? []
         
-        //self.profileImageUrl = data["profileImageUrl"] as? String ?? ""
     }
 }
 
