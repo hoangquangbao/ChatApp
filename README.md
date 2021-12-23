@@ -1,9 +1,8 @@
 # ChatApp
-<img width="918" alt="Screen Shot 2021-12-18 at 19 22 15" src="https://user-images.githubusercontent.com/66858640/146640930-1d05e19e-2b09-4ac2-99ed-a03654f0055f.png">
-<img width="914" alt="Screen Shot 2021-12-18 at 19 30 29" src="https://user-images.githubusercontent.com/66858640/146641153-f49ebe90-7749-4b1f-8da7-8f28d7d3369e.png">
-<img width="704" alt="Screen Shot 2021-12-18 at 19 26 02" src="https://user-images.githubusercontent.com/66858640/146640978-ffd8bc20-fa49-4ebb-9190-c075d6310ee8.png">
-<img width="917" alt="Screen Shot 2021-12-18 at 19 28 18" src="https://user-images.githubusercontent.com/66858640/146641055-592f4c7c-251b-40f9-b3cc-37be16bd96d9.png">
-<img width="705" alt="Screen Shot 2021-12-18 at 19 29 06" src="https://user-images.githubusercontent.com/66858640/146641100-7fcccfea-0d73-4d43-85ce-e11a18119104.png">
+<img width="951" alt="Screen Shot 2021-12-24 at 01 09 57" src="https://user-images.githubusercontent.com/66858640/147278118-89a74267-874d-41cc-8296-c3af0a843299.png">
+<img width="954" alt="Screen Shot 2021-12-24 at 01 15 47" src="https://user-images.githubusercontent.com/66858640/147278133-1093e8c9-5a03-4365-a355-c6e0afb319c4.png">
+<img width="946" alt="Screen Shot 2021-12-24 at 01 00 54" src="https://user-images.githubusercontent.com/66858640/147278140-33072832-e487-4beb-8f37-8d91097f641e.png">
+
 
 
 
