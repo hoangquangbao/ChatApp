@@ -14,8 +14,6 @@ struct MainMessage : View {
     @StateObject var vm = HomeViewModel()
     @State var selectedUser : User?
     
-    //@Environment(\.presentationMode) var presentationMode
-    
     var body: some View {
         NavigationView{
             VStack {
@@ -27,16 +25,13 @@ struct MainMessage : View {
                 
             }
             .edgesIgnoringSafeArea(.bottom)
-            //.onAppear(perform: vm.fetchRecentChatUser)
             .navigationBarHidden(true)
             
-            //Navigation to Home
             .fullScreenCover(isPresented: $vm.isShowHomePage, onDismiss: nil) {
                 //Home()
                 ContentView()
             }
             
-            //Navigation to NewMessage
             .fullScreenCover(isPresented: $vm.isShowNewMessage, onDismiss: nil) {
                 NewMessage(vm: vm)
             }
@@ -105,19 +100,9 @@ struct MainMessage : View {
                         ])
                 }
                 
-                let usn = vm.currentUser?.name
+                Text(vm.currentUser?.name ?? "")
+                    .font(.system(size: 20, weight: .bold))
                 
-                if usn != "" {
-                    
-                    Text(vm.currentUser?.name ?? "")
-                        .font(.system(size: 20, weight: .bold))
-                    
-                } else {
-                    
-                    Text("Me")
-                        .font(.system(size: 20, weight: .bold))
-                    
-                }
                 
                 Spacer()
                 
@@ -163,6 +148,7 @@ struct MainMessage : View {
             
         }
         .padding(.horizontal)
+        
     }
     
     
@@ -179,31 +165,32 @@ struct MainMessage : View {
                 Spacer()
                 
             } else {
+                
                 ScrollView {
+                    
                     LazyVStack{
+                        
                         ForEach(vm.filterAllLastMessage) { object in
+                            
                             VStack{
                                 
                                 Button {
                                     
-                                    //Get the user follow User data type to provide to fetchMessage
                                     vm.searchMainMessage = ""
                                     
                                     let selectedObjectId = object.toId
                                     vm.fetchMessage(selectedObjectId: selectedObjectId)
-                                    //Check it is group or user:
-                                    //if have "-" is group
-                                    //else it is user
+                                    
+                                    //if have "-" is group else it is user
                                     if (selectedObjectId.contains("-")) {
                                         
-                                        vm.getGroupInfo(groupId: selectedObjectId)
-                                        //isShowGroup = true should put in fetchGroup because when we initialization a new group that need to call "fetchGroup" and show "Group UI". Otherwise, isShowGroup = true put in here, "Group UI" can't show.
+                                        vm.fetchGroupInfo(groupId: selectedObjectId)
+                                        //isShowGroup = true should put in fetchGroupInfo because when we initialization a new group that need to call "fetchGroup" and show "Group UI". Otherwise, isShowGroup = true put in here is not good
                                         //vm.isShowGroup = true
                                         
                                     } else {
                                         
                                         selectedUser = vm.getUserInfo(selectedObjectId: selectedObjectId )
-                                        //                                        vm.filterChat = vm.allMessages
                                         vm.isShowChat = true
                                         
                                     }
@@ -264,7 +251,7 @@ struct MainMessage : View {
     
     
     //MARK: - timeAgoDisplay
-    //Convert data type of "timestam" from Timestamp to Date. After that set timeAgo format
+    //Convert "timestam" from Timestamp type to Date type. After that set timeAgo format
     func timeAgoDisplay(timestamp : Timestamp) -> String {
         
         let today = Date()

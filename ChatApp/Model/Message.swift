@@ -23,16 +23,3 @@ struct Message: Identifiable {
 //    
 //        }
 }
-
-
-//extension Date{
-//    
-//    static func dateFromCustomString(customString: String) -> Date {
-//        
-//        let dateFomatter = DateFormatter()
-//        dateFomatter.dateFormat = "MM/dd/yyyy"
-//        return dateFomatter.date(from: customString) ?? Date()
-//        
-//    }
-//    
-//}

@@ -12,12 +12,12 @@ struct GroupDetail: View {
     
     @ObservedObject var vm = HomeViewModel()
     @State var selectedGroup : GroupUser?
-    
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         
         NavigationView{
+            
             VStack{
                 
                 topGroupDetail
@@ -64,6 +64,7 @@ struct GroupDetail: View {
     private var mainGroupDetail: some View {
         
         ScrollView{
+            
             LazyVStack(alignment: .leading){
                 
                 Text("Members")
@@ -89,7 +90,6 @@ struct GroupDetail: View {
                         
                     }
                     .padding()
-                    
                 }
             }
         }

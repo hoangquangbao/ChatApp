@@ -42,23 +42,23 @@ struct GroupChat: View {
                 }
             }
             .navigationBarHidden(true)
+            
             .sheet(isPresented: $vm.isShowGroupDetail, onDismiss: nil, content: {
                 GroupDetail(vm: vm, selectedGroup: selectedGroup)
             })
+            
             .fullScreenCover(isPresented: $vm.isShowImagePickerGroup, onDismiss: {
                 
                 if imageGroup != nil
                 {
                     
                     //Activate activity indicator..
-                    //..true: when start send Image Message (bottomChat)
+                    //..true: when start send Image Message (GroupChat)
                     //..false: when fetchMessage success (fetchMessage)
                     vm.isShowActivityIndicator = true
-                    
-                    vm.uploadImageMessageOfGroup(selectedGroup: selectedGroup, text: "", imageGroup: imageGroup)
+                    vm.sendImageMessageOfGroup(selectedGroup: selectedGroup, text: "", imageGroup: imageGroup)
                     
                 }
-                
             }) {
                 
                 ImagePickerGroup(imageGroup: $imageGroup)
@@ -67,12 +67,11 @@ struct GroupChat: View {
             .onChange(of: vm.searchChat) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if newValue == vm.searchChat && vm.searchChat != "" {
-                        //Check func in here
+                        
                         vm.filterForChat()
                         
                     }
                 }
-                
                 if vm.searchChat == ""{
                     
                     //do nothing
@@ -140,11 +139,11 @@ struct GroupChat: View {
                 } label: {
                     
                     Image(systemName: "info.circle")
-                        //.padding(8)
+                    //.padding(8)
                         .foregroundColor(.purple)
                         .font(.system(size: 20))
-                        //.background(.purple)
-                        //.mask(Circle())
+                    //.background(.purple)
+                    //.mask(Circle())
                     
                 }
             }
@@ -157,16 +156,11 @@ struct GroupChat: View {
                     .disableAutocorrection(true)
                 
                 Divider()
-                //                    .frame(height: 1)
-                //                    .padding(.horizontal, 30)
-                //                    .background(Color.gray)
                 
             }
             .padding(.vertical)
-            
         }
         .padding(.horizontal)
-        
     }
     
     
@@ -174,11 +168,15 @@ struct GroupChat: View {
     private var mainGroupChat : some View {
         
         VStack {
+            
             ScrollView {
+                
                 LazyVStack {
+                    
                     ForEach(vm.filterAllMessages){ content in
+                        
                         VStack() {
-                            
+                            //My message
                             if content.fromId == vm.currentUser?.id {
                                 
                                 HStack() {
@@ -205,6 +203,7 @@ struct GroupChat: View {
                                         
                                     }
                                 }
+                                //My firiend's message
                             } else {
                                 
                                 HStack(alignment: .bottom){
@@ -217,7 +216,6 @@ struct GroupChat: View {
                                         .scaledToFill()
                                         .frame(width: 25, height: 25)
                                         .mask(Circle())
-                                    
                                     
                                     VStack(alignment: .leading, spacing: 2) {
                                         
@@ -259,8 +257,7 @@ struct GroupChat: View {
                             
                             Button {
                                 
-                                let memberGroup = vm.getUserInfo(selectedObjectId: content.fromId)
-                                vm.deleteMessage(selectedUser: memberGroup, selectedMessage: content)
+                                vm.deleteMessage(selectedObjectId: selectedGroup!.id, selectedMessage: content)
                                 
                             } label: {
                                 
@@ -271,10 +268,8 @@ struct GroupChat: View {
                     }
                 }
                 .rotationEffect(.degrees(180))
-                
             }
             .rotationEffect(.degrees(180))
-            
         }
     }
     
@@ -333,7 +328,6 @@ struct GroupChat: View {
         .cornerRadius(45)
         .padding(.horizontal)
         .animation(.easeOut)
-        
     }
     
     
@@ -351,23 +345,4 @@ struct GroupChat: View {
         return name
         
     }
-    
-    
-//    func dismissTo(vc: UIViewController?, count: Int?, animated: Bool, completion: (() -> Void)? = nil) {
-//        var loopCount = 0
-//        var dummyVC: UIViewController? = self
-//        for _ in 0..<(count ?? 100) {
-//            loopCount = loopCount + 1
-//            dummyVC = dummyVC?.presentingViewController
-//            if let dismissToVC = vc {
-//                if dummyVC != nil && dummyVC!.isKind(of: dismissToVC.classForCoder) {
-//                    dummyVC?.dismiss(animated: animated, completion: completion)
-//                }
-//            }
-//        }
-//
-//        if count != nil {
-//            dummyVC?.dismiss(animated: animated, completion: completion)
-//        }
-//    }
 }

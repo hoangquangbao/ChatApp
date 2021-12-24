@@ -60,10 +60,11 @@ struct NewGroup: View {
             .navigationBarItems(trailing:
                                     Button(action: {
                 
+                //Activate activity indicator..
+                //..true: when start create new group (NewGroup)
+                //..false: when create new group success (implementNewGroup)
                 vm.isShowActivityIndicator = true
-                
                 groupId = NSUUID().uuidString
-                
                 vm.uploadProfileImageGroup(groupId: groupId!)
                 
             }, label: {
@@ -100,6 +101,7 @@ struct NewGroup: View {
     private var mainNewGroup : some View {
         
         ScrollView{
+            
             LazyVStack(alignment: .leading){
                 
                 Text("\(vm.participantList.count) participants")
@@ -123,11 +125,9 @@ struct NewGroup: View {
                         
                     }
                     .padding(.vertical, 10)
-                    
                 }
             }
             .padding(.horizontal)
-            
         }
     }
 }

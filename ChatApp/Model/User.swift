@@ -9,9 +9,7 @@ import SwiftUI
 import Firebase
 
 struct User: Identifiable {
-    
-    //var id: String {id}
-    
+        
     let id, email, name, profileImageUrl: String
     
     // To identify whether it is added to Participant List....

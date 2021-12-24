@@ -12,11 +12,12 @@ struct AddParticipants: View {
     
     @ObservedObject var vm = HomeViewModel()
     @State var isShowConfirmDiscardGroup = false
-    
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
+        
         NavigationView{
+            
             VStack{
                 
                 topAddParticipants
@@ -62,19 +63,11 @@ struct AddParticipants: View {
                 
             }).disabled(vm.participantList.count <= 1)
             )
-            
-            //Navigation to NewGroup
-//            .fullScreenCover(isPresented: $vm.isShowNewGroup, onDismiss: {
-//                vm.isShowAddParticipants = false
-//            }, content: {
-//                NewGroup(vm: vm)
-//
-//            })
+
             .fullScreenCover(isPresented: $vm.isShowNewGroup, onDismiss: nil, content: {
                 NewGroup(vm: vm)
             })
             
-            //Navigation back to NewMessage
             .actionSheet(isPresented: $isShowConfirmDiscardGroup) {
                 
                 ActionSheet(
@@ -141,9 +134,6 @@ struct AddParticipants: View {
             .padding(.top)
             
             Divider()
-            //                .frame(height: 1)
-            //                .padding(.horizontal, 30)
-            //                .background(Color.gray)
             
             //Selected user list
             ScrollView(.horizontal) {
@@ -162,9 +152,8 @@ struct AddParticipants: View {
                                 }) { vm.participantList.remove(at: index) }
                                 
                                 /*COMMENT*/
-                                //2. Get user location on suggestUser..
-                                // and set isAdded is false..
-                                // to change the User status is checkmark.green
+                                //2. Get location of the user on allSuggestUser..
+                                // set isAdded value is false to change the User status is checkmark.green
                                 
                                 //Trạng thái isAdded phải change từ gốc suggestUser.
                                 //Nếu change từ ngọn ở filterAddParticipants thì khi tìm kiếm, data load lại nó sẽ sai.
@@ -174,7 +163,9 @@ struct AddParticipants: View {
                                 //                                }) { vm.filterAddParticipants[index].isAdded = false }
                                 
                                 if let index = vm.allSuggestUser.firstIndex(where: { us in
+                                    
                                     us.id == user.id
+                                    
                                 }) { vm.allSuggestUser[index].isAdded = false }
                                 
                                 //3. Update.
@@ -226,7 +217,7 @@ struct AddParticipants: View {
                     
                     Button {
                         
-                        //If the user not exist in groupChat array then add it.
+                        //Add user to participantList if it's not exists
                         if(isNotExist(user: user)) {
                             
                             vm.searchAddParticipants = ""

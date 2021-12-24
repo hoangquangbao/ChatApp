@@ -44,6 +44,7 @@ struct Chat: View {
                 }
             }
             .navigationBarHidden(true)
+            
             .fullScreenCover(isPresented: $vm.isShowImagePickerMessage, onDismiss: {
                 
                 if imageMessage != nil
@@ -54,16 +55,16 @@ struct Chat: View {
                     //..false: when fetchMessage success (fetchMessage)
                     vm.isShowActivityIndicator = true
                     
-                    vm.uploadImageMessage(selectedUser: selectedUser, text: "", imageMessage: imageMessage!)
+                    vm.sendImageMessage(selectedUser: selectedUser, text: "", imageMessage: imageMessage!)
                     //vm.sendMessage(selectedUser: vm.selectedUser, text: "", imgMessage: <#String#>)
                 }
                 
             }) {
                 
-                //                ImagePickerMessage(isShowImagePickerMessage: self.$isShowImagePickerMessage, imgMessage: self.$imgMessage)
                 ImagePickerMessage(imageMessage: $imageMessage)
                 
             }
+            
             .onChange(of: vm.searchChat) { newValue in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if newValue == vm.searchChat && vm.searchChat != "" {
@@ -128,7 +129,7 @@ struct Chat: View {
                     
                     vm.searchChat = ""
                     presentationMode.wrappedValue.dismiss()
-
+                    
                     
                 } label: {
                     
@@ -147,16 +148,11 @@ struct Chat: View {
                     .disableAutocorrection(true)
                 
                 Divider()
-                //                    .frame(height: 1)
-                //                    .padding(.horizontal, 30)
-                //                    .background(Color.gray)
                 
             }
             .padding(.vertical)
-            
         }
         .padding(.horizontal)
-        
     }
     
     
@@ -164,13 +160,16 @@ struct Chat: View {
     private var mainChat : some View {
         
         VStack{
+            
             ScrollView {
+                
                 LazyVStack{
+                    
                     ForEach(vm.filterAllMessages){ content in
+                        
                         VStack(){
                             
                             //My message
-                            //                                if content.fromId != selectedUser?.uid{
                             if content.fromId == vm.currentUser?.id {
                                 
                                 HStack() {
@@ -189,9 +188,7 @@ struct Chat: View {
                                         //.scaledToFit()
                                         //                                                .padding(.top)
                                         
-                                    }
-                                    //My firiend's message
-                                    else {
+                                    } else {
                                         
                                         Text(text)
                                             .padding()
@@ -201,6 +198,7 @@ struct Chat: View {
                                         
                                     }
                                 }
+                                //My firiend's message
                             } else {
                                 
                                 HStack(alignment: .bottom){
@@ -243,7 +241,7 @@ struct Chat: View {
                             
                             Button {
                                 
-                                vm.deleteMessage(selectedUser: selectedUser!, selectedMessage: content)
+                                vm.deleteMessage(selectedObjectId: selectedUser!.id, selectedMessage: content)
                                 
                             } label: {
                                 
@@ -254,10 +252,8 @@ struct Chat: View {
                     }
                 }
                 .rotationEffect(.degrees(180))
-                
             }
             .rotationEffect(.degrees(180))
-            
         }
     }
     

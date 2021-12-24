@@ -12,7 +12,6 @@ struct NewMessage: View {
     
     @ObservedObject var vm = HomeViewModel()
     @State var selectedUser : User?
-    
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -32,7 +31,6 @@ struct NewMessage: View {
             .navigationBarItems(leading:
                                     Button(action: {
                 vm.searchNewMessage = ""
-                //                vm.isShowNewMessage = false
                 presentationMode.wrappedValue.dismiss()
                 
             }, label: {
@@ -43,8 +41,6 @@ struct NewMessage: View {
                 
             })
             )
-            
-            //Navigation...
             .fullScreenCover(isPresented: $vm.isShowAddParticipants, onDismiss: nil, content: {
                 AddParticipants(vm: vm)
             })
@@ -91,9 +87,6 @@ struct NewMessage: View {
             }
             
             Divider()
-            //                    .frame(height: 1)
-            //                    .padding(.horizontal, 30)
-            //                    .background(Color.gray)
             
         }
         .padding()
@@ -138,8 +131,6 @@ struct NewMessage: View {
                         selectedUser = user
                         
                         vm.searchNewMessage = ""
-                        //                        vm.isShowNewMessage = false
-                        //                        vm.fetchMessage(selectedObjectId: selectedUser)
                         vm.fetchMessage(selectedObjectId: user.id)
                         vm.isShowChat = true
                         
