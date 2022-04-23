@@ -5,16 +5,10 @@
 
 
 
-
-## Using Swift Package Manager for Firebase
-### Manual 
-https://github.com/firebase/firebase-ios-sdk/blob/master/SwiftPackageManager.md
-### Package installed
-  - #### FirebaseAuth, FirebaseStorage using spm 
-    https://github.com/firebase/firebase-ios-sdk.git
-  - #### FirebaseFirestorage using pod file
-    https://github.com/invertase/firestore-ios-sdk-frameworks
-  - #### SDwebimageSwiftUI
-    https://github.com/SDWebImage/SDWebImageSwiftUI
-
->Quang Bao
+  
+### 🌵 Installed Packages
+- [Firebase Apple Open Source Development](https://github.com/firebase/firebase-ios-sdk.git) FirebaseAuth, FirebaseStorage using spm
+- [Swift Package Manager for Firebase](https://github.com/firebase/firebase-ios-sdk/blob/master/SwiftPackageManager.md
+)
+- [Firestore iOS SDK](https://github.com/invertase/firestore-ios-sdk-frameworks) FirebaseFirestorage using pod file
+- [SDwebimageSwiftUI](https://github.com/SDWebImage/SDWebImageSwiftUI)
